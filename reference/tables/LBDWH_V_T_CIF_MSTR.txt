@@ -1,0 +1,138 @@
+## Table: LBDWH.V_T_CIF_MSTR
+Library   : LBDWH
+Schema    : DWHOWR
+Engine    : ODBC (Oracle)
+Variables : 127
+
+## Variable Reference
+# Num = Numeric, Char = Character
+
+#  | Variable                       | Type | Len | Format      | Label
+---|--------------------------------|------|-----|-------------|--------------------------------
+1  | CIF_NO                         | Char | 7   | $7.         | CIF_NO
+2  | CIF_NAME                       | Char | 80  | $80.        | CIF_NAME
+3  | MAIL_ADDR1                     | Char | 80  | $80.        | MAIL_ADDR1
+4  | MAIL_ADDR2                     | Char | 80  | $80.        | MAIL_ADDR2
+5  | MAIL_ADDR3                     | Char | 80  | $80.        | MAIL_ADDR3
+6  | FRN_ADDR                       | Char | 1   | $1.         | FRN_ADDR
+7  | CLS_CODE                       | Char | 2   | $2.         | CLS_CODE
+8  | RSDT_CODE                      | Char | 1   | $1.         | RSDT_CODE
+9  | CNTRY_CODE                     | Char | 2   | $2.         | CNTRY_CODE
+10 | CTZ_CODE                       | Char | 3   | $3.         | CTZ_CODE
+11 | BIRTH_DTE                      | Num  | 8   | DATETIME20. | BIRTH_DTE
+12 | BIZ_TYP_CODE                   | Char | 8   | $8.         | BIZ_TYP_CODE
+13 | POSTAL_CODE                    | Char | 6   | $6.         | POSTAL_CODE
+14 | SEX_CODE                       | Char | 1   | $1.         | SEX_CODE
+15 | RACE_CODE                      | Char | 3   | $3.         | RACE_CODE
+16 | EDUC_CODE                      | Char | 1   | $1.         | EDUC_CODE
+17 | INCM_LVL_CODE                  | Char | 1   | $1.         | INCM_LVL_CODE
+18 | MRTL_STS_CODE                  | Char | 1   | $1.         | MRTL_STS_CODE
+19 | DEPNT_NO                       | Num  | 8   | 3.          | DEPNT_NO
+20 | CIF_CRT_DTE                    | Num  | 8   | DATETIME20. | CIF_CRT_DTE
+21 | CIF_TYP_CODE                   | Char | 10  | $10.        | CIF_TYP_CODE
+22 | INDST_CODE                     | Char | 6   | $6.         | INDST_CODE
+23 | MRKT_SEG_CODE                  | Char | 2   | $2.         | MRKT_SEG_CODE
+24 | RISK_FTR_CODE                  | Char | 2   | $2.         | RISK_FTR_CODE
+25 | OPN_BR_CODE                    | Char | 3   | $3.         | OPN_BR_CODE
+26 | CR_STS_CODE                    | Char | 1   | $1.         | CR_STS_CODE
+27 | CR_STS_CHNG_DTE                | Num  | 8   | DATETIME20. | CR_STS_CHNG_DTE
+28 | CR_GDE_CODE                    | Char | 2   | $2.         | CR_GDE_CODE
+29 | CUR_AC_MGR_CODE                | Char | 3   | $3.         | CUR_AC_MGR_CODE
+30 | PRV_AC_MGR_CODE                | Char | 3   | $3.         | PRV_AC_MGR_CODE
+31 | AC_MGR_CHNG_DTE                | Num  | 8   | DATETIME20. | AC_MGR_CHNG_DTE
+32 | ID_TYP_CODE                    | Char | 2   | $2.         | ID_TYP_CODE
+33 | ID_CODE                        | Char | 18  | $18.        | ID_CODE
+34 | SYS_CODE                       | Char | 2   | $2.         | SYS_CODE
+35 | MAS_CODE                       | Char | 5   | $5.         | MAS_CODE
+36 | UPDT_DTE                       | Num  | 8   | DATETIME20. | UPDT_DTE
+37 | UPDT_PRG                       | Char | 20  | $20.        | UPDT_PRG
+38 | UPDT_USR                       | Char | 10  | $10.        | UPDT_USR
+39 | CIF_TYP_FLG                    | Char | 1   | $1.         | CIF_TYP_FLG
+40 | ORGL_UPDT_DTE                  | Num  | 8   | DATETIME20. | ORGL_UPDT_DTE
+41 | CIF_ACT_FLG                    | Char | 1   | $1.         | CIF_ACT_FLG
+42 | EMAIL_ADDR1                    | Char | 60  | $60.        | EMAIL_ADDR1
+43 | EMAIL_ADDR2                    | Char | 60  | $60.        | EMAIL_ADDR2
+44 | COMP_NAME                      | Char | 60  | $60.        | COMP_NAME
+45 | YRS_IN_SVC_CODE                | Num  | 8   | 5.          | YRS_IN_SVC_CODE
+46 | LAST_INCM_UPD_DTE              | Num  | 8   | DATETIME20. | LAST_INCM_UPD_DTE
+47 | VIP_CODE                       | Char | 2   | $2.         | VIP_CODE
+48 | DECEASED_FLG                   | Char | 1   | $1.         | DECEASED_FLG
+49 | HOLD_CODE                      | Char | 1   | $1.         | HOLD_CODE
+50 | CITY                           | Char | 50  | $50.        | CITY
+51 | STATE_CODE                     | Char | 3   | $3.         | STATE_CODE
+52 | INSUF_ADDR                     | Char | 1   | $1.         | INSUF_ADDR
+53 | FIRST_DELQ_DTE                 | Num  | 8   | DATETIME20. | FIRST_DELQ_DTE
+54 | SOLICITOR_NO                   | Char | 10  | $10.        | SOLICITOR_NO
+55 | SOLICIT_DTE                    | Num  | 8   | DATETIME20. | SOLICIT_DTE
+56 | SOLICITOR_VALIDITY             | Char | 1   | $1.         | SOLICITOR_VALIDITY
+57 | MRKTG_HOLD                     | Char | 1   | $1.         | MRKTG_HOLD
+58 | CIF_GRP_CODE                   | Char | 7   | $7.         | CIF_GRP_CODE
+59 | CIF_RLTN_CODE                  | Char | 1   | $1.         | CIF_RLTN_CODE
+60 | INCM_STRUC                     | Char | 8   | $8.         | INCM_STRUC
+61 | CAR_OWN_CODE                   | Char | 1   | $1.         | CAR_OWN_CODE
+62 | SELF_EMP_IND                   | Char | 1   | $1.         | SELF_EMP_IND
+63 | PROFESSN_GDE_CODE              | Char | 3   | $3.         | PROFESSN_GDE_CODE
+64 | RSDT_OWN_CODE                  | Char | 4   | $4.         | RSDT_OWN_CODE
+65 | RSDT_TYP_CODE                  | Char | 1   | $1.         | RSDT_TYP_CODE
+66 | MTHS_IN_RSDT                   | Num  | 8   | 5.          | MTHS_IN_RSDT
+67 | OTH_CR_NO                      | Num  | 8   | 3.          | OTH_CR_NO
+68 | OTH_LN_NO                      | Num  | 8   | 3.          | OTH_LN_NO
+69 | CSTMT_FLG                      | Char | 1   | $1.         | CSTMT_FLG
+70 | CSTMT_DTE                      | Num  | 8   | DATETIME20. | CSTMT_DTE
+71 | SECT35_FLG                     | Char | 1   | $1.         | SECT35_FLG
+72 | TP_RT_FLG                      | Char | 1   | $1.         | TP_RT_FLG
+73 | ID_ISS_CNTRY_CODE              | Char | 2   | $2.         | ID_ISS_CNTRY_CODE
+74 | HLDG_COMP_IND                  | Char | 1   | $1.         | HLDG_COMP_IND
+75 | ADDR_SEQ_NO                    | Num  | 8   | 4.          | ADDR_SEQ_NO
+76 | INSIDER_CODE                   | Char | 1   | $1.         | INSIDER_CODE
+77 | RSDT_CNTRY_CODE                | Char | 3   | $3.         | RSDT_CNTRY_CODE
+78 | PRI_INDST_CODE                 | Char | 8   | $8.         | PRI_INDST_CODE
+79 | SEC_INDST_CODE                 | Char | 8   | $8.         | SEC_INDST_CODE
+80 | TERT_INDST_CODE                | Char | 8   | $8.         | TERT_INDST_CODE
+81 | RISK_CODE                      | Char | 4   | $4.         | RISK_CODE
+82 | NXT_CR_REVIEW_DTE              | Num  | 8   | DATETIME20. | NXT_CR_REVIEW_DTE
+83 | MAS757_STS_CODE                | Char | 1   | $1.         | MAS757_STS_CODE
+84 | PRI_BIZ_CNTRY                  | Char | 3   | $3.         | PRI_BIZ_CNTRY
+85 | SEC_BIZ_CNTRY                  | Char | 3   | $3.         | SEC_BIZ_CNTRY
+86 | TERT_BIZ_CNTRY                 | Char | 3   | $3.         | TERT_BIZ_CNTRY
+87 | CREATE_USR                     | Char | 10  | $10.        | CREATE_USR
+88 | CREATE_STAFF                   | Char | 10  | $10.        | CREATE_STAFF
+89 | CREATE_TIME                    | Num  | 8   | 7.          | CREATE_TIME
+90 | CREATE_WKSTN                   | Char | 10  | $10.        | CREATE_WKSTN
+91 | LAST_MAINT_TIME                | Num  | 8   | 7.          | LAST_MAINT_TIME
+92 | LAST_MAINT_DTE                 | Num  | 8   | DATETIME20. | LAST_MAINT_DTE
+93 | LAST_MAINT_USR                 | Char | 10  | $10.        | LAST_MAINT_USR
+94 | LAST_MAINT_STAFF               | Char | 10  | $10.        | LAST_MAINT_STAFF
+95 | LAST_MAINT_WKSTN               | Char | 10  | $10.        | LAST_MAINT_WKSTN
+96 | UPDT_FLG                       | Char | 1   | $1.         | UPDT_FLG
+97 | CSE_FLG                        | Char | 1   | $1.         | CSE_FLG
+98 | CHARITY_FLG                    | Char | 1   | $1.         | CHARITY_FLG
+99 | SUSP_SHELL_CMP                 | Char | 10  | $10.        | SUSP_SHELL_CMP
+100| RELIGION_CODE                  | Char | 2   | $2.         | RELIGION_CODE
+101| ACCESS_LVL_CODE                | Char | 1   | $1.         | ACCESS_LVL_CODE
+102| EMP_NO                         | Num  | 8   | 7.          | EMP_NO
+103| DEPNT_AGE                      | Char | 30  | $30.        | DEPNT_AGE
+104| LAST_AA_APPROVAL_DTE           | Num  | 8   | DATETIME20. | LAST_AA_APPROVAL_DTE
+105| CTRL_IND                       | Char | 1   | $1.         | CTRL_IND
+106| TREAT_PTS                      | Num  | 8   | 8.          | TREAT_PTS
+107| MEM_IND                        | Char | 1   | $1.         | MEM_IND
+108| MEM_EXP_DATE                   | Num  | 8   | DATETIME20. | MEM_EXP_DATE
+109| RIV_RWD_TYP                    | Char | 2   | $2.         | RIV_RWD_TYP
+110| RIV_TREAT_PTS                  | Num  | 8   | 12.         | RIV_TREAT_PTS
+111| RIV_CASH_REBATE                | Num  | 8   | 19.2        | RIV_CASH_REBATE
+112| OFFICER_CODE                   | Char | 10  | $10.        | OFFICER_CODE
+113| BIRTH_CNTRY_CODE               | Char | 3   | $3.         | BIRTH_CNTRY_CODE
+114| SEG_CODE                       | Char | 5   | $5.         | SEG_CODE
+115| SUB_SEG_CODE                   | Char | 5   | $5.         | SUB_SEG_CODE
+116| SOLICITOR_SUB_SEG              | Char | 10  | $10.        | SOLICITOR_SUB_SEG
+117| RCMS_IND                       | Char | 1   | $1.         | RCMS_IND
+118| PASSPORT_EXPIRY_DTE            | Num  | 8   | DATETIME20. | PASSPORT_EXPIRY_DTE
+119| AI_STS                         | Char | 1   | $1.         | AI_STS
+120| AI_INCEPTION_DTE               | Num  | 8   | DATETIME20. | AI_INCEPTION_DTE
+121| AI_EXPIRY_DTE                  | Num  | 8   | DATETIME20. | AI_EXPIRY_DTE
+122| STATE_OWN_PCT                  | Char | 20  | $20.        | STATE_OWN_PCT
+123| PRE_NPL_STS                    | Char | 3   | $3.         | PRE_NPL_STS
+124| MAS_SME_FLG                    | Char | 10  | $10.        | MAS_SME_FLG
+125| AVQ_BP_OPN_DTE                 | Num  | 8   | DATETIME20. | AVQ_BP_OPN_DTE
+126| PASSPORT_LETTER_EXP_FLAG       | Char | 1   | $1.         | PASSPORT_LETTER_EXP_FLAG
+127| UCIF_NO                        | Char | 50  | $50.        | UCIF_NO

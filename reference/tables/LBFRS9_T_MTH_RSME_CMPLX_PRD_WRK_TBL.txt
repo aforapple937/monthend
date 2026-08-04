@@ -1,0 +1,18 @@
+## Table: LBFRS9.T_MTH_RSME_CMPLX_PRD_WRK_TBL
+Library   : LBFRS9
+Schema    : FRSPOWR
+Engine    : ODBC (Oracle)
+Variables : 7
+
+## Variable Reference
+# Num = Numeric, Char = Character
+
+#  | Variable                       | Type | Len | Format      | Label
+---|--------------------------------|------|-----|-------------|--------------------------------
+1  | PROC_DTE                       | Num  | 8   | DATETIME20. | PROC_DTE
+2  | CIF_NO                         | Char | 7   | $7.         | CIF_NO
+3  | RSME_IN_OUT_FLG                | Char | 15  | $15.        | RSME_IN_OUT_FLG
+4  | UPDT_DTE                       | Num  | 8   | DATETIME20. | UPDT_DTE
+5  | UPDT_USR                       | Char | 20  | $20.        | UPDT_USR
+6  | UPDT_PRG                       | Char | 50  | $50.        | UPDT_PRG
+7  | SOURCE                         | Char | 20  | $20.        | SOURCE

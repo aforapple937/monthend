@@ -1,0 +1,20 @@
+%let rpt_mth = 30JUN2026;
+%let rpt_dt  = %sysfunc(inputn(&rpt_mth, date9.));
+
+/* ECL_METHOD is resolved in three steps, in order:
+     1. STAGE3 accounts are provisioned specifically.
+     2. Otherwise, an UNRATED current rating has no PD/LGD to model.
+     3. Otherwise: the standard PD/LGD method. */
+data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_IFRS_STAGE_CODE
+                            CURR_RATING ECL_METHOD);
+    retain PROC_DTE V_ACCOUNT_NUMBER V_IFRS_STAGE_CODE
+           CURR_RATING ECL_METHOD;
+    length ECL_METHOD $255;
+    set LBFRS9.T_MTH_FRS9_RDL_MSTR_LIST(keep=PROC_DTE V_ACCOUNT_NUMBER V_D_ACCOUNT_STATUS
+                                             V_IFRS_STAGE_CODE CURR_RATING);
+    where datepart(PROC_DTE) = &rpt_dt and V_D_ACCOUNT_STATUS = "Active";
+
+    if      V_IFRS_STAGE_CODE = 'STAGE3' then ECL_METHOD = 'Specific Provision Methodology';
+    else if CURR_RATING       = 'UNRATED' then ECL_METHOD = 'Risk Sensitivity Method';
+    else                                       ECL_METHOD = 'PD LGD Method';
+run;

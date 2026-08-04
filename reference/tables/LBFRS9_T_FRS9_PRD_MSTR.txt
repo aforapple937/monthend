@@ -1,0 +1,38 @@
+## Table: LBFRS9.T_FRS9_PRD_MSTR
+Library   : LBFRS9
+Schema    : FRSPOWR
+Engine    : ODBC (Oracle)
+Variables : 27
+
+## Variable Reference
+# Num = Numeric, Char = Character
+
+#  | Variable                       | Type | Len | Format      | Label
+---|--------------------------------|------|-----|-------------|--------------------------------
+1  | SOURCE                         | Char | 5   | $5.         | SOURCE
+2  | PRODUCT_HIERARCHY_CD           | Char | 20  | $20.        | PRODUCT_HIERARCHY_CD
+3  | PRODUCT_HIERARCHY_DSC          | Char | 100 | $100.       | PRODUCT_HIERARCHY_DSC
+4  | SOURCE_PROD_TYPE_CD            | Char | 20  | $20.        | SOURCE_PROD_TYPE_CD
+5  | SOURCE_PROD_TYPE_DESC          | Char | 100 | $100.       | SOURCE_PROD_TYPE_DESC
+6  | PROD_CD_LEVEL0                 | Char | 5   | $5.         | PROD_CD_LEVEL0
+7  | LEVEL_0                        | Char | 20  | $20.        | LEVEL_0
+8  | PROD_CD_LEVEL1                 | Char | 20  | $20.        | PROD_CD_LEVEL1
+9  | LEVEL_1                        | Char | 20  | $20.        | LEVEL_1
+10 | PROD_CD_LEVEL2                 | Char | 20  | $20.        | PROD_CD_LEVEL2
+11 | LEVEL_2                        | Char | 20  | $20.        | LEVEL_2
+12 | PROD_CD_LEVEL3                 | Char | 20  | $20.        | PROD_CD_LEVEL3
+13 | LEVEL_3                        | Char | 20  | $20.        | LEVEL_3
+14 | PROD_CD_LEVEL4                 | Char | 20  | $20.        | PROD_CD_LEVEL4
+15 | LEVEL_4                        | Char | 100 | $100.       | LEVEL_4
+16 | PROD_CD_LEVEL5                 | Char | 30  | $30.        | PROD_CD_LEVEL5
+17 | LEVEL_5                        | Char | 100 | $100.       | LEVEL_5
+18 | PROD_CD_LEVEL6                 | Char | 40  | $40.        | PROD_CD_LEVEL6
+19 | LEVEL_6                        | Char | 100 | $100.       | LEVEL_6
+20 | UPDT_DTE                       | Num  | 8   | DATETIME20. | UPDT_DTE
+21 | UPDT_PRG                       | Char | 50  | $50.        | UPDT_PRG
+22 | UPDT_USR                       | Char | 20  | $20.        | UPDT_USR
+23 | PRODUCT_CATEGORY               | Char | 100 | $100.       | PRODUCT_CATEGORY
+24 | PROD_CD_LEVEL7                 | Char | 40  | $40.        | PROD_CD_LEVEL7
+25 | LEVEL_7                        | Char | 100 | $100.       | LEVEL_7
+26 | PROD_CD_LEVEL8                 | Char | 40  | $40.        | PROD_CD_LEVEL8
+27 | LEVEL_8                        | Char | 100 | $100.       | LEVEL_8

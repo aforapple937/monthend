@@ -1,0 +1,141 @@
+## Table: LBDWH.V_T_MTH_AC_DTL
+Library   : LBDWH
+Schema    : DWHOWR
+Engine    : ODBC (Oracle)
+Variables : 130
+
+## Variable Reference
+# Num = Numeric, Char = Character
+
+#  | Variable                       | Type | Len | Format      | Label
+---|--------------------------------|------|-----|-------------|--------------------------------
+1  | AC_CODE                        | Char | 20  | $20.        | AC_CODE
+2  | PROC_DTE                       | Num  | 8   | DATETIME20. | PROC_DTE
+3  | AC_STS_CODE                    | Char | 1   | $1.         | AC_STS_CODE
+4  | EXTD_MAT_DTE                   | Num  | 8   | DATETIME20. | EXTD_MAT_DTE
+5  | RCY_CUR_BAL                    | Num  | 8   | 17.2        | RCY_CUR_BAL
+6  | LCY_CUR_BAL                    | Num  | 8   | 17.2        | LCY_CUR_BAL
+7  | UPDT_DTE                       | Num  | 8   | DATETIME20. | UPDT_DTE
+8  | UPDT_PRG                       | Char | 20  | $20.        | UPDT_PRG
+9  | UPDT_USR                       | Char | 10  | $10.        | UPDT_USR
+10 | ORGL_MAT_TERM                  | Num  | 8   | 14.6        | ORGL_MAT_TERM
+11 | TERM_CODE                      | Char | 4   | $4.         | TERM_CODE
+12 | BIZ_TYP_CODE                   | Char | 8   | $8.         | BIZ_TYP_CODE
+13 | CTZ_CODE                       | Char | 3   | $3.         | CTZ_CODE
+14 | CNTRY_CODE                     | Char | 2   | $2.         | CNTRY_CODE
+15 | CIF_TYP_CODE                   | Char | 10  | $10.        | CIF_TYP_CODE
+16 | MAS_CODE                       | Char | 5   | $5.         | MAS_CODE
+17 | GL_BK_CODE                     | Char | 1   | $1.         | GL_BK_CODE
+18 | RSDT_CODE                      | Char | 1   | $1.         | RSDT_CODE
+19 | CIF_NO                         | Char | 7   | $7.         | CIF_NO
+20 | CURCY_CODE                     | Char | 3   | $3.         | CURCY_CODE
+21 | PRD_TYP_CODE                   | Char | 3   | $3.         | PRD_TYP_CODE
+22 | PRD_CODE                       | Char | 7   | $7.         | PRD_CODE
+23 | MI_PRD_CODE                    | Char | 15  | $15.        | MI_PRD_CODE
+24 | PRD_GRP_CODE                   | Char | 10  | $10.        | PRD_GRP_CODE
+25 | PURPOSE_CODE                   | Char | 2   | $2.         | PURPOSE_CODE
+26 | CR_STS_CODE                    | Char | 1   | $1.         | CR_STS_CODE
+27 | CR_STS_CHNG_DTE                | Num  | 8   | DATETIME20. | CR_STS_CHNG_DTE
+28 | AC_AUTH_LMT                    | Num  | 8   | 17.2        | AC_AUTH_LMT
+29 | AC_DRAW_LMT                    | Num  | 8   | 17.2        | AC_DRAW_LMT
+30 | RT_TYP_CODE                    | Char | 3   | $3.         | RT_TYP_CODE
+31 | BASE_RT                        | Num  | 8   | 20.9        | BASE_RT
+32 | VAR_RT                         | Num  | 8   | 20.9        | VAR_RT
+33 | NXT_RPRICE_DTE                 | Num  | 8   | DATETIME20. | NXT_RPRICE_DTE
+34 | NXT_RPYM_DTE                   | Num  | 8   | DATETIME20. | NXT_RPYM_DTE
+35 | LAST_RPYM_DTE                  | Num  | 8   | DATETIME20. | LAST_RPYM_DTE
+36 | SYS_CODE                       | Char | 2   | $2.         | SYS_CODE
+37 | FAC_CODE                       | Char | 3   | $3.         | FAC_CODE
+38 | INT_BAS_DAYS                   | Num  | 8   | 6.          | INT_BAS_DAYS
+39 | NXT_INT_DUE_DTE                | Num  | 8   | DATETIME20. | NXT_INT_DUE_DTE
+40 | INT_TENOR                      | Num  | 8   | 11.         | INT_TENOR
+41 | INSTAL_AMT                     | Num  | 8   | 17.2        | INSTAL_AMT
+42 | INT_SUS                        | Num  | 8   | 17.2        | INT_SUS
+43 | TOT_INT_CHG                    | Num  | 8   | 17.2        | TOT_INT_CHG
+44 | COMM_PYBL_AMT                  | Num  | 8   | 17.2        | COMM_PYBL_AMT
+45 | COMM_DUE_AMT                   | Num  | 8   | 17.2        | COMM_DUE_AMT
+46 | DISB_AMT                       | Num  | 8   | 17.2        | DISB_AMT
+47 | RTNT_AMT                       | Num  | 8   | 17.2        | RTNT_AMT
+48 | UPDT_FLG                       | Char | 1   | $1.         | UPDT_FLG
+49 | BIZ_UNIT                       | Char | 3   | $3.         | BIZ_UNIT
+50 | AC_MGR_CODE                    | Char | 10  | $10.        | AC_MGR_CODE
+51 | UTIL_PTS                       | Num  | 8   | 14.         | UTIL_PTS
+52 | AVAIL_PTS                      | Num  | 8   | 14.         | AVAIL_PTS
+53 | PROMO_PTS                      | Num  | 8   | 17.2        | PROMO_PTS
+54 | HOLD_AMT                       | Num  | 8   | 17.2        | HOLD_AMT
+55 | RCY_LC_OS                      | Num  | 8   | 17.2        | RCY_LC_OS
+56 | RCY_OTHCHG_OS                  | Num  | 8   | 17.2        | RCY_OTHCHG_OS
+57 | NEXT_RPYM_AMT                  | Num  | 8   | 17.2        | NEXT_RPYM_AMT
+58 | ARREAR_NO                      | Num  | 8   | 6.          | ARREAR_NO
+59 | INT_REBATE                     | Num  | 8   | 17.2        | INT_REBATE
+60 | RCY_INT_OS                     | Num  | 8   | 17.2        | RCY_INT_OS
+61 | LCY_INT_OS                     | Num  | 8   | 17.2        | LCY_INT_OS
+62 | RCY_ADV_PMT                    | Num  | 8   | 17.2        | RCY_ADV_PMT
+63 | LCY_ADV_PMT                    | Num  | 8   | 17.2        | LCY_ADV_PMT
+64 | RCY_PRNCP_OS                   | Num  | 8   | 17.2        | RCY_PRNCP_OS
+65 | LCY_PRNCP_OS                   | Num  | 8   | 17.2        | LCY_PRNCP_OS
+66 | RCY_TOT_OS                     | Num  | 8   | 19.2        | RCY_TOT_OS
+67 | LCY_TOT_OS                     | Num  | 8   | 19.2        | LCY_TOT_OS
+68 | RCY_INT_DUE                    | Num  | 8   | 17.2        | RCY_INT_DUE
+69 | LCY_INT_DUE                    | Num  | 8   | 17.2        | LCY_INT_DUE
+70 | TOT_INSTAL_NO                  | Num  | 8   | 6.          | TOT_INSTAL_NO
+71 | FNL_INSTAL_AMT                 | Num  | 8   | 17.2        | FNL_INSTAL_AMT
+72 | COMM_RT                        | Num  | 8   | 14.9        | COMM_RT
+73 | EFF_RT                         | Num  | 8   | 14.9        | EFF_RT
+74 | DEALER_NO                      | Char | 7   | $7.         | DEALER_NO
+75 | INFO_CODE                      | Char | 10  | $10.        | INFO_CODE
+76 | COMM_AMT                       | Num  | 8   | 17.2        | COMM_AMT
+77 | LIEN_FLG                       | Char | 1   | $1.         | LIEN_FLG
+78 | SECT35_FLG                     | Char | 1   | $1.         | SECT35_FLG
+79 | FNL_INSTL_DTE                  | Num  | 8   | DATETIME20. | FNL_INSTL_DTE
+80 | COLLTRL_CODE                   | Char | 3   | $3.         | COLLTRL_CODE
+81 | CIF_GRP_CODE                   | Char | 7   | $7.         | CIF_GRP_CODE
+82 | CIF_RLTN_CODE                  | Char | 1   | $1.         | CIF_RLTN_CODE
+83 | ACR_INT_INCM                   | Num  | 8   | 20.5        | ACR_INT_INCM
+84 | ACR_INT_COST                   | Num  | 8   | 20.5        | ACR_INT_COST
+85 | LINE_NO                        | Char | 5   | $5.         | LINE_NO
+86 | OVERDUE_AMT                    | Num  | 8   | 17.2        | OVERDUE_AMT
+87 | ACR_PEN_INT                    | Num  | 8   | 20.5        | ACR_PEN_INT
+88 | LN_DEBTOR_IND                  | Char | 1   | $1.         | LN_DEBTOR_IND
+89 | RCY_FWD_BAL                    | Num  | 8   | 17.2        | RCY_FWD_BAL
+90 | FINANCE_AGST                   | Char | 15  | $15.        | FINANCE_AGST
+91 | ACR_IOI_COST                   | Num  | 8   | 20.5        | ACR_IOI_COST
+92 | BIZ_PRD_CODE                   | Char | 15  | $15.        | BIZ_PRD_CODE
+93 | MTM_VAL_AMT                    | Num  | 8   | 17.2        | MTM_VAL_AMT
+94 | MTM_CURCY_CODE                 | Char | 3   | $3.         | MTM_CURCY_CODE
+95 | RCY_ACRUED_INT                 | Num  | 8   | 17.2        | RCY_ACRUED_INT
+96 | RCY_FAC_RCV                    | Num  | 8   | 17.2        | RCY_FAC_RCV
+97 | RCY_FAC_CLIENT                 | Num  | 8   | 17.2        | RCY_FAC_CLIENT
+98 | RDMS_ASSET_FLG                 | Char | 1   | $1.         | RDMS_ASSET_FLG
+99 | AC_TYP_CODE                    | Char | 1   | $1.         | AC_TYP_CODE
+100| NET_MTM_VAL_AMT                | Num  | 8   | 17.2        | NET_MTM_VAL_AMT
+101| MARKUP_AMOUNT                  | Num  | 8   | 17.2        | MARKUP_AMOUNT
+102| INT_EARN                       | Num  | 8   | 17.2        | INT_EARN
+103| AMOUNT_PAID                    | Num  | 8   | 17.2        | AMOUNT_PAID
+104| ORGL_TENOR                     | Num  | 8   | 11.         | ORGL_TENOR
+105| ORGL_RT_TYP_CODE               | Char | 7   | $7.         | ORGL_RT_TYP_CODE
+106| REM_INST_AMT                   | Num  | 8   | 17.2        | REM_INST_AMT
+107| MTH_AVG_BAL                    | Num  | 8   | 17.2        | MTH_AVG_BAL
+108| ORGL_MAT_DTE                   | Num  | 8   | DATETIME20. | ORGL_MAT_DTE
+109| LINK_ID                        | Char | 20  | $20.        | LINK_ID
+110| RCMS_IND                       | Char | 1   | $1.         | RCMS_IND
+111| SRC_IND                        | Char | 3   | $3.         | SRC_IND
+112| UNDRAWN_LMT                    | Num  | 8   | 19.2        | UNDRAWN_LMT
+113| CO_CODE                        | Char | 3   | $3.         | CO_CODE
+114| BILLED_INT                     | Num  | 8   | 17.2        | BILLED_INT
+115| LEFS_APPL_NO                   | Char | 25  | $25.        | LEFS_APPL_NO
+116| LEFS_INT_LINE                  | Char | 8   | $8.         | LEFS_INT_LINE
+117| FAC_TENOR_MTHS                 | Num  | 8   | 4.          | FAC_TENOR_MTHS
+118| LCY_EIR_ADJ_AMT                | Num  | 8   | 32.2        | LCY_EIR_ADJ_AMT
+119| LCY_INT_UNWIND_CLOSING_FY      | Num  | 8   | 32.2        | LCY_INT_UNWIND_CLOSING_FY
+120| LCY_ECL_CLOSING_FY             | Num  | 8   | 32.2        | LCY_ECL_CLOSING_FY
+121| LCY_MAS_GROSS_LN_BAL           | Num  | 8   | 32.2        | LCY_MAS_GROSS_LN_BAL
+122| LCY_MAS_NET_LN_BAL             | Num  | 8   | 32.2        | LCY_MAS_NET_LN_BAL
+123| LCY_MAS_GROSS_DP_BAL           | Num  | 8   | 32.2        | LCY_MAS_GROSS_DP_BAL
+124| MTHS_IN_ARREAR                 | Num  | 8   | 6.          | MTHS_IN_ARREAR
+125| MTM_GAINLOSS_IND               | Char | 4   | $4.         | MTM_GAINLOSS_IND
+126| RCY_COUPON_OS_AMT              | Num  | 8   | 19.2        | RCY_COUPON_OS_AMT
+127| RCY_PROFIT_ACRUED              | Num  | 8   | 19.2        | RCY_PROFIT_ACRUED
+128| RCY_TOT_PROFIT_DUE             | Num  | 8   | 19.2        | RCY_TOT_PROFIT_DUE
+129| PRINCIPAL_PYM_DTE              | Num  | 8   | DATETIME20. | PRINCIPAL_PYM_DTE
+130| RCY_PRINCIPAL_CF_AMT           | Num  | 8   | 19.2        | RCY_PRINCIPAL_CF_AMT

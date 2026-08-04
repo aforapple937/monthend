@@ -1,0 +1,142 @@
+## Table: LBFRS9.T_MTH_FRS9_RDL_MSTR_LIST
+Library   : LBFRS9
+Schema    : FRSPOWR
+Engine    : ODBC (Oracle)
+Variables : 131
+
+## Variable Reference
+# Num = Numeric, Char = Character
+
+#  | Variable                       | Type | Len | Format      | Label
+---|--------------------------------|------|-----|-------------|--------------------------------
+1  | PROC_DTE                       | Num  | 8   | DATETIME20. | PROC_DTE
+2  | N_RUN_SKEY                     | Num  | 8   | 11.         | N_RUN_SKEY
+3  | N_ACCT_SKEY                    | Num  | 8   | 16.         | N_ACCT_SKEY
+4  | V_LV_CODE                      | Char | 20  | $20.        | V_LV_CODE
+5  | V_ACCOUNT_NUMBER               | Char | 50  | $50.        | V_ACCOUNT_NUMBER
+6  | V_ORIGINAL_ACCOUNT_NUMBER      | Char | 50  | $50.        | V_ORIGINAL_ACCOUNT_NUMBER
+7  | V_CCY_CODE                     | Char | 3   | $3.         | V_CCY_CODE
+8  | V_IFRS_STAGE_CODE              | Char | 10  | $10.        | V_IFRS_STAGE_CODE
+9  | V_STAGE_REASON_DESC            | Char | 200 | $200.       | V_STAGE_REASON_DESC
+10 | CURR_RATING                    | Char | 20  | $20.        | CURR_RATING
+11 | ORIG_RATING                    | Char | 20  | $20.        | ORIG_RATING
+12 | ECL_METHOD                     | Char | 255 | $255.       | ECL_METHOD
+13 | CUSTOMER_ID                    | Char | 50  | $50.        | CUSTOMER_ID
+14 | V_CUST_MKT_SEG                 | Char | 60  | $60.        | V_CUST_MKT_SEG
+15 | V_CUST_MKT_SUB_SEG             | Char | 60  | $60.        | V_CUST_MKT_SUB_SEG
+16 | MKT_SUB_SEGMENT                | Char | 20  | $20.        | MKT_SUB_SEGMENT
+17 | V_SEGMENT_TYPE                 | Char | 60  | $60.        | V_SEGMENT_TYPE
+18 | V_SEGMENT_NAME                 | Char | 20  | $20.        | V_SEGMENT_NAME
+19 | V_SEGMENT_ID                   | Char | 100 | $100.       | V_SEGMENT_ID
+20 | PROD_LV1                       | Char | 150 | $150.       | PROD_LV1
+21 | PROD_LV4                       | Char | 150 | $150.       | PROD_LV4
+22 | CE_TYPE                        | Char | 20  | $20.        | CE_TYPE
+23 | V_PROD_CODE                    | Char | 50  | $50.        | V_PROD_CODE
+24 | V_SECTOR_CATEGORY              | Char | 20  | $20.        | V_SECTOR_CATEGORY
+25 | N_UWI_CLOSING                  | Num  | 8   | 24.3        | N_UWI_CLOSING
+26 | FINAL_ECL                      | Num  | 8   | 24.3        | FINAL_ECL
+27 | N_ACCRUED_INTEREST             | Num  | 8   | 24.3        | N_ACCRUED_INTEREST
+28 | N_ALLOCATION_FACTOR            | Num  | 8   | 18.11       | N_ALLOCATION_FACTOR
+29 | N_DRAWN_CCF_PERCENT            | Num  | 8   | 17.11       | N_DRAWN_CCF_PERCENT
+30 | N_CCF_PERCENT                  | Num  | 8   | 17.11       | N_CCF_PERCENT
+31 | F_UNCOND_CANCELLED_EXP_IND     | Char | 1   | $1.         | F_UNCOND_CANCELLED_EXP_IND
+32 | F_COMMITMENT_FLAG              | Char | 1   | $1.         | F_COMMITMENT_FLAG
+33 | N_CUST_UTILISATION_LEVEL       | Num  | 8   | 24.3        | N_CUST_UTILISATION_LEVEL
+34 | F_DISBURSED_IND                | Char | 1   | $1.         | F_DISBURSED_IND
+35 | N_DRAWN_AMOUNT                 | Num  | 8   | 24.3        | N_DRAWN_AMOUNT
+36 | N_UNDRAWN_AMOUNT_RCY           | Num  | 8   | 24.3        | N_UNDRAWN_AMOUNT_RCY
+37 | N_EAD_AMOUNT_RCY               | Num  | 8   | 24.3        | N_EAD_AMOUNT_RCY
+38 | N_MODIFICATION_GAIN_LOSS       | Num  | 8   | 24.3        | N_MODIFICATION_GAIN_LOSS
+39 | N_EAD_BEF_MOD_AMT              | Num  | 8   | 24.3        | N_EAD_BEF_MOD_AMT
+40 | N_EIR_ADJUSTMENT_AMT_RCY       | Num  | 8   | 24.3        | N_EIR_ADJUSTMENT_AMT_RCY
+41 | F_EXP_REVOLVING_FLAG           | Char | 1   | $1.         | F_EXP_REVOLVING_FLAG
+42 | N_EXPOSURE_LIMIT               | Num  | 8   | 24.3        | N_EXPOSURE_LIMIT
+43 | N_FACE_VALUE                   | Num  | 8   | 24.3        | N_FACE_VALUE
+44 | DCF_AMT                        | Num  | 8   | 24.3        | DCF_AMT
+45 | D_FINAL_DISBURSEMENT_DATE      | Num  | 8   | DATETIME20. | D_FINAL_DISBURSEMENT_DATE
+46 | D_LAST_DELINQUENT_DATE         | Num  | 8   | DATETIME20. | D_LAST_DELINQUENT_DATE
+47 | F_NEW_ACCT_FLG                 | Char | 1   | $1.         | F_NEW_ACCT_FLG
+48 | N_OUTSTANDING_AMT              | Num  | 8   | 24.3        | N_OUTSTANDING_AMT
+49 | N_LEDGER_BALANCE_AMT           | Num  | 8   | 24.3        | N_LEDGER_BALANCE_AMT
+50 | D_ISSUE_DATE                   | Num  | 8   | DATETIME20. | D_ISSUE_DATE
+51 | N_ORIGINAL_MATURITY            | Num  | 8   | 24.3        | N_ORIGINAL_MATURITY
+52 | D_REVISED_MATURITY_DATE        | Num  | 8   | DATETIME20. | D_REVISED_MATURITY_DATE
+53 | N_RESIDUAL_MATURITY            | Num  | 8   | 24.3        | N_RESIDUAL_MATURITY
+54 | F_MODIFICATION_FLAG            | Char | 1   | $1.         | F_MODIFICATION_FLAG
+55 | F_PREF_TREATMENT_FLAG          | Char | 1   | $1.         | F_PREF_TREATMENT_FLAG
+56 | V_RELEASE_TYPE_CD              | Char | 1   | $1.         | V_RELEASE_TYPE_CD
+57 | F_SHORTFALL_FLAG               | Char | 1   | $1.         | F_SHORTFALL_FLAG
+58 | F_RESCHEDULE_IND               | Char | 1   | $1.         | F_RESCHEDULE_IND
+59 | F_RESTRUCTURED_IND             | Char | 1   | $1.         | F_RESTRUCTURED_IND
+60 | F_SHORTFALL_FLAG_1             | Char | 1   | $1.         | F_SHORTFALL_FLAG_1
+61 | N_MONTH_IN_ARREARS             | Num  | 8   | 6.          | N_MONTH_IN_ARREARS
+62 | N_DELINQUENT_DAYS              | Num  | 8   | 6.          | N_DELINQUENT_DAYS
+63 | F_EMP_ACCT_FLAG                | Char | 1   | $1.         | F_EMP_ACCT_FLAG
+64 | F_RATING_OUTLOOK_WATCH         | Char | 1   | $1.         | F_RATING_OUTLOOK_WATCH
+65 | F_SMA_FLAG                     | Char | 1   | $1.         | F_SMA_FLAG
+66 | F_AKPK_FLAG                    | Char | 1   | $1.         | F_AKPK_FLAG
+67 | F_WRITTEN_OFF                  | Char | 1   | $1.         | F_WRITTEN_OFF
+68 | F_EXPOSURE_DEFAULT_STATUS_FLAG | Char | 1   | $1.         | F_EXPOSURE_DEFAULT_STATUS_FLAG
+69 | IMPAIRED_FLAG                  | Char | 1   | $1.         | IMPAIRED_FLAG
+70 | F_REPRICE_FLAG                 | Char | 1   | $1.         | F_REPRICE_FLAG
+71 | F_REPACKAGING_IND              | Char | 1   | $1.         | F_REPACKAGING_IND
+72 | V_PD_TERM_STRUCTURE_ID         | Char | 40  | $40.        | V_PD_TERM_STRUCTURE_ID
+73 | V_BASEL_LGD_POOL_ID            | Char | 20  | $20.        | V_BASEL_LGD_POOL_ID
+74 | V_LGD_POOL_ID                  | Char | 20  | $20.        | V_LGD_POOL_ID
+75 | V_SUB_LGD_POOL_ID              | Char | 20  | $20.        | V_SUB_LGD_POOL_ID
+76 | N_PD_PERCENT                   | Num  | 8   | 17.11       | N_PD_PERCENT
+77 | V_LGD_TERM_STRUCTURE_ID        | Char | 40  | $40.        | V_LGD_TERM_STRUCTURE_ID
+78 | N_LGD_PERCENT                  | Num  | 8   | 17.11       | N_LGD_PERCENT
+79 | NPL_STATUS                     | Char | 26  | $26.        | NPL_STATUS
+80 | N_12M_ALLOWANCE_EOP_RCY        | Num  | 8   | 24.3        | N_12M_ALLOWANCE_EOP_RCY
+81 | N_PRE_FL_12M_ALLOWANCE_EOP_RCY | Num  | 8   | 24.3        | N_PRE_FL_12M_ALLOWANCE_EOP_RCY
+82 | N_ALLOWANCE_EOP_RCY            | Num  | 8   | 24.3        | N_ALLOWANCE_EOP_RCY
+83 | N_PRE_FL_ALLOWANCE_EOP_RCY     | Num  | 8   | 24.3        | N_PRE_FL_ALLOWANCE_EOP_RCY
+84 | N_EFFECTIVE_INTEREST_RATE      | Num  | 8   | 17.11       | N_EFFECTIVE_INTEREST_RATE
+85 | N_SCALAR_PERCENT               | Num  | 8   | 17.11       | N_SCALAR_PERCENT
+86 | SCALAR_TERM_STRUCTURE          | Char | 100 | $100.       | SCALAR_TERM_STRUCTURE
+87 | N_SCALAR                       | Num  | 8   | 15.         | N_SCALAR
+88 | TWELVEMONTH_ECL                | Num  | 8   | 24.3        | TWELVEMONTH_ECL
+89 | LIFETIME_ECL                   | Num  | 8   | 24.3        | LIFETIME_ECL
+90 | CORPORATE_SCORECARD            | Char | 20  | $20.        | CORPORATE_SCORECARD
+91 | RS_INCLUSION                   | Char | 20  | $20.        | RS_INCLUSION
+92 | F_RSME_INCLUSION_IND           | Char | 1   | $1.         | F_RSME_INCLUSION_IND
+93 | AMORTISED_CASH_IND             | Char | 1   | $1.         | AMORTISED_CASH_IND
+94 | DEFAULT_RULE                   | Char | 1   | $1.         | DEFAULT_RULE
+95 | N_AVG_RECOVERY_PERIOD          | Num  | 8   | 6.          | N_AVG_RECOVERY_PERIOD
+96 | V_NAICS_CODE                   | Char | 50  | $50.        | V_NAICS_CODE
+97 | V_FLA_SEGMENT_DESC             | Char | 255 | $255.       | V_FLA_SEGMENT_DESC
+98 | EIR                            | Num  | 8   | 24.3        | EIR
+99 | EIR_OPENING                    | Num  | 8   | 24.3        | EIR_OPENING
+100| EIR_PREVIOUS                   | Num  | 8   | 24.3        | EIR_PREVIOUS
+101| ECL_OPENING_ORI_CCY            | Num  | 8   | 24.3        | ECL_OPENING_ORI_CCY
+102| ECL_OPENING_BAL_REVAL          | Num  | 8   | 24.3        | ECL_OPENING_BAL_REVAL
+103| ECL_OPENING_1ST_JAN            | Num  | 8   | 24.3        | ECL_OPENING_1ST_JAN
+104| ECL_CHARGED                    | Num  | 8   | 24.3        | ECL_CHARGED
+105| ECL_WRITE_BACK                 | Num  | 8   | 24.3        | ECL_WRITE_BACK
+106| ECL_WRITE_OFF                  | Num  | 8   | 24.3        | ECL_WRITE_OFF
+107| ECL_FX_DIFF                    | Num  | 8   | 24.3        | ECL_FX_DIFF
+108| ECL_CLOSING_BAL                | Num  | 8   | 24.3        | ECL_CLOSING_BAL
+109| NET_ECL_PL                     | Num  | 8   | 24.3        | NET_ECL_PL
+110| INDIVIDUAL_ALLOWANCE           | Num  | 8   | 24.3        | INDIVIDUAL_ALLOWANCE
+111| UWI_OPENING_ORI_CCY            | Num  | 8   | 24.3        | UWI_OPENING_ORI_CCY
+112| UWI_OPENING_BAL_REVAL          | Num  | 8   | 24.3        | UWI_OPENING_BAL_REVAL
+113| UWI_OPENING_1ST_JAN            | Num  | 8   | 24.3        | UWI_OPENING_1ST_JAN
+114| UWI_CHARGED                    | Num  | 8   | 24.3        | UWI_CHARGED
+115| UWI_WRITE_BACK                 | Num  | 8   | 24.3        | UWI_WRITE_BACK
+116| UWI_WRITE_OFF                  | Num  | 8   | 24.3        | UWI_WRITE_OFF
+117| UWI_FX_DIFF                    | Num  | 8   | 24.3        | UWI_FX_DIFF
+118| UWI_CLOSING_BAL                | Num  | 8   | 24.3        | UWI_CLOSING_BAL
+119| UWI_FTM                        | Num  | 8   | 24.3        | UWI_FTM
+120| V_D_ACCOUNT_STATUS             | Char | 20  | $20.        | V_D_ACCOUNT_STATUS
+121| V_FINANCING_CODE               | Char | 1   | $1.         | V_FINANCING_CODE
+122| V_CUSTOMER_PARENT_GROUP_NAME   | Char | 30  | $30.        | V_CUSTOMER_PARENT_GROUP_NAME
+123| N_RCY_CONVERSION_FACTOR        | Num  | 8   | 17.9        | N_RCY_CONVERSION_FACTOR
+124| CURR_RATING_BAND_CATEGORY      | Char | 25  | $25.        | CURR_RATING_BAND_CATEGORY
+125| WL_FLAG                        | Char | 1   | $1.         | WL_FLAG
+126| F_SHORT_TERM_IND               | Char | 1   | $1.         | F_SHORT_TERM_IND
+127| F_SHORT_TERM_INCEP_IND         | Char | 1   | $1.         | F_SHORT_TERM_INCEP_IND
+128| FINAL_ECL_ADJ                  | Num  | 8   | 24.3        | FINAL_ECL_ADJ
+129| UPDT_PRG                       | Char | 100 | $100.       | UPDT_PRG
+130| UPDT_DTE                       | Num  | 8   | DATETIME20. | UPDT_DTE
+131| UPDT_USR                       | Char | 20  | $20.        | UPDT_USR

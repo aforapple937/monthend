@@ -1,0 +1,52 @@
+## Table: LBFRS9.T_MTH_FRS9_PARTY_MSTR
+Library   : LBFRS9
+Schema    : FRSPOWR
+Engine    : ODBC (Oracle)
+Variables : 41
+
+## Variable Reference
+# Num = Numeric, Char = Character
+
+#  | Variable                       | Type | Len | Format      | Label
+---|--------------------------------|------|-----|-------------|--------------------------------
+1  | PROC_DTE                       | Num  | 8   | DATETIME20. | PROC_DTE
+2  | CIF_NAME                       | Char | 255 | $255.       | CIF_NAME
+3  | DATA_ORIGIN                    | Char | 20  | $20.        | DATA_ORIGIN
+4  | CIF_NO                         | Char | 50  | $50.        | CIF_NO
+5  | GENDER                         | Char | 1   | $1.         | GENDER
+6  | PARTY_REGION_CODE              | Char | 20  | $20.        | PARTY_REGION_CODE
+7  | BRANCH_CODE                    | Char | 20  | $20.        | BRANCH_CODE
+8  | PARTY_SCORE                    | Num  | 8   | 13.6        | PARTY_SCORE
+9  | INDUSTRY_CODE                  | Char | 30  | $30.        | INDUSTRY_CODE
+10 | EQUITY_CODE                    | Char | 20  | $20.        | EQUITY_CODE
+11 | TICKER_SYMBOL                  | Char | 20  | $20.        | TICKER_SYMBOL
+12 | BANKRUPTCY_FLAG                | Char | 20  | $20.        | BANKRUPTCY_FLAG
+13 | PARTY_BNKRPT_FLG               | Char | 1   | $1.         | PARTY_BNKRPT_FLG
+14 | PARTY_BNKRPT_DTE               | Num  | 8   | DATETIME20. | PARTY_BNKRPT_DTE
+15 | PARTY_TYP_CODE                 | Char | 40  | $40.        | PARTY_TYP_CODE
+16 | ORIG_PARTY_ID                  | Char | 50  | $50.        | ORIG_PARTY_ID
+17 | CNTRY_CODE                     | Char | 20  | $20.        | CNTRY_CODE
+18 | CURCY_CODE                     | Char | 3   | $3.         | CURCY_CODE
+19 | PARTY_CLASS_CODE               | Char | 15  | $15.        | PARTY_CLASS_CODE
+20 | PARTY_CLASS_DESC               | Char | 60  | $60.        | PARTY_CLASS_DESC
+21 | CUST_CATEGORY                  | Char | 1   | $1.         | CUST_CATEGORY
+22 | MKT_SUB_SEG                    | Char | 15  | $15.        | MKT_SUB_SEG
+23 | CUST_MKT_SUB_SEG_DESC          | Char | 15  | $15.        | CUST_MKT_SUB_SEG_DESC
+24 | MKT_SUB_SEG_DESC               | Char | 60  | $60.        | MKT_SUB_SEG_DESC
+25 | CUST_MKT_SUB_SUB_SEG_DESC      | Char | 60  | $60.        | CUST_MKT_SUB_SUB_SEG_DESC
+26 | MKT_SEG                        | Char | 15  | $15.        | MKT_SEG
+27 | MKT_SEG_DESC                   | Char | 60  | $60.        | MKT_SEG_DESC
+28 | SECTOR_CAT                     | Char | 6   | $6.         | SECTOR_CAT
+29 | RATING_OUTLOOK_WATCH           | Char | 1   | $1.         | RATING_OUTLOOK_WATCH
+30 | OUTLOOK_WATCH_ASSIGN_DATE      | Num  | 8   | DATETIME20. | OUTLOOK_WATCH_ASSIGN_DATE
+31 | WATCHLIST_REASON_DESC          | Char | 255 | $255.       | WATCHLIST_REASON_DESC
+32 | SM_FLG                         | Char | 1   | $1.         | SM_FLG
+33 | SM_DTE                         | Num  | 8   | DATETIME20. | SM_DTE
+34 | SMA_REASON                     | Char | 200 | $200.       | SMA_REASON
+35 | UPDT_DTE                       | Num  | 8   | DATETIME20. | UPDT_DTE
+36 | UPDT_PRG                       | Char | 50  | $50.        | UPDT_PRG
+37 | UPDT_USR                       | Char | 20  | $20.        | UPDT_USR
+38 | SSIC_CODE                      | Char | 20  | $20.        | SSIC_CODE
+39 | CNTRY_OPERATION                | Char | 20  | $20.        | CNTRY_OPERATION
+40 | NAICS_CODE                     | Char | 10  | $10.        | NAICS_CODE
+41 | PARENT_GROUP_NAME              | Char | 3   | $3.         | PARENT_GROUP_NAME

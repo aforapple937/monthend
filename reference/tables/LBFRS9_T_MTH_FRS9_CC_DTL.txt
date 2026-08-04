@@ -1,0 +1,84 @@
+## Table: LBFRS9.T_MTH_FRS9_CC_DTL
+Library   : LBFRS9
+Schema    : FRSPOWR
+Engine    : ODBC (Oracle)
+Variables : 73
+
+## Variable Reference
+# Num = Numeric, Char = Character
+
+#  | Variable                       | Type | Len | Format      | Label
+---|--------------------------------|------|-----|-------------|--------------------------------
+1  | PROC_DTE                       | Num  | 8   | DATETIME20. | PROC_DTE
+2  | AC_CODE                        | Char | 50  | $50.        | AC_CODE
+3  | DATA_ORIGIN                    | Char | 20  | $20.        | DATA_ORIGIN
+4  | GAAP_CODE                      | Char | 6   | $6.         | GAAP_CODE
+5  | AC_OPN_DTE                     | Num  | 8   | DATETIME20. | AC_OPN_DTE
+6  | MATURITY_DTE                   | Num  | 8   | DATETIME20. | MATURITY_DTE
+7  | RCY_END_PERIOD_BAL             | Num  | 8   | 24.3        | RCY_END_PERIOD_BAL
+8  | EOP_PRIN_BAL                   | Num  | 8   | 24.3        | EOP_PRIN_BAL
+9  | RCY_CURR_CREDIT_LMT            | Num  | 8   | 24.3        | RCY_CURR_CREDIT_LMT
+10 | PRD_CODE                       | Char | 50  | $50.        | PRD_CODE
+11 | LOB_CODE                       | Char | 20  | $20.        | LOB_CODE
+12 | BRANCH_CODE                    | Char | 20  | $20.        | BRANCH_CODE
+13 | DELQ_DAYS                      | Num  | 8   | 6.          | DELQ_DAYS
+14 | CURR_INT_RT                    | Num  | 8   | 13.6        | CURR_INT_RT
+15 | CURCY_CODE                     | Char | 3   | $3.         | CURCY_CODE
+16 | RCY_UNDRAWN_AMT                | Num  | 8   | 24.3        | RCY_UNDRAWN_AMT
+17 | RCY_WO_AMT                     | Num  | 8   | 24.3        | RCY_WO_AMT
+18 | CNTRY_CODE                     | Char | 20  | $20.        | CNTRY_CODE
+19 | DEFAULT_FLG                    | Char | 1   | $1.         | DEFAULT_FLG
+20 | LGD                            | Num  | 8   | 17.11       | LGD
+21 | CIF_NO                         | Char | 50  | $50.        | CIF_NO
+22 | GL_CODE                        | Char | 20  | $20.        | GL_CODE
+23 | CCF                            | Num  | 8   | 17.11       | CCF
+24 | LEGAL_ENTITY_CODE              | Char | 20  | $20.        | LEGAL_ENTITY_CODE
+25 | CUM_RECOVERIES                 | Num  | 8   | 24.3        | CUM_RECOVERIES
+26 | IFRS9_CLASS_CODE               | Char | 20  | $20.        | IFRS9_CLASS_CODE
+27 | ACCT_DISPLAY_NAME              | Char | 255 | $255.       | ACCT_DISPLAY_NAME
+28 | EMPLOYEE_FLG                   | Char | 1   | $1.         | EMPLOYEE_FLG
+29 | BIZ_UNIT_CODE                  | Char | 20  | $20.        | BIZ_UNIT_CODE
+30 | ORIGINAL_ACCOUNT_NUMBER        | Char | 50  | $50.        | ORIGINAL_ACCOUNT_NUMBER
+31 | ACCT_STATUS_CODE               | Char | 20  | $20.        | ACCT_STATUS_CODE
+32 | LOAD_RUN_ID                    | Num  | 8   | 11.         | LOAD_RUN_ID
+33 | REGION_CODE                    | Char | 20  | $20.        | REGION_CODE
+34 | EOP_INT_AMT                    | Num  | 8   | 24.3        | EOP_INT_AMT
+35 | RESTRUCTURED_DTE               | Num  | 8   | DATETIME20. | RESTRUCTURED_DTE
+36 | INTRA_GRP_FLG                  | Char | 1   | $1.         | INTRA_GRP_FLG
+37 | RESTRUCTURED_FLG               | Char | 1   | $1.         | RESTRUCTURED_FLG
+38 | RSME_FLG                       | Char | 1   | $1.         | RSME_FLG
+39 | RESCHEDULE_DTE                 | Num  | 8   | DATETIME20. | RESCHEDULE_DTE
+40 | RESCHEDULE_FLG                 | Char | 1   | $1.         | RESCHEDULE_FLG
+41 | SM_FLG                         | Char | 1   | $1.         | SM_FLG
+42 | SM_DTE                         | Num  | 8   | DATETIME20. | SM_DTE
+43 | SM_REASON                      | Char | 200 | $200.       | SM_REASON
+44 | CREDIT_SCORE_SOURCE            | Char | 10  | $10.        | CREDIT_SCORE_SOURCE
+45 | CREDIT_CLASS_TYP_CODE          | Char | 20  | $20.        | CREDIT_CLASS_TYP_CODE
+46 | WO_FLG                         | Char | 1   | $1.         | WO_FLG
+47 | LAST_DELQ_DTE                  | Num  | 8   | DATETIME20. | LAST_DELQ_DTE
+48 | AKPK_FLG                       | Char | 1   | $1.         | AKPK_FLG
+49 | AKPK_DATE                      | Num  | 8   | DATETIME20. | AKPK_DATE
+50 | REPRICE_DATE                   | Num  | 8   | DATETIME20. | REPRICE_DATE
+51 | REPRICE_FLAG                   | Char | 1   | $1.         | REPRICE_FLAG
+52 | BASEL_LGD_CLS                  | Char | 20  | $20.        | BASEL_LGD_CLS
+53 | MIA_BUCKET_ID                  | Char | 20  | $20.        | MIA_BUCKET_ID
+54 | LOAN_BUCKET_ID                 | Char | 20  | $20.        | LOAN_BUCKET_ID
+55 | CORPORATE_REMEDIAL_CD          | Char | 10  | $10.        | CORPORATE_REMEDIAL_CD
+56 | SHORTFALL_FLAG                 | Char | 1   | $1.         | SHORTFALL_FLAG
+57 | RATING_OUTLOOK_WATCH           | Char | 1   | $1.         | RATING_OUTLOOK_WATCH
+58 | OUTLOOK_WATCH_ASSIGN_DATE      | Num  | 8   | DATETIME20. | OUTLOOK_WATCH_ASSIGN_DATE
+59 | WATCHLIST_REASON_DESC          | Char | 255 | $255.       | WATCHLIST_REASON_DESC
+60 | LEDGER_BALANCE_AMT             | Num  | 8   | 24.3        | LEDGER_BALANCE_AMT
+61 | EAD_ADJ_AMT                    | Num  | 8   | 24.3        | EAD_ADJ_AMT
+62 | RPSIA_FLG                      | Char | 1   | $1.         | RPSIA_FLG
+63 | CUST_UTILISATION               | Num  | 8   | 24.3        | CUST_UTILISATION
+64 | UPDT_DTE                       | Num  | 8   | DATETIME20. | UPDT_DTE
+65 | UPDT_PRG                       | Char | 50  | $50.        | UPDT_PRG
+66 | UPDT_USR                       | Char | 20  | $20.        | UPDT_USR
+67 | FINANCING_CODE                 | Char | 1   | $1.         | FINANCING_CODE
+68 | UNCOND_CANCELLED_EXP_IND       | Char | 1   | $1.         | UNCOND_CANCELLED_EXP_IND
+69 | RCY_CURR_CREDIT_LMT_LEDGER     | Num  | 8   | 24.3        | RCY_CURR_CREDIT_LMT_LEDGER
+70 | TOTAL_LEDGER_BALANCE_AMT       | Num  | 8   | 24.3        | TOTAL_LEDGER_BALANCE_AMT
+71 | RCY_UNDRAWN_AMT_ORIG           | Num  | 8   | 24.3        | RCY_UNDRAWN_AMT_ORIG
+72 | CCF_NEW                        | Num  | 8   | 17.11       | CCF_NEW
+73 | LGD_PROD_TYPE                  | Char | 7   | $7.         | LGD_PROD_TYPE

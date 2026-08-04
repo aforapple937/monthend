@@ -1,0 +1,129 @@
+## Table: LBFRS9.T_MTH_FRS9_LN_DTL
+Library   : LBFRS9
+Schema    : FRSPOWR
+Engine    : ODBC (Oracle)
+Variables : 118
+
+## Variable Reference
+# Num = Numeric, Char = Character
+
+#  | Variable                       | Type | Len | Format      | Label
+---|--------------------------------|------|-----|-------------|--------------------------------
+1  | PROC_DTE                       | Num  | 8   | DATETIME20. | PROC_DTE
+2  | AC_CODE                        | Char | 50  | $50.        | AC_CODE
+3  | GAAP_CODE                      | Char | 6   | $6.         | GAAP_CODE
+4  | LAST_PYM_DTE                   | Num  | 8   | DATETIME20. | LAST_PYM_DTE
+5  | REVISED_MATURITY_DATE          | Num  | 8   | DATETIME20. | REVISED_MATURITY_DATE
+6  | NEXT_PYM_DTE                   | Num  | 8   | DATETIME20. | NEXT_PYM_DTE
+7  | SANCTIONED_LMT                 | Num  | 8   | 24.3        | SANCTIONED_LMT
+8  | PREPAYMT_AMT                   | Num  | 8   | 24.3        | PREPAYMT_AMT
+9  | PYMT_RECD_CURR_MTH             | Num  | 8   | 24.3        | PYMT_RECD_CURR_MTH
+10 | EOP_CURR_PRIN_BAL              | Num  | 8   | 24.3        | EOP_CURR_PRIN_BAL
+11 | EOP_INT_BAL                    | Num  | 8   | 24.3        | EOP_INT_BAL
+12 | RCY_END_PERIOD_BAL             | Num  | 8   | 24.3        | RCY_END_PERIOD_BAL
+13 | RCY_WO_AMT                     | Num  | 8   | 24.3        | RCY_WO_AMT
+14 | RCY_UNDRAWN_AMT                | Num  | 8   | 24.3        | RCY_UNDRAWN_AMT
+15 | RCY_ACCRUED_INT                | Num  | 8   | 24.3        | RCY_ACCRUED_INT
+16 | DELQ_DAYS                      | Num  | 8   | 6.          | DELQ_DAYS
+17 | INT_PYM_FREQ                   | Num  | 8   | 6.          | INT_PYM_FREQ
+18 | INT_PYM_FREQ_UNIT              | Char | 1   | $1.         | INT_PYM_FREQ_UNIT
+19 | PRNCP_PYM_FREQ                 | Num  | 8   | 6.          | PRNCP_PYM_FREQ
+20 | COMPOUND_FREQ                  | Num  | 8   | 6.          | COMPOUND_FREQ
+21 | INTEREST_PAYMENT_TYPE          | Char | 20  | $20.        | INTEREST_PAYMENT_TYPE
+22 | CURR_INT_RT                    | Num  | 8   | 13.6        | CURR_INT_RT
+23 | LGD                            | Num  | 8   | 17.11       | LGD
+24 | CCF                            | Num  | 8   | 17.11       | CCF
+25 | GL_CODE                        | Char | 20  | $20.        | GL_CODE
+26 | CIF_NO                         | Char | 50  | $50.        | CIF_NO
+27 | INT_CALC_METHOD                | Char | 5   | $5.         | INT_CALC_METHOD
+28 | INT_TYP                        | Char | 60  | $60.        | INT_TYP
+29 | RPYM_TYP                       | Char | 60  | $60.        | RPYM_TYP
+30 | PRD_CODE                       | Char | 50  | $50.        | PRD_CODE
+31 | CURCY_CODE                     | Char | 3   | $3.         | CURCY_CODE
+32 | BRANCH_CODE                    | Char | 20  | $20.        | BRANCH_CODE
+33 | LOB_CODE                       | Char | 20  | $20.        | LOB_CODE
+34 | BIZ_UNIT_CODE                  | Char | 20  | $20.        | BIZ_UNIT_CODE
+35 | LEGAL_ENTITY_CODE              | Char | 20  | $20.        | LEGAL_ENTITY_CODE
+36 | CNTRY_CODE                     | Char | 20  | $20.        | CNTRY_CODE
+37 | CREDIT_SCORE_SOURCE            | Char | 10  | $10.        | CREDIT_SCORE_SOURCE
+38 | DATA_ORIGIN                    | Char | 20  | $20.        | DATA_ORIGIN
+39 | DAY_CNT                        | Char | 20  | $20.        | DAY_CNT
+40 | INSTRUMENT_TYPE_CD             | Char | 20  | $20.        | INSTRUMENT_TYPE_CD
+41 | RCY_DRAWN_AMT                  | Num  | 8   | 24.3        | RCY_DRAWN_AMT
+42 | DEFAULT_FLG                    | Char | 1   | $1.         | DEFAULT_FLG
+43 | BENCHMARK_CODE                 | Char | 20  | $20.        | BENCHMARK_CODE
+44 | CUM_RECOVERIES                 | Num  | 8   | 24.3        | CUM_RECOVERIES
+45 | IFRS9_CLASS_CODE               | Char | 20  | $20.        | IFRS9_CLASS_CODE
+46 | RESTRUCTURED_FLG               | Char | 1   | $1.         | RESTRUCTURED_FLG
+47 | INTRA_GRP_FLG                  | Char | 1   | $1.         | INTRA_GRP_FLG
+48 | ACCT_DISPLAY_NAME              | Char | 255 | $255.       | ACCT_DISPLAY_NAME
+49 | EMPLOYEE_FLG                   | Char | 1   | $1.         | EMPLOYEE_FLG
+50 | PORTFOLIO_CODE                 | Char | 20  | $20.        | PORTFOLIO_CODE
+51 | NO_OF_INTEREST_ONLY_MTHS       | Num  | 8   | 6.          | NO_OF_INTEREST_ONLY_MTHS
+52 | LAST_DELQ_DTE                  | Num  | 8   | DATETIME20. | LAST_DELQ_DTE
+53 | ORIGINAL_ACCOUNT_NUMBER        | Char | 50  | $50.        | ORIGINAL_ACCOUNT_NUMBER
+54 | ACCT_STATUS_CODE               | Char | 20  | $20.        | ACCT_STATUS_CODE
+55 | LOAD_RUN_ID                    | Num  | 8   | 11.         | LOAD_RUN_ID
+56 | VALUE_DTE                      | Num  | 8   | DATETIME20. | VALUE_DTE
+57 | FLOAT_SPREAD                   | Num  | 8   | 13.6        | FLOAT_SPREAD
+58 | REGION_CODE                    | Char | 20  | $20.        | REGION_CODE
+59 | PRIN_FREQ_UNIT                 | Char | 1   | $1.         | PRIN_FREQ_UNIT
+60 | MATURITY_DTE                   | Num  | 8   | DATETIME20. | MATURITY_DTE
+61 | COMPOUND_FREQ_UNIT             | Char | 1   | $1.         | COMPOUND_FREQ_UNIT
+62 | CREDIT_CLS_TYP_CODE            | Char | 20  | $20.        | CREDIT_CLS_TYP_CODE
+63 | RESTRUCTURED_DTE               | Num  | 8   | DATETIME20. | RESTRUCTURED_DTE
+64 | EFFECTIVE_DATE                 | Num  | 8   | DATETIME20. | EFFECTIVE_DATE
+65 | ACCOUNT_PURPOSE_CODE           | Char | 20  | $20.        | ACCOUNT_PURPOSE_CODE
+66 | RSME_FLG                       | Char | 1   | $1.         | RSME_FLG
+67 | REPACKAGE_DATE                 | Num  | 8   | DATETIME20. | REPACKAGE_DATE
+68 | REPACKAGING_IND                | Char | 1   | $1.         | REPACKAGING_IND
+69 | RESCHEDULE_DTE                 | Num  | 8   | DATETIME20. | RESCHEDULE_DTE
+70 | RESCHEDULE_FLG                 | Char | 1   | $1.         | RESCHEDULE_FLG
+71 | FINAL_DISB_DTE                 | Num  | 8   | DATETIME20. | FINAL_DISB_DTE
+72 | SM_FLG                         | Char | 1   | $1.         | SM_FLG
+73 | SM_DTE                         | Num  | 8   | DATETIME20. | SM_DTE
+74 | SMA_REASON                     | Char | 200 | $200.       | SMA_REASON
+75 | REMOVE_RESTRUCTURE_IND         | Char | 1   | $1.         | REMOVE_RESTRUCTURE_IND
+76 | REMOVE_RESCHEDULE_IND          | Char | 1   | $1.         | REMOVE_RESCHEDULE_IND
+77 | MTH_ARREARS                    | Num  | 8   | 6.          | MTH_ARREARS
+78 | WO_FLG                         | Char | 1   | $1.         | WO_FLG
+79 | RELEASE_TYPE_CD                | Char | 1   | $1.         | RELEASE_TYPE_CD
+80 | AKPK_FLG                       | Char | 1   | $1.         | AKPK_FLG
+81 | AKPK_DATE                      | Num  | 8   | DATETIME20. | AKPK_DATE
+82 | REPRICE_DATE                   | Num  | 8   | DATETIME20. | REPRICE_DATE
+83 | REPRICE_FLAG                   | Char | 1   | $1.         | REPRICE_FLAG
+84 | BASEL_LGD_CLS                  | Char | 20  | $20.        | BASEL_LGD_CLS
+85 | MIA_BUCKET_ID                  | Char | 20  | $20.        | MIA_BUCKET_ID
+86 | LOAN_BUCKET_ID                 | Char | 20  | $20.        | LOAN_BUCKET_ID
+87 | CORPORATE_REMEDIAL_CD          | Char | 10  | $10.        | CORPORATE_REMEDIAL_CD
+88 | RTO_FLAG                       | Char | 1   | $1.         | RTO_FLAG
+89 | LEDGER_BALANCE_AMT             | Num  | 8   | 24.3        | LEDGER_BALANCE_AMT
+90 | SHORTFALL_FLAG                 | Char | 1   | $1.         | SHORTFALL_FLAG
+91 | RATING_OUTLOOK_WATCH           | Char | 1   | $1.         | RATING_OUTLOOK_WATCH
+92 | OUTLOOK_WATCH_ASSIGN_DATE      | Num  | 8   | DATETIME20. | OUTLOOK_WATCH_ASSIGN_DATE
+93 | WATCHLIST_REASON_DESC          | Char | 255 | $255.       | WATCHLIST_REASON_DESC
+94 | EAD_ADJ_AMT                    | Num  | 8   | 24.3        | EAD_ADJ_AMT
+95 | RPSIA_FLG                      | Char | 1   | $1.         | RPSIA_FLG
+96 | UPDT_DTE                       | Num  | 8   | DATETIME20. | UPDT_DTE
+97 | UPDT_PRG                       | Char | 50  | $50.        | UPDT_PRG
+98 | UPDT_USR                       | Char | 20  | $20.        | UPDT_USR
+99 | FINANCING_CODE                 | Char | 1   | $1.         | FINANCING_CODE
+100| UNCOND_CANCELLED_EXP_IND       | Char | 1   | $1.         | UNCOND_CANCELLED_EXP_IND
+101| ALLOCATED_COST                 | Num  | 8   | 24.3        | ALLOCATED_COST
+102| PPTY_TYP                       | Char | 20  | $20.        | PPTY_TYP
+103| FEES_EIR                       | Num  | 8   | 24.3        | FEES_EIR
+104| VAR_RT                         | Num  | 8   | 17.9        | VAR_RT
+105| BASE_RT                        | Num  | 8   | 17.9        | BASE_RT
+106| RT_TYP_DESC                    | Char | 20  | $20.        | RT_TYP_DESC
+107| MULTI_TIER_INT_FLG             | Char | 1   | $1.         | MULTI_TIER_INT_FLG
+108| TOT_INT_CHG                    | Num  | 8   | 17.2        | TOT_INT_CHG
+109| MORA_START_DTE                 | Num  | 8   | DATETIME20. | MORA_START_DTE
+110| MORA_END_DTE                   | Num  | 8   | DATETIME20. | MORA_END_DTE
+111| AA_FAC_REF                     | Char | 20  | $20.        | AA_FAC_REF
+112| PARENT_AA_FAC_REF              | Char | 20  | $20.        | PARENT_AA_FAC_REF
+113| ACCT_UTILISATION               | Num  | 8   | 17.6        | ACCT_UTILISATION
+114| LCY_PARENT_LIMIT               | Num  | 8   | 17.2        | LCY_PARENT_LIMIT
+115| CUST_UTILISATION               | Num  | 8   | 24.3        | CUST_UTILISATION
+116| RCY_UNDRAWN_AMT_ORIG           | Num  | 8   | 24.3        | RCY_UNDRAWN_AMT_ORIG
+117| CCF_NEW                        | Num  | 8   | 17.11       | CCF_NEW
+118| LGD_PROD_TYPE                  | Char | 7   | $7.         | LGD_PROD_TYPE

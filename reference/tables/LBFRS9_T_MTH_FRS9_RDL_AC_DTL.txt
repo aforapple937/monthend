@@ -1,0 +1,158 @@
+## Table: LBFRS9.T_MTH_FRS9_RDL_AC_DTL
+Library   : LBFRS9
+Schema    : FRSPOWR
+Engine    : ODBC (Oracle)
+Variables : 147
+
+## Variable Reference
+# Num = Numeric, Char = Character
+
+#  | Variable                       | Type | Len | Format      | Label
+---|--------------------------------|------|-----|-------------|--------------------------------
+1  | PROC_DTE                       | Num  | 8   | DATETIME20. | PROC_DTE
+2  | DATA_ORIGIN                    | Char | 20  | $20.        | DATA_ORIGIN
+3  | CIF_NO                         | Char | 50  | $50.        | CIF_NO
+4  | STOCK_CODE                     | Char | 20  | $20.        | STOCK_CODE
+5  | CURCY_CODE                     | Char | 3   | $3.         | CURCY_CODE
+6  | SUB_MKT_SEG                    | Char | 15  | $15.        | SUB_MKT_SEG
+7  | SUB_MKT_SEG_DESC               | Char | 15  | $15.        | SUB_MKT_SEG_DESC
+8  | MKT_SEG                        | Char | 15  | $15.        | MKT_SEG
+9  | LEGAL_ENTITY                   | Char | 20  | $20.        | LEGAL_ENTITY
+10 | IA_FLG                         | Char | 2   | $2.         | IA_FLG
+11 | LCY_DCF_AMT                    | Num  | 8   | 24.3        | LCY_DCF_AMT
+12 | GL_AC_ID                       | Char | 20  | $20.        | GL_AC_ID
+13 | FRS_BIZ_SEG                    | Char | 20  | $20.        | FRS_BIZ_SEG
+14 | EXCHG_RT                       | Num  | 8   | 17.9        | EXCHG_RT
+15 | RATING_SRC                     | Char | 255 | $255.       | RATING_SRC
+16 | RATING                         | Char | 20  | $20.        | RATING
+17 | WATCHLIST_FLG                  | Char | 1   | $1.         | WATCHLIST_FLG
+18 | MFRS9_LGD_POOL                 | Char | 20  | $20.        | MFRS9_LGD_POOL
+19 | MFRS9_SUB_LGD_POOL             | Char | 20  | $20.        | MFRS9_SUB_LGD_POOL
+20 | UNIQUE_ID_NO                   | Char | 50  | $50.        | UNIQUE_ID_NO
+21 | LCY_BAL                        | Num  | 8   | 24.3        | LCY_BAL
+22 | BAL_AFT_EIR_ADJ                | Num  | 8   | 24.3        | BAL_AFT_EIR_ADJ
+23 | NPL_FLG                        | Char | 1   | $1.         | NPL_FLG
+24 | EFF_INT_RT                     | Num  | 8   | 17.11       | EFF_INT_RT
+25 | SEC_CLS_CD                     | Char | 20  | $20.        | SEC_CLS_CD
+26 | RESTRUCTURE_FLG                | Char | 1   | $1.         | RESTRUCTURE_FLG
+27 | AC_CODE                        | Char | 50  | $50.        | AC_CODE
+28 | REPACKAGING_FLG                | Char | 1   | $1.         | REPACKAGING_FLG
+29 | RESCHEDULE_FLG                 | Char | 1   | $1.         | RESCHEDULE_FLG
+30 | SM_FLG                         | Char | 2   | $2.         | SM_FLG
+31 | REMOVE_RESTRUCT_FLG            | Char | 1   | $1.         | REMOVE_RESTRUCT_FLG
+32 | REMOVE_RESCHED_FLG             | Char | 1   | $1.         | REMOVE_RESCHED_FLG
+33 | LCY_EIR_ADJ_AMT                | Num  | 8   | 24.3        | LCY_EIR_ADJ_AMT
+34 | REPRICE_FLG                    | Char | 1   | $1.         | REPRICE_FLG
+35 | LCY_LEDGER_BAL                 | Num  | 8   | 24.3        | LCY_LEDGER_BAL
+36 | RCY_CUR_PAR_BAL                | Num  | 8   | 24.3        | RCY_CUR_PAR_BAL
+37 | NO_UNQUOTED_SHARE              | Num  | 8   | 24.3        | NO_UNQUOTED_SHARE
+38 | PRODUCT_GRP                    | Char | 50  | $50.        | PRODUCT_GRP
+39 | MTH_ON_BOOK                    | Num  | 8   | 24.3        | MTH_ON_BOOK
+40 | STAGE_CLASSIFICATION           | Char | 20  | $20.        | STAGE_CLASSIFICATION
+41 | RCY_ECL_CLOSING_FY             | Num  | 8   | 24.2        | RCY_ECL_CLOSING_FY
+42 | RCY_ECL_CHARGE_FY              | Num  | 8   | 24.2        | RCY_ECL_CHARGE_FY
+43 | RCY_ECL_WRITEBACK_FY           | Num  | 8   | 24.2        | RCY_ECL_WRITEBACK_FY
+44 | RCY_ECL_WRITE_OFF_FY           | Num  | 8   | 24.2        | RCY_ECL_WRITE_OFF_FY
+45 | RCY_ECL_OPENING_BAL            | Num  | 8   | 24.2        | RCY_ECL_OPENING_BAL
+46 | RCY_MODIFICATION_GAIN_LOSS     | Num  | 8   | 24.2        | RCY_MODIFICATION_GAIN_LOSS
+47 | RCY_MOD_GAIN_LOSS_OPENING_FY   | Num  | 8   | 24.2        | RCY_MOD_GAIN_LOSS_OPENING_FY
+48 | RCY_MODIFICATION_GAIN_LOSS_FTM | Num  | 8   | 24.2        | RCY_MODIFICATION_GAIN_LOSS_FTM
+49 | RCY_MOD_GAIN_LOSS_CLOSING_FY   | Num  | 8   | 24.2        | RCY_MOD_GAIN_LOSS_CLOSING_FY
+50 | RCY_INT_UNWIND_CLOSING_FY      | Num  | 8   | 24.2        | RCY_INT_UNWIND_CLOSING_FY
+51 | RCY_INT_UNWIND_CHARGE_FY       | Num  | 8   | 24.2        | RCY_INT_UNWIND_CHARGE_FY
+52 | RCY_INT_UNWIND_WRITEBACK_FY    | Num  | 8   | 24.2        | RCY_INT_UNWIND_WRITEBACK_FY
+53 | RCY_INT_UNWIND_WRITE_OFF_FY    | Num  | 8   | 24.2        | RCY_INT_UNWIND_WRITE_OFF_FY
+54 | RCY_INT_UNWIND_OPENING_FY      | Num  | 8   | 24.2        | RCY_INT_UNWIND_OPENING_FY
+55 | RCY_INT_UNWIND_CHARGE_FTM      | Num  | 8   | 24.2        | RCY_INT_UNWIND_CHARGE_FTM
+56 | RCY_INT_UNWIND_WRITEBACK_FTM   | Num  | 8   | 24.2        | RCY_INT_UNWIND_WRITEBACK_FTM
+57 | RCY_INT_UNWIND_WRITE_OFF_FTM   | Num  | 8   | 24.2        | RCY_INT_UNWIND_WRITE_OFF_FTM
+58 | RCY_ECL_CHARGE_FTM             | Num  | 8   | 24.2        | RCY_ECL_CHARGE_FTM
+59 | RCY_ECL_WRITEBACK_FTM          | Num  | 8   | 24.2        | RCY_ECL_WRITEBACK_FTM
+60 | RCY_ECL_WRITE_OFF_FTM          | Num  | 8   | 24.2        | RCY_ECL_WRITE_OFF_FTM
+61 | RCY_EAD_AMT                    | Num  | 8   | 24.2        | RCY_EAD_AMT
+62 | RATING_INDICATOR               | Char | 50  | $50.        | RATING_INDICATOR
+63 | DATE_FIRST_STAGE_2             | Num  | 8   | DATETIME20. | DATE_FIRST_STAGE_2
+64 | DATE_LAST_STAGE_2              | Num  | 8   | DATETIME20. | DATE_LAST_STAGE_2
+65 | DATE_DECLASSIFIED_STAGE_2      | Num  | 8   | DATETIME20. | DATE_DECLASSIFIED_STAGE_2
+66 | DATE_FIRST_STAGE_3             | Num  | 8   | DATETIME20. | DATE_FIRST_STAGE_3
+67 | DATE_LAST_STAGE_3              | Num  | 8   | DATETIME20. | DATE_LAST_STAGE_3
+68 | DATE_DECLASSIFIED_STAGE_3      | Num  | 8   | DATETIME20. | DATE_DECLASSIFIED_STAGE_3
+69 | ORIGINAL_RATING                | Char | 20  | $20.        | ORIGINAL_RATING
+70 | ORIGINAL_RATING_DATE           | Num  | 8   | DATETIME20. | ORIGINAL_RATING_DATE
+71 | RCY_FAIR_VALUE                 | Num  | 8   | 24.2        | RCY_FAIR_VALUE
+72 | SRC_PROD_TYPE_CD               | Char | 50  | $50.        | SRC_PROD_TYPE_CD
+73 | LCY_FAIR_VALUE                 | Num  | 8   | 24.2        | LCY_FAIR_VALUE
+74 | LCY_ECL_CLOSING_FY             | Num  | 8   | 24.2        | LCY_ECL_CLOSING_FY
+75 | GL_ID_ECL_CHARGE_FY_BS         | Char | 20  | $20.        | GL_ID_ECL_CHARGE_FY_BS
+76 | GL_ID_ECL_CHARGE_FY_PL         | Char | 20  | $20.        | GL_ID_ECL_CHARGE_FY_PL
+77 | LCY_ECL_CHARGE_FY              | Num  | 8   | 24.2        | LCY_ECL_CHARGE_FY
+78 | GL_ID_ECL_WRITEBACK_FY_BS      | Char | 20  | $20.        | GL_ID_ECL_WRITEBACK_FY_BS
+79 | GL_ID_ECL_WRITEBACK_FY_PL      | Char | 20  | $20.        | GL_ID_ECL_WRITEBACK_FY_PL
+80 | LCY_ECL_WRITEBACK_FY           | Num  | 8   | 24.2        | LCY_ECL_WRITEBACK_FY
+81 | GL_ID_ECL_WO_FY_BS             | Char | 20  | $20.        | GL_ID_ECL_WO_FY_BS
+82 | GL_ID_BAD_DEBT_WO_FY_PL        | Char | 20  | $20.        | GL_ID_BAD_DEBT_WO_FY_PL
+83 | LCY_ECL_WRITE_OFF_FY           | Num  | 8   | 24.2        | LCY_ECL_WRITE_OFF_FY
+84 | LCY_ECL_OPENING_BAL            | Num  | 8   | 24.2        | LCY_ECL_OPENING_BAL
+85 | LCY_MOD_GAIN_LOSS              | Num  | 8   | 24.2        | LCY_MOD_GAIN_LOSS
+86 | LCY_MOD_GAIN_LOSS_OPENING_FY   | Num  | 8   | 24.2        | LCY_MOD_GAIN_LOSS_OPENING_FY
+87 | LCY_MOD_GAIN_LOSS_FTM          | Num  | 8   | 24.2        | LCY_MOD_GAIN_LOSS_FTM
+88 | GL_ID_MOD_GAIN_LOSS_CL_FY_BS   | Char | 20  | $20.        | GL_ID_MOD_GAIN_LOSS_CL_FY_BS
+89 | GL_ID_MOD_GAIN_LOSS_CL_FY_PL   | Char | 20  | $20.        | GL_ID_MOD_GAIN_LOSS_CL_FY_PL
+90 | LCY_MOD_GAIN_LOSS_CLOSING_FY   | Num  | 8   | 24.2        | LCY_MOD_GAIN_LOSS_CLOSING_FY
+91 | LCY_INT_UNWIND_CLOSING_FY      | Num  | 8   | 24.2        | LCY_INT_UNWIND_CLOSING_FY
+92 | GL_ID_INT_UNWIND_CHARGE_FY_BS  | Char | 50  | $50.        | GL_ID_INT_UNWIND_CHARGE_FY_BS
+93 | GL_ID_INT_UNWIND_CHARGE_FY_PL  | Char | 50  | $50.        | GL_ID_INT_UNWIND_CHARGE_FY_PL
+94 | LCY_INT_UNWIND_CHARGE_FY       | Num  | 8   | 24.2        | LCY_INT_UNWIND_CHARGE_FY
+95 | LCY_INT_UNWIND_WRITEBACK_FY    | Num  | 8   | 24.2        | LCY_INT_UNWIND_WRITEBACK_FY
+96 | GL_ID_UNWIND_WRITE_OFF_FY_BS   | Char | 50  | $50.        | GL_ID_UNWIND_WRITE_OFF_FY_BS
+97 | LCY_INT_UNWIND_WRITE_OFF_FY    | Num  | 8   | 24.2        | LCY_INT_UNWIND_WRITE_OFF_FY
+98 | LCY_INT_UNWIND_OPENING_FY      | Num  | 8   | 24.2        | LCY_INT_UNWIND_OPENING_FY
+99 | LCY_INT_UNWIND_CHARGE_FTM      | Num  | 8   | 24.2        | LCY_INT_UNWIND_CHARGE_FTM
+100| LCY_INT_UNWIND_WRITEBACK_FTM   | Num  | 8   | 24.2        | LCY_INT_UNWIND_WRITEBACK_FTM
+101| LCY_INT_UNWIND_WRITE_OFF_FTM   | Num  | 8   | 24.2        | LCY_INT_UNWIND_WRITE_OFF_FTM
+102| LCY_ECL_CHARGE_FTM             | Num  | 8   | 24.2        | LCY_ECL_CHARGE_FTM
+103| LCY_ECL_WRITEBACK_FTM          | Num  | 8   | 24.2        | LCY_ECL_WRITEBACK_FTM
+104| LCY_ECL_WRITE_OFF_FTM          | Num  | 8   | 24.2        | LCY_ECL_WRITE_OFF_FTM
+105| LCY_EAD_AMT                    | Num  | 8   | 24.2        | LCY_EAD_AMT
+106| ID_NUM                         | Char | 50  | $50.        | ID_NUM
+107| DEAL_CHIT_NO                   | Char | 50  | $50.        | DEAL_CHIT_NO
+108| PD_12_MTH                      | Num  | 8   | 17.11       | PD_12_MTH
+109| LGD_12_MTH                     | Num  | 8   | 17.11       | LGD_12_MTH
+110| HOLDINGS_UNIT                  | Num  | 8   | 24.3        | HOLDINGS_UNIT
+111| RCY_UNREALISED_PROFIT_LOSS     | Num  | 8   | 24.3        | RCY_UNREALISED_PROFIT_LOSS
+112| GL_ID_UNREALISED_PL_BS         | Char | 20  | $20.        | GL_ID_UNREALISED_PL_BS
+113| GL_ID_UNREALISED_PL_PL         | Char | 20  | $20.        | GL_ID_UNREALISED_PL_PL
+114| LCY_UNREALISED_PROFIT_LOSS     | Num  | 8   | 24.3        | LCY_UNREALISED_PROFIT_LOSS
+115| MTHS_IN_ARREARS                | Num  | 8   | 6.          | MTHS_IN_ARREARS
+116| AC_MGR_UNIT_CODE               | Char | 20  | $20.        | AC_MGR_UNIT_CODE
+117| UPDT_DTE                       | Num  | 8   | DATETIME20. | UPDT_DTE
+118| UPDT_PRG                       | Char | 50  | $50.        | UPDT_PRG
+119| UPDT_USR                       | Char | 20  | $20.        | UPDT_USR
+120| SYS_CODE                       | Char | 2   | $2.         | SYS_CODE
+121| BIZ_PRD_CODE                   | Char | 15  | $15.        | BIZ_PRD_CODE
+122| PRD_CODE                       | Char | 10  | $10.        | PRD_CODE
+123| MI_PRD_CODE                    | Char | 15  | $15.        | MI_PRD_CODE
+124| CR_STS_CODE                    | Char | 1   | $1.         | CR_STS_CODE
+125| UNIT_CODE                      | Char | 3   | $3.         | UNIT_CODE
+126| LCY_EIR_ADJ_OPENING_AMT        | Num  | 8   | 24.2        | LCY_EIR_ADJ_OPENING_AMT
+127| LCY_EIR_ADJ_FY_AMT             | Num  | 8   | 24.2        | LCY_EIR_ADJ_FY_AMT
+128| LCY_EIR_ADJ_FTM_AMT            | Num  | 8   | 24.2        | LCY_EIR_ADJ_FTM_AMT
+129| GL_ID_EIR_ADJ_BS               | Char | 20  | $20.        | GL_ID_EIR_ADJ_BS
+130| GL_ID_EIR_ADJ_PL               | Char | 20  | $20.        | GL_ID_EIR_ADJ_PL
+131| GL_ID_UWI_WRITEBACK_FY_BS      | Char | 20  | $20.        | GL_ID_UWI_WRITEBACK_FY_BS
+132| GL_ID_UWI_WRITEBACK_FY_PL      | Char | 20  | $20.        | GL_ID_UWI_WRITEBACK_FY_PL
+133| STAGE_REASON                   | Char | 100 | $100.       | STAGE_REASON
+134| CR_STS_CODE_BASEL              | Char | 10  | $10.        | CR_STS_CODE_BASEL
+135| REQ_CIF_NO                     | Char | 10  | $10.        | REQ_CIF_NO
+136| GL_ID_INT_UWI_OPENING_FY_BS    | Char | 30  | $30.        | GL_ID_INT_UWI_OPENING_FY_BS
+137| GL_ID_UWI_MOD_GL_BS            | Char | 30  | $30.        | GL_ID_UWI_MOD_GL_BS
+138| GL_ID_UWI_MOD_GL_PL            | Char | 30  | $30.        | GL_ID_UWI_MOD_GL_PL
+139| UWI_MOD_GAIN_LOSS_FY           | Num  | 8   | 26.2        | UWI_MOD_GAIN_LOSS_FY
+140| UWI_MOD_GAIN_LOSS_FTM          | Num  | 8   | 26.2        | UWI_MOD_GAIN_LOSS_FTM
+141| ECL_OPENING_REVAL_RCY          | Num  | 8   | 26.2        | ECL_OPENING_REVAL_RCY
+142| ECL_OPENING_FX_DIFF            | Num  | 8   | 26.2        | ECL_OPENING_FX_DIFF
+143| UWI_OPENING_REVAL_RCY          | Num  | 8   | 26.2        | UWI_OPENING_REVAL_RCY
+144| UWI_OPENING_FX_DIFF            | Num  | 8   | 26.2        | UWI_OPENING_FX_DIFF
+145| FINAL_MITIGATION_FLG           | Char | 1   | $1.         | FINAL_MITIGATION_FLG
+146| POSTED_EGL_RC                  | Char | 10  | $10.        | POSTED_EGL_RC
+147| ECL_OPENING_FX_DIFF_FTM        | Num  | 8   | 26.2        | ECL_OPENING_FX_DIFF_FTM

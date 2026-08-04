@@ -1,0 +1,17 @@
+# SAS artefacts
+*.sas7bdat
+*.sas7bndx
+*.log
+*.lst
+*.egp
+*.bak
+
+# Exports and month outputs - these belong on the server, not in the repo
+*.xlsx
+*.xls
+*.xlsm
+*.csv
+
+# OS
+.DS_Store
+Thumbs.db

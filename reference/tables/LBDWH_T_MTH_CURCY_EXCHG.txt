@@ -1,0 +1,25 @@
+## Table: LBDWH.T_MTH_CURCY_EXCHG
+Library   : LBDWH
+Schema    : DWHOWR
+Engine    : ODBC (Oracle)
+Variables : 14
+
+## Variable Reference
+# Num = Numeric, Char = Character
+
+#  | Variable                       | Type | Len | Format      | Label
+---|--------------------------------|------|-----|-------------|--------------------------------
+1  | CURCY_CODE                     | Char | 3   | $3.         | CURCY_CODE
+2  | PROC_DTE                       | Num  | 8   | DATETIME20. | PROC_DTE
+3  | BID_RT                         | Num  | 8   | 17.9        | BID_RT
+4  | OFR_RT                         | Num  | 8   | 17.9        | OFR_RT
+5  | PAR_RT                         | Num  | 8   | 17.9        | PAR_RT
+6  | EXCHG_RT                       | Num  | 8   | 20.10       | EXCHG_RT
+7  | MAS_RT                         | Num  | 8   | 20.10       | MAS_RT
+8  | HIGH_RT                        | Num  | 8   | 17.9        | HIGH_RT
+9  | LOW_RT                         | Num  | 8   | 17.9        | LOW_RT
+10 | AVG_RT                         | Num  | 8   | 17.9        | AVG_RT
+11 | UPDT_DTE                       | Num  | 8   | DATETIME20. | UPDT_DTE
+12 | UPDT_PRG                       | Char | 20  | $20.        | UPDT_PRG
+13 | UPDT_USR                       | Char | 10  | $10.        | UPDT_USR
+14 | KP_EXCHG_RT                    | Num  | 8   | 27.18       | KP_EXCHG_RT

@@ -1,0 +1,33 @@
+## Table: LBFRS9.T_MTH_FRS9_AC_RATING_DTL
+Library   : LBFRS9
+Schema    : FRSPOWR
+Engine    : ODBC (Oracle)
+Variables : 22
+
+## Variable Reference
+# Num = Numeric, Char = Character
+
+#  | Variable                       | Type | Len | Format      | Label
+---|--------------------------------|------|-----|-------------|--------------------------------
+1  | PROC_DTE                       | Num  | 8   | DATETIME20. | PROC_DTE
+2  | RATING_SOURCE                  | Char | 255 | $255.       | RATING_SOURCE
+3  | RATING                         | Char | 20  | $20.        | RATING
+4  | AC_CODE                        | Char | 50  | $50.        | AC_CODE
+5  | ORGL_CR_RATING_FLG             | Char | 1   | $1.         | ORGL_CR_RATING_FLG
+6  | RATING_ASSIGNED_DATE           | Num  | 8   | DATETIME20. | RATING_ASSIGNED_DATE
+7  | DATA_ORIGIN                    | Char | 20  | $20.        | DATA_ORIGIN
+8  | EXTERNAL_RATING_SOURCE         | Char | 255 | $255.       | EXTERNAL_RATING_SOURCE
+9  | EXTERNAL_RATING                | Char | 20  | $20.        | EXTERNAL_RATING
+10 | INTERNAL_RATING_SOURCE         | Char | 255 | $255.       | INTERNAL_RATING_SOURCE
+11 | INTERNAL_RATING                | Char | 20  | $20.        | INTERNAL_RATING
+12 | UPDT_DTE                       | Num  | 8   | DATETIME20. | UPDT_DTE
+13 | UPDT_PRG                       | Char | 50  | $50.        | UPDT_PRG
+14 | UPDT_USR                       | Char | 20  | $20.        | UPDT_USR
+15 | LEGAL_ENTITY_CODE              | Char | 20  | $20.        | LEGAL_ENTITY_CODE
+16 | CIF_NO                         | Char | 10  | $10.        | CIF_NO
+17 | RATING_SEGMENT                 | Char | 20  | $20.        | RATING_SEGMENT
+18 | RATING_SOURCE_Y                | Char | 255 | $255.       | RATING_SOURCE_Y
+19 | EXTERNAL_RATING_SOURCE_Y       | Char | 255 | $255.       | EXTERNAL_RATING_SOURCE_Y
+20 | EXTERNAL_RATING_Y              | Char | 20  | $20.        | EXTERNAL_RATING_Y
+21 | INTERNAL_RATING_SOURCE_Y       | Char | 255 | $255.       | INTERNAL_RATING_SOURCE_Y
+22 | INTERNAL_RATING_Y              | Char | 20  | $20.        | INTERNAL_RATING_Y
