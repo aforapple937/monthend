@@ -2,8 +2,7 @@
 
 Where the data lives: the FRS9/DWH tables, their grains, keys and conventions.
 The reporting processes that consume these tables are the `MER_*` files —
-one per stored process, mapped in `FRS9_Work_Reference.md`. Entity naming
-conventions are in `FRS9_Work_Reference.md` §2.
+one per stored process, mapped in `FRS9_Work_Reference.md`.
 
 Status markers: **[C]** confirmed, **[I]** inferred, **[O]** open.
 
@@ -27,20 +26,19 @@ them before answering any lineage question. **[C]**
 `LN_DTL.ALLOCATED_COST` derivation — part of the same library, not a table in
 the monthly flow. **[C]**
 
-**Two known defects across the library.** Both were found in `V_SEGMENT_NAME`
-in Aug26 and fixed there only; every other `__COLUMN.txt` file still carries
-them, so expect them when running one for the first time. **[C]**
+**Two known defects across the library** — fixed in `V_SEGMENT_NAME` only;
+every other `__COLUMN.txt` file still carries them, so expect them when
+running one for the first time. **[C]**
 
-1. **`datepart(PROC_DTE)` month filters** — correct, but slow for the reason
-   recorded in §2 below. `V_SEGMENT_NAME` now uses bounded datetime literals.
+1. **`datepart(PROC_DTE)` month filters** — correct, but slow; the fix is the
+   bounded-literal standing rule in §2 below.
 2. **Hash lookup variables typed numeric by accident.** A variable that appears
    only in a `RETAIN` list or in `CALL MISSING` — never in a `SET` — is created
    as numeric, so `definedone()` fails with `Type mismatch for data variable`
    against a character column in the lookup dataset. The fix is
    `if 0 then set <lookup dataset>;` placed after the `RETAIN` (which fixes
    column order) and before the main `SET`. Trap detail is in the sas-writing
-   skill; the file affected here is `V_SEGMENT_NAME`, whose step 6 hashes onto
-   the two product-attribute CSVs.
+   skill.
 
 ---
 
@@ -54,7 +52,7 @@ Data-warehouse tables in `LBDWH` feed the product input tables in `LBFRS9`, whic
 
 ### Tables
 
-`PROC_DTE` is the month-end date; monthly snapshots are retained month-on-month. Two tables have no `PROC_DTE`: `T_FRS9_PRD_MSTR`, a static lookup, and `V_T_CIF_MSTR`, a current-state view.
+`PROC_DTE` is the month-end date; monthly snapshots are retained month-on-month. The two exceptions without a `PROC_DTE` are flagged in the grain column below.
 
 | Table | Grain (unique key) | One row = |
 |---|---|---|
@@ -109,13 +107,13 @@ Whether `EIR_ADJ_SCH.ACCOUNT_NUMBER` is suffixed is **[O]** — it joins to
 
 **`CIF_NO` is `$7` on that view against `$50` on `PARTY_MSTR` and `RDL_AC_DTL`.** Reading it into a hash keyed off RDL is safe — the key takes the PDV variable's attributes, so the narrower value is blank-padded into the wider key and matches — but the view cannot hold a CIF longer than 7 characters, and any such borrower would have no name from this source. Whether one exists is the open question at `Open_Items.md` item 6. `UCIF_NO` on the same view is `$50` and may be where a longer identifier lives. **[I]**. `CIF_NAME` is `$80` here, against the `$255` that both `ECL Flux` and `Overlay Watchlist` declare downstream; `ECL Manual Override` declares `$80`, matching the source.
 
-Four processes read the view: `ECL Flux` (§11.10), `FVOCI Loan MTM` (§11.12), `Overlay Watchlist` (§11.14) and `ECL Manual Override` (§11.15). `ECL Flux` moved onto it in July 2026, having previously taken the name from `PARTY_MSTR`; it still reads `PARTY_MSTR` for `MKT_SUB_SEG_DESC`. So the split that used to run between processes now runs **inside one of them** — that report carries a borrower's name as held now and its sub-segment as at the reporting date, and a borrower renamed since month-end shows the new name against the old segment. **[C]**
+Four processes read the view: `ECL Flux` (§11.10), `FVOCI Loan MTM` (§11.12), `Overlay Watchlist` (§11.14) and `ECL Manual Override` (§11.15). `ECL Flux` takes the borrower name from this view but `MKT_SUB_SEG_DESC` from `PARTY_MSTR` — so that report carries a name as held now against a sub-segment as at the reporting date, and a borrower renamed since month-end shows the new name against the old segment. **[C]**
 
-**FX rates — `EXCHG_RT` is one unit of the foreign currency expressed in SGD.** So a foreign-currency amount converts to SGD by **multiplying** by the rate, and back out by dividing. Same convention on `T_MTH_CURCY_EXCHG` (monthly) and `T_DAL_CURCY_EXCHG` (daily); the daily table holds one row per code per date. **[C]**
+**FX rates — `EXCHG_RT` is one unit of the foreign currency expressed in SGD.** So a foreign-currency amount converts to SGD by **multiplying** by the rate, and back out by dividing. Same convention on `T_MTH_CURCY_EXCHG` (monthly) and `T_DAL_CURCY_EXCHG` (daily). **[C]**
 
-> This **corrects** an earlier note here which stated the opposite — that the rate was quoted 1 SGD = *n* foreign units and that conversion to SGD was a division. It was marked **[C]** and it was wrong. Confirmed from the 30JUN2026 rates: `KWD 4.2054` (the dinar is the world's highest-valued currency, so 1 KWD = SGD 4.21 and not the reverse), `USD 1.2948`, and `BND 1.0000` (the Brunei dollar is pegged 1:1 to SGD, which only reads correctly under the multiply convention). `SGD` itself is 1.0000. At the time of the correction `FVOCI Loan MTM` was the only process reading either table, so nothing built earlier was inverted.
+> An earlier note here recorded the **opposite** convention and was wrong despite a **[C]** marker. The multiply convention is confirmed by the 30JUN2026 rates: `KWD 4.2054`, `USD 1.2948`, and `BND 1.0000` (pegged 1:1 to SGD, which only reads correctly under multiply).
 
-`ECL Manual Override` (§11.15) now also reads the monthly table, dividing `LCY_LEDGER_BAL` by `EXCHG_RT` to reach the account-currency target. **[C]**
+`ECL Manual Override` (§11.15) now also reads the monthly table, for the `LCY_LEDGER_BAL` conversion described below. **[C]**
 
 **The table carries variant currency codes alongside the standard ones.** Seen at 30JUN2026: `CNO` and `CNH` beside `CNY`; `INO`/`INH` beside `INR`; `KRO`/`KRH` beside `KRW`; `TWO` beside `TWD`; and `IDO`/`IDH`, `MYO`, `PHO`/`PHH`, `THO`/`THH`, `VNO` beside their base codes. Some carry an identical rate to the base, some differ slightly — `CNH` is the recognised offshore renminbi code, so these look like onshore/offshore book splits. **[I]** on what `O` and `H` denote.
 
@@ -168,7 +166,7 @@ It also means `OPENING_AMT + FY_AMT = AMT` holds by construction, maintained dow
 
 > **The RCY twins are not derived.** IT's loader does not recompute `RCY_ECL_CHARGE_FY`, `RCY_ECL_WRITEBACK_FY` or the `FTM` pair from a patched `RCY_ECL_CLOSING_FY`, so an RCY ECL patch has to carry them explicitly. `ECL Manual Override` (§11.15) sends a five-column RCY file for that reason, against a closing-only LCY file. **[C]** This asymmetry matters because `Post-Posting TB Recon` (§11.9) reconciles on the four RCY **component** columns and not on closing — an RCY patch carrying closing alone would leave that recon broken on every patched account. Whether the LCY derivation also reaches the `FTM` pair, and splits charge against writeback the same way, is **[O]** and worth confirming after a load, because `ECL Flux` (§11.10) reads the LCY `FTM` columns.
 
-The differing decimal format (24.2 against 24.3) suggests the three movement columns were added to the table later than `LCY_EIR_ADJ_AMT`. **[I]**
+The differing decimal format suggests the three movement columns were added to the table later than `LCY_EIR_ADJ_AMT`. **[I]**
 
 `RDL_MSTR_LIST` carries the engine-native equivalents `EIR`, `EIR_OPENING` and `EIR_PREVIOUS`. **`EIR_PREVIOUS` is the prior month's balance** — the amount HO's reversal file should carry, which would let `EGL Reversal Check` test the EIR leg against a stated figure rather than only against last month's posting. **[I]** — not yet used anywhere. It also carries `N_EIR_ADJUSTMENT_AMT_RCY` (`24.3`), a fourth EIR field of unknown relation to the other three. **[O]**
 
@@ -228,7 +226,7 @@ Not an FRS9 table. Locally maintained, in `FUTREP` = `My SAS Files\futrep`. **On
 
 Contrast `EIR_ADJ_SCH` above, which is a **single accumulating table** keyed on `PROC_DTE` and held in two places. This one is month-per-dataset with no mirror, which is what makes the write idempotent — a rerun overwrites only its own month. **[C]**
 
-The month before the process went live was migrated from `PREV_FUT_REPRICING.xlsx`; character lengths from that `PROC IMPORT` were narrower than the `LN_DTL` native widths (`AC_CODE` `$11`, `PRD_CODE` `$8`, `BIZ_UNIT_CODE` `$5`) and were recast on load. Nothing appends months together, so a width mismatch between months is harmless, but it would bite anyone who stacked them. **[C]**
+The oldest month (migrated from Excel) carries narrower character widths than the `LN_DTL`-native months (`AC_CODE` `$11`, `PRD_CODE` `$8`, `BIZ_UNIT_CODE` `$5`). Nothing appends months together, so this is harmless — but it would bite anyone who stacked the datasets. **[C]**
 
 Note `LN_DTL` also carries `REPRICE_FLAG` (`$1`) beside `REPRICE_DATE`. The
 process selects on the date alone; whether the flag is redundant is **[O]**.
@@ -296,31 +294,12 @@ the input. This is how the NOSTRO spec (§12 field 17) populates it. **[C]**
   applies the row limit and SAS applies the filter afterwards — `obs=1` tests
   one arbitrary physical row, and RDL holds every month of the year. Count over
   a datetime range on the raw column instead. **[C]**
-- **The cost of that non-pushdown, measured Aug26.** Every pair below returned
-  identical rows; only elapsed time changed. **[C]**
-
-  | Read | `datepart()` | Literals |
-  |---|---|---|
-  | `RDL_MSTR_LIST`, DATA step, 451,696 rows out | 1:04.55 | 14.11s |
-  | Five product tables stacked in one `SET`, 465,927 out (§11.2) | 56.71s | 4.00s |
-  | `T_FRS_RT_INTF`, `PROC SORT`, 167,631 out (§11.5) | 15.31s | 1.50s |
-  | `LN_DTL` joined to a WORK table in `PROC SQL` (§11.5) | 16.38s | 1.99s |
-  | `RT_DTL` joined to a WORK table in `PROC SQL` (§11.5) | 16.63s | 2.00s |
-  | `LN_DTL`, DATA step, 129,956 out (§11.12) | 39.40s | 3.32s |
-  | `RDL_AC_DTL`, `PROC SQL`, 611 out (§11.12) | 9.01s | 0.70s |
-
-  Between 4× and 14×. The shape of the step does not matter — `SET`,
-  `PROC SORT` and `PROC SQL` all gained, including the two `PROC SQL` steps
-  joining an Oracle table to a WORK table, where the filter was expected to be
-  the least likely to travel. **[C]**
-
-  CPU rises with elapsed time, which is the tell: the logic is identical, so the
-  extra work is SAS evaluating `datepart()` on retained months and discarding
-  them. On the product tables the CPU ratio was ~15×, implying that many months
-  retained; on `RDL_MSTR_LIST` ~5×. Neither was counted directly. **[I]** The
-  gap widens by one month's rows every cycle. The log states which happened:
-  the fast runs print the literals in the `WHERE` sent to Oracle, the slow ones
-  print `DATEPART(PROC_DTE)=24318`. **[C]**
+- **The cost of that non-pushdown: 4×–14× elapsed** (measured Aug26, identical
+  rows out on every pair tested). The shape of the step does not matter —
+  `SET`, `PROC SORT` and `PROC SQL` all gained, including `PROC SQL` steps
+  joining an Oracle table to a WORK table. The gap widens by one month's rows
+  every cycle. The log states which happened: fast runs print the literals in
+  the `WHERE` sent to Oracle, slow ones print `DATEPART(PROC_DTE)=24318`. **[C]**
 
 - **Which tables retain months.** `RDL_MSTR_LIST`, `RDL_AC_DTL`, the five
   product tables, `T_FRS_RT_INTF`, `RT_DTL` and `LBDWH.T_DAL_CURCY_EXCHG` all
