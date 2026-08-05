@@ -3,9 +3,6 @@
 %let rpt_dtm = "&rpt_mth:00:00:00"dt;
 %let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
 
-/* PROD_LV1 is LEVEL_1 from the product hierarchy master, keyed
-   V_PROD_CODE -> PRODUCT_HIERARCHY_CD. A code with no hierarchy row is left
-   blank. The master is static - no PROC_DTE. */
 data WORK.prd_hier(keep=V_PROD_CODE LEVEL_1);
     length V_PROD_CODE $50 LEVEL_1 $20;
     set LBFRS9.T_FRS9_PRD_MSTR(keep=PRODUCT_HIERARCHY_CD LEVEL_1

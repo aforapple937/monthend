@@ -3,10 +3,6 @@
 %let rpt_dtm = "&rpt_mth:00:00:00"dt;
 %let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
 
-/* CURR_RATING sources from RATING on AC_RATING_DTL. An account carries up to two
-   rating rows per month, distinguished by ORGL_CR_RATING_FLG: Y = origination,
-   N = current. Filter to N for the current rating. Accounts with no current
-   rating row, or a blank RATING, default to UNRATED. */
 data WORK.curr_rtg(keep=AC_CODE RATING);
     length AC_CODE $50 RATING $20;
     set LBFRS9.T_MTH_FRS9_AC_RATING_DTL(keep=PROC_DTE AC_CODE RATING ORGL_CR_RATING_FLG);

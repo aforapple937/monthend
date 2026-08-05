@@ -6,12 +6,6 @@
 %let prev_dtm = "%sysfunc(putn(&prev_dt, date9.)):00:00:00"dt;
 %let prv_nxt  = "%sysfunc(putn(%eval(&prev_dt + 1), date9.)):00:00:00"dt;
 
-/* ORIG_RATING is resolved in three steps, in order:
-     1. RATING from AC_RATING_DTL where ORGL_CR_RATING_FLG = Y (the origination
-        rating), if it is neither blank nor UNRATED.
-     2. Otherwise: the prior month's ORIGINAL_RATING on RDL_AC_DTL, if present
-        and not UNRATED.
-     3. Otherwise: the current month's CURR_RATING on the master list. */
 data WORK.orig_rtg(keep=AC_CODE ORGL_RATING);
     length AC_CODE $50 ORGL_RATING $20;
     set LBFRS9.T_MTH_FRS9_AC_RATING_DTL(keep=PROC_DTE AC_CODE RATING ORGL_CR_RATING_FLG

@@ -3,8 +3,6 @@
 %let rpt_dtm = "&rpt_mth:00:00:00"dt;
 %let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
 
-/* V_SEGMENT_ID takes V_SEGMENT_NAME unchanged - an exact copy, not a lookup.
-   A blank name therefore yields a blank id. */
 data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_SEGMENT_NAME V_SEGMENT_ID);
     retain PROC_DTE V_ACCOUNT_NUMBER V_SEGMENT_NAME V_SEGMENT_ID;
     length V_SEGMENT_ID $100;

@@ -3,9 +3,6 @@
 %let rpt_dtm = "&rpt_mth:00:00:00"dt;
 %let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
 
-/* V_CUST_MKT_SUB_SEG maps directly from MKT_SUB_SEG on PARTY_MSTR. PARTY_MSTR is
-   keyed on CIF_NO, so CUSTOMER_ID is rebuilt there as SG + CIF_NO to key against
-   the master list. */
 data WORK.party(keep=CUSTOMER_ID MKT_SUB_SEG);
     length CUSTOMER_ID $50 MKT_SUB_SEG $15;
     set LBFRS9.T_MTH_FRS9_PARTY_MSTR(keep=PROC_DTE CIF_NO MKT_SUB_SEG);
