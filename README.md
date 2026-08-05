@@ -1,7 +1,7 @@
-# Month-End
+# SAS Workspace
 
-SAS programs for the monthly reporting cycle, and the reference material
-needed to write against its tables.
+SAS programs, and the reference material needed to write against the source
+tables.
 
 ## Layout
 
