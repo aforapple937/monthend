@@ -96,10 +96,6 @@ Whether `EIR_ADJ_SCH.ACCOUNT_NUMBER` is suffixed is **[O]** — it joins to
 **multiplying**, back out by dividing. Same on `T_MTH_CURCY_EXCHG` and
 `T_DAL_CURCY_EXCHG`. **[C]**
 
-> An earlier note recorded the **opposite** convention and was wrong despite a
-> **[C]** marker. Confirmed from 30JUN2026: `KWD 4.2054`, `USD 1.2948`,
-> `BND 1.0000` (pegged 1:1 to SGD, which only reads right under multiply).
-
 **Variant currency codes sit alongside the standard ones.** At 30JUN2026: `CNO`
 and `CNH` beside `CNY`; `INO`/`INH`, `KRO`/`KRH`, `TWO`, `IDO`/`IDH`, `MYO`,
 `PHO`/`PHH`, `THO`/`THH`, `VNO` beside their bases. Rates are sometimes
