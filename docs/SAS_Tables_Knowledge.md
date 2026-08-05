@@ -92,11 +92,6 @@ Whether `EIR_ADJ_SCH.ACCOUNT_NUMBER` is suffixed is **[O]** — it joins to
 
 ### Other table-level facts
 
-`ECL Flux` (§11.10) takes the borrower name from this view but
-`MKT_SUB_SEG_DESC` from `PARTY_MSTR`, so it carries a name as held now against a
-segment as at the reporting date. A borrower renamed since month-end shows the
-new name against the old segment. **[C]**
-
 **FX — `EXCHG_RT` is one unit of foreign currency in SGD.** Convert to SGD by
 **multiplying**, back out by dividing. Same on `T_MTH_CURCY_EXCHG` and
 `T_DAL_CURCY_EXCHG`. **[C]**
