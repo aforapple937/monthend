@@ -9,8 +9,8 @@ tables.
 |---|---|
 | `sas/` | one file per program, bare code, copy-and-run |
 | `docs/SAS_Tables_Knowledge.md` | data dictionary — grain, join map, reference files |
-| `reference/tables/` | `PROC CONTENTS` of each source table |
-| `reference/derivations/` | finalised SAS derivation for one column each, `TABLE__COLUMN.sas` |
+| `reference/tables/` | `PROC CONTENTS` of each source table — the authority on columns, types, lengths |
+| `reference/derivations/` | one column's derivation each (IT's Informatica logic in SAS), `TABLE__COLUMN.sas` |
 
 ## Environment
 

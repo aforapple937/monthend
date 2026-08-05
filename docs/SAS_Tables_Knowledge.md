@@ -71,12 +71,3 @@ Include `PROC_DTE` in every join except to `V_T_CIF_MSTR` and
 | `LBFRS9.T_MTH_FRS9_RDL_AC_DTL` | `LBFRS9.T_FRS9_PRD_MSTR` | `SRC_PROD_TYPE_CD` = `PRODUCT_HIERARCHY_CD` | many:1 |
 | `LBFRS9.T_MTH_FRS9_RDL_MSTR_LIST` | `LBFRS9.T_FRS9_PRD_MSTR` | `V_PROD_CODE` = `PRODUCT_HIERARCHY_CD` | many:1 |
 | any table with `CURCY_CODE` | `LBDWH.T_MTH_CURCY_EXCHG` or `LBDWH.T_DAL_CURCY_EXCHG` | `CURCY_CODE` = `CURCY_CODE` | many:1 |
-
----
-
-## 3. Reference files
-
-| Path | Contents |
-|---|---|
-| `reference/tables/LIBRARY_TABLE.txt` | `PROC CONTENTS` — the authority on columns, types, lengths |
-| `reference/derivations/LIBRARY_TABLE__COLUMN.sas` | one column's derivation (IT's Informatica logic in SAS) |
