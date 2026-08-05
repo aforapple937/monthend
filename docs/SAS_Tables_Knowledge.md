@@ -14,7 +14,7 @@ Grain, join map, column rules. Facts are confirmed unless **[I]** inferred or
 ## 1. Grain
 
 `PROC_DTE` = month-end date; part of every key except where noted. All months
-are retained — **every query needs a `PROC_DTE` filter** (§4).
+are retained — **every query needs a `PROC_DTE` filter** (§3).
 
 | Table | Grain | Note |
 |---|---|---|
@@ -25,7 +25,7 @@ are retained — **every query needs a `PROC_DTE` filter** (§4).
 | `PARTY_MSTR` | `PROC_DTE` + `CIF_NO` | |
 | `AC_RATING_DTL` | `PROC_DTE` + `AC_CODE` + `ORGL_CR_RATING_FLG` | **2 rows/account**: `Y` orig, `N` current |
 | `RT_DTL` | `PROC_DTE` + `AC_CODE` + rate period | **many rows/account** |
-| `T_FRS_RT_INTF` | `PROC_DTE` + `AC_CODE` + `RT_EFF_DTE` | **many rows/account** — dedupe (§3 R1) |
+| `T_FRS_RT_INTF` | `PROC_DTE` + `AC_CODE` + `RT_EFF_DTE` | **many rows/account** — dedupe to latest `RT_EFF_DTE` |
 | `LBDWH.T_MTH_CURCY_EXCHG` | `PROC_DTE` + `CURCY_CODE` | monthly rate |
 | `LBDWH.T_DAL_CURCY_EXCHG` | `PROC_DTE` + `CURCY_CODE` | daily rate |
 | `LBDWH.V_T_CIF_MSTR` | `CIF_NO` | **no `PROC_DTE`** — current state |
@@ -69,7 +69,7 @@ Include `PROC_DTE` in every join except to `V_T_CIF_MSTR` and
 | `RDL_AC_DTL` | `V_T_CIF_MSTR` | `CIF_NO` | many:1 |
 | product tables | `AC_RATING_DTL` | `AC_CODE` | **1:2** — filter `ORGL_CR_RATING_FLG` |
 | `LN_DTL` | `RT_DTL` | `AC_CODE` | **1:many** |
-| `LN_DTL` | `T_FRS_RT_INTF` | `AC_CODE` | **1:many** — dedupe first (§3 R1) |
+| `LN_DTL` | `T_FRS_RT_INTF` | `AC_CODE` | **1:many** — dedupe first |
 | product tables | `T_FRS9_PRD_MSTR` | `PRD_CODE` = `PRODUCT_HIERARCHY_CD` | many:1 |
 | `RDL_AC_DTL` | `T_FRS9_PRD_MSTR` | `SRC_PROD_TYPE_CD` = `PRODUCT_HIERARCHY_CD` | many:1 |
 | `RDL_MSTR_LIST` | `T_FRS9_PRD_MSTR` | `V_PROD_CODE` = `PRODUCT_HIERARCHY_CD` | many:1 |
@@ -77,36 +77,9 @@ Include `PROC_DTE` in every join except to `V_T_CIF_MSTR` and
 | `LN_DTL` | `EIR_ADJ_SCH` | `AC_CODE` = `ACCOUNT_NUMBER` | 1:1 |
 | `LN_DTL` | `FUT_REPRICING_<yymm>` | `AC_CODE` | 1:1 |
 
-### Value translations across layers
-
-| Concept | product tables | `RDL_AC_DTL` |
-|---|---|---|
-| entity | `LEGAL_ENTITY_CODE` = `MBB-SG` / `MSL` | `LEGAL_ENTITY` = `001` / `003` |
-| product | `PRD_CODE` | `SRC_PROD_TYPE_CD` (same values) |
-
-`SG_NOSTRO` → `LEVEL_3 = Cash and STF` in `T_FRS9_PRD_MSTR`.
-
 ---
 
-## 3. Column rules
-
-| # | Column / table | Rule |
-|---|---|---|
-| C1 | `EXCHG_RT` | 1 FCY unit = *n* SGD. FCY→SGD: **multiply**. Same on monthly and daily tables |
-| C2 | `RDL_AC_DTL.LCY_LEDGER_BAL` | Only ledger balance — no RCY twin. ACY = LCY ÷ `EXCHG_RT`. Adjacent `RCY_CUR_PAR_BAL` is par, **not** ledger **[O]** whether they pair |
-| S1 | ECL signs | LCY: `WRITEBACK` already negative. RCY: all 4 components **positive** magnitudes. Swapping LCY↔RCY column without changing arithmetic doubles the figure |
-| S2 | RCY identity | `CLOSING = OPENING + CHARGE − WRITEBACK − WRITEOFF` (components positive). Table-wide validity **[O]** |
-| P1 | `*_FY` / `*_FTM` | Year-to-date / month alone. **Exception: EIR = balance, not movement** |
-| P2 | EIR columns on `RDL_AC_DTL` | Use `LCY_EIR_ADJ_AMT` (the balance). `_OPENING_AMT` + `_FY_AMT` = `_AMT` by construction, testable to 2dp only. `_OPENING_AMT`: 31 Dec or prior month? **[O]** |
-| P3 | `RDL_MSTR_LIST.EIR_PREVIOUS` | Prior month's EIR balance **[I]** |
-| R1 | `T_FRS_RT_INTF` | Dedupe to latest `RT_EFF_DTE` per account, **then** filter peg — old peg rows persist underneath. `PRM_RT_NO`: 90 = 1M SORA, 91 = 3M SORA. `RT_EFF_DTE` may be future-dated |
-| R2 | `RT_DTL` | `TIER_INT_RT` = `BASE_RT` + `VAR_RT`. `RT_EFF_DTE`/`RT_END_DTE` are **datetimes** (date format → asterisks) |
-| R3 | `LN_DTL.BASE_RT` | Fixed-then-floating loan in fixed period: holds the **pegged SORA rate**, not the charged fixed rate (`RT_TYP_DESC` = `FIXED RATE` throughout). Not a bug |
-| X1 | `ECL_OPENING_REVAL_RCY`, `ECL_OPENING_FX_DIFF`(`_FTM`), `UWI_OPENING_REVAL_RCY`, `UWI_OPENING_FX_DIFF` | Unused; posted or informational? **[O]** |
-
----
-
-## 4. Query rules
+## 3. Query rules
 
 | # | Rule |
 |---|---|
@@ -120,7 +93,7 @@ Confirmed month-retaining: `RDL_MSTR_LIST`, `RDL_AC_DTL`, product tables,
 
 ---
 
-## 5. Local datasets (non-FRS9)
+## 4. Local datasets (non-FRS9)
 
 | Dataset | Location | Grain | Note |
 |---|---|---|---|
@@ -136,7 +109,7 @@ rows excluded). `LN_DTL.REPRICE_FLAG` beside `REPRICE_DATE`: redundant? **[O]**
 
 ---
 
-## 6. Companion `.txt` files
+## 5. Companion `.txt` files
 
 | File pattern | Contents |
 |---|---|
@@ -146,5 +119,5 @@ rows excluded). `LN_DTL.REPRICE_FLAG` beside `REPRICE_DATE`: redundant? **[O]**
 | `LBFRS9_T_MTH_RSME_CMPLX_PRD_WRK_TBL.txt` | work table for `LN_DTL.ALLOCATED_COST`; not in the monthly flow |
 
 Library-wide defects (fixed in `V_SEGMENT_NAME` only): unbounded
-`datepart(PROC_DTE)` filters (§4), hash lookup variables typed numeric (fix in
+`datepart(PROC_DTE)` filters (§3), hash lookup variables typed numeric (fix in
 the sas-writing skill).
