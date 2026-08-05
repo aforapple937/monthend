@@ -9,6 +9,9 @@ libname sasfiles "C:/Users/FNLNJE/Documents/My SAS Files";
 %let rpt_lbl = %sysfunc(putn(&rpt_dt, date9.));
 %let egl_dir = C:/Users/FNLNJE/Documents/My SAS Files/eglfile;
 
+%let rpt_dtm = "%sysfunc(putn(&rpt_dt, date9.)):00:00:00"dt;
+%let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
+
 options dlcreatedir;
 libname mth "C:/Users/FNLNJE/Documents/My SAS Files/&yymm";
 
@@ -30,16 +33,13 @@ proc sort data=LBFRS9.T_FRS9_PRD_MSTR(keep=PRODUCT_HIERARCHY_CD LEVEL_3)
     by PRODUCT_HIERARCHY_CD;
 run;
 
-%let dt_lo = "&rpt_lbl:00:00:00"dt;
-%let dt_hi = "&rpt_lbl:23:59:59"dt;
-
 %let ml_found = 0;
 
 proc sql noprint;
     select case when count(*) > 0 then 1 else 0 end
       into :ml_found trimmed
       from LBFRS9.T_MTH_FRS9_RDL_MSTR_LIST
-     where PROC_DTE between &dt_lo and &dt_hi;
+     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm;
 quit;
 
 %macro get_mstr;
@@ -49,7 +49,7 @@ quit;
                       (keep=PROC_DTE V_ACCOUNT_NUMBER F_SHORT_TERM_IND
                             F_SHORT_TERM_INCEP_IND
                             V_CUSTOMER_PARENT_GROUP_NAME V_FINANCING_CODE
-                       where=(datepart(PROC_DTE) = &rpt_dt))
+                       where=(PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm))
                   out=work.mstr(rename=(V_ACCOUNT_NUMBER=UNIQUE_ID_NO)
                                 drop=PROC_DTE);
             by V_ACCOUNT_NUMBER;
@@ -84,7 +84,7 @@ proc sort data=LBFRS9.T_MTH_FRS9_RDL_AC_DTL
                     RCY_ECL_WRITE_OFF_FY RCY_INT_UNWIND_CHARGE_FY
                     RCY_INT_UNWIND_WRITEBACK_FY RCY_INT_UNWIND_WRITE_OFF_FY
                     LCY_EIR_ADJ_AMT
-               where=(datepart(PROC_DTE) = &rpt_dt))
+               where=(PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm))
           out=work.acdtl(drop=PROC_DTE);
     by UNIQUE_ID_NO;
 run;
