@@ -18,7 +18,7 @@ are retained — **every query needs a `PROC_DTE` filter** (§3).
 
 | Table | Grain | Note |
 |---|---|---|
-| product tables (×5) | `PROC_DTE` + `AC_CODE` | point-in-time: open accounts only |
+| product tables (×5) | `PROC_DTE` + `AC_CODE` | point-in-time: present through the month it closes, absent after |
 | `LBDWH.V_T_MTH_AC_DTL` | `PROC_DTE` + `AC_CODE` | `AC_CODE` **unsuffixed** here |
 | `RDL_AC_DTL` | `PROC_DTE` + `UNIQUE_ID_NO` | accumulates YTD¹ |
 | `RDL_MSTR_LIST` | `PROC_DTE` + `V_ACCOUNT_NUMBER` | accumulates YTD¹ |
@@ -31,8 +31,8 @@ are retained — **every query needs a `PROC_DTE` filter** (§3).
 | `LBDWH.V_T_CIF_MSTR` | `CIF_NO` | **no `PROC_DTE`** — current state |
 | `T_FRS9_PRD_MSTR` | `PRODUCT_HIERARCHY_CD` | **no `PROC_DTE`** — static |
 
-¹ Once an account appears it stays in every later month, at nil balance after
-closure. Product tables drop it the month after closure.
+¹ Once an account appears in RDL it stays in every later month, at nil balance
+after closure.
 
 ---
 
