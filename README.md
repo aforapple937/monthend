@@ -12,15 +12,6 @@ tables.
 | `reference/tables/` | `PROC CONTENTS` of each source table |
 | `reference/derivations/` | finalised SAS derivation for one column each, `TABLE__COLUMN.sas` |
 
-## The two entities
-
-| Convention | Entity A | Entity B |
-|---|---|---|
-| TB / EGL account string, segment 1 | `128` | `252` |
-| TB shorthand | MBS | MSL |
-| FRS9 `LEGAL_ENTITY_CODE` | `MBB-SG` | `MSL` |
-| FRS9 `CO_CODE` | `001` | `003` |
-
 ## Environment
 
 - SAS 9.4 M8 via Enterprise Guide, `SASApp`, host `SGDWVAPP01SAS` — a **remote
