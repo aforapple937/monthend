@@ -1,252 +1,287 @@
-# SAS Tables Knowledge
+# FRS9 / DWH Table Reference
 
-The FRS9/DWH tables — grains, keys and conventions. Consuming processes are the
-`MER_*` files, mapped in `FRS9_Work_Reference.md`.
+Grains, keys, join paths and the conventions that change how code must be
+written. Scope is the tables only — what a process *does* with them is in the
+`MER_*` files.
 
-Status markers: **[C]** confirmed, **[I]** inferred, **[O]** open.
-
-## The `.txt` companion files
-
-| File | Contents |
-|---|---|
-| `LIBRARY_TABLENAME.txt` | `PROC CONTENTS` of one table |
-| `LIBRARY_TABLENAME__COLUMNNAME.txt` | the derivation of one column, rebuilt in SAS |
-
-The `__COLUMN.txt` files are a **lineage library for reference, not a production
-workstream** — IT's Informatica derivations restated in SAS, so "where does this
-field come from" can be answered without asking IT. Search them before answering
-any lineage question. **[C]**
-
-`FRS9_LN_DTL_pending_derivations.txt` lists the columns not yet rebuilt.
-`LBFRS9_T_MTH_RSME_CMPLX_PRD_WRK_TBL.txt` is a work table feeding the
-`LN_DTL.ALLOCATED_COST` derivation, not a table in the monthly flow. **[C]**
-
-**Two defects run through the library** — fixed in `V_SEGMENT_NAME` only, so
-expect them elsewhere. **[C]**
-
-1. **`datepart(PROC_DTE)` month filters** — correct but slow; fix with the
-   bounded-literal rule in §2.
-2. **Hash lookup variables typed numeric by accident.** A variable appearing
-   only in a `RETAIN` or `CALL MISSING` — never in a `SET` — is created numeric,
-   so `definedone()` fails with `Type mismatch for data variable` against a
-   character lookup column. Fix: `if 0 then set <lookup dataset>;` after the
-   `RETAIN` and before the main `SET`.
+Facts here are confirmed unless marked **[I]** inferred or **[O]** open.
 
 ---
 
-## 1. Data model
+## 1. Model
 
-Monthly IFRS 9 / MFRS 9 Expected Credit Loss (ECL) reporting.
+    LBDWH tables → product INPUT tables → ECL engine → RDL_MSTR_LIST → RDL_AC_DTL
 
-    DWH tables → INPUT tables → ECL engine → MSTR_LIST → RDL
+Monthly IFRS 9 / MFRS 9 Expected Credit Loss reporting. `RDL_MSTR_LIST` is
+engine-native; `RDL_AC_DTL` is the business-named layer derived from it. Both
+sit in `LBFRS9` alongside the input tables.
 
-`LBDWH` tables feed the product input tables in `LBFRS9`, which feed the ECL
-engine. The engine writes the engine-native `RDL_MSTR_LIST`, from which the
-business-named `RDL_AC_DTL` is derived. Both RDL tables sit in `LBFRS9` too, as
-output rather than input.
+The five **product input tables** are `LN_DTL`, `CC_DTL`, `OD_DTL`,
+`INVMT_DTL`, `GUARANTEE_DTL` — referred to collectively throughout.
 
-### Tables
+---
 
-`PROC_DTE` is the month-end date; snapshots are retained month-on-month.
+## 2. Grain
 
-| Table | Grain (unique key) | One row = |
+`PROC_DTE` is the month-end date and part of the key on every table but the two
+noted. Snapshots are retained month-on-month, so **every query needs a
+`PROC_DTE` filter** (§5).
+
+| Table | Grain | Notes |
 |---|---|---|
-| `LBDWH.V_T_MTH_AC_DTL` | `PROC_DTE` + `AC_CODE` | one account, one month |
-| `LBFRS9.T_MTH_FRS9_LN_DTL` | `PROC_DTE` + `AC_CODE` | one account, one month |
-| `LBFRS9.T_MTH_FRS9_CC_DTL` | `PROC_DTE` + `AC_CODE` | one account, one month |
-| `LBFRS9.T_MTH_FRS9_OD_DTL` | `PROC_DTE` + `AC_CODE` | one account, one month |
-| `LBFRS9.T_MTH_FRS9_INVMT_DTL` | `PROC_DTE` + `AC_CODE` | one account, one month |
-| `LBFRS9.T_MTH_FRS9_GUARANTEE_DTL` | `PROC_DTE` + `AC_CODE` | one account, one month |
-| `LBFRS9.T_MTH_FRS9_AC_RATING_DTL` | `PROC_DTE` + `AC_CODE` + `ORGL_CR_RATING_FLG` | one rating for one account, one month |
-| `LBFRS9.T_MTH_FRS9_PARTY_MSTR` | `PROC_DTE` + `CIF_NO` | one customer (party), one month |
-| `LBFRS9.T_MTH_FRS9_RDL_AC_DTL` | `PROC_DTE` + `UNIQUE_ID_NO` | one account, one month |
-| `LBFRS9.T_MTH_FRS9_RDL_MSTR_LIST` | `PROC_DTE` + `V_ACCOUNT_NUMBER` | one account, one month |
-| `LBDWH.V_T_CIF_MSTR` | `CIF_NO` (current state; no `PROC_DTE`) | one customer, as held now |
-| `LBDWH.T_MTH_CURCY_EXCHG` | `PROC_DTE` + `CURCY_CODE` | one currency, one month |
-| `LBDWH.T_DAL_CURCY_EXCHG` | `PROC_DTE` + `CURCY_CODE` | one currency, one date |
-| `LBFRS9.T_FRS9_PRD_MSTR` | `PRODUCT_HIERARCHY_CD` (static; no `PROC_DTE`) | one product-hierarchy code |
+| `LBFRS9.T_MTH_FRS9_LN_DTL` | `PROC_DTE` + `AC_CODE` | point-in-time |
+| `LBFRS9.T_MTH_FRS9_CC_DTL` | `PROC_DTE` + `AC_CODE` | point-in-time |
+| `LBFRS9.T_MTH_FRS9_OD_DTL` | `PROC_DTE` + `AC_CODE` | point-in-time |
+| `LBFRS9.T_MTH_FRS9_INVMT_DTL` | `PROC_DTE` + `AC_CODE` | point-in-time |
+| `LBFRS9.T_MTH_FRS9_GUARANTEE_DTL` | `PROC_DTE` + `AC_CODE` | point-in-time |
+| `LBDWH.V_T_MTH_AC_DTL` | `PROC_DTE` + `AC_CODE` | `AC_CODE` here is **unsuffixed** |
+| `LBFRS9.T_MTH_FRS9_RDL_AC_DTL` | `PROC_DTE` + `UNIQUE_ID_NO` | accumulates (§3) |
+| `LBFRS9.T_MTH_FRS9_RDL_MSTR_LIST` | `PROC_DTE` + `V_ACCOUNT_NUMBER` | accumulates (§3) |
+| `LBFRS9.T_MTH_FRS9_PARTY_MSTR` | `PROC_DTE` + `CIF_NO` | one party |
+| `LBFRS9.T_MTH_FRS9_AC_RATING_DTL` | `PROC_DTE` + `AC_CODE` + `ORGL_CR_RATING_FLG` | **2 rows per account**: `Y` origination, `N` current |
+| `LBFRS9.T_MTH_FRS9_RT_DTL` | `PROC_DTE` + `AC_CODE` + rate period | **many rows per account** |
+| `T_FRS_RT_INTF` | `PROC_DTE` + `AC_CODE` + `RT_EFF_DTE` | **many rows per account**; dedupe (§4) |
+| `LBDWH.T_MTH_CURCY_EXCHG` | `PROC_DTE` + `CURCY_CODE` | one rate per month |
+| `LBDWH.T_DAL_CURCY_EXCHG` | `PROC_DTE` + `CURCY_CODE` | one rate per date |
+| `LBDWH.V_T_CIF_MSTR` | `CIF_NO` | **no `PROC_DTE`** — current state |
+| `LBFRS9.T_FRS9_PRD_MSTR` | `PRODUCT_HIERARCHY_CD` | **no `PROC_DTE`** — static |
 
-### Account keys — the FVOCI suffix and the `AC_CODE` trap
+**Point-in-time vs accumulating.** The product tables hold only accounts open in
+that month. RDL keeps an account in every later month once it appears, so by
+mid-year most RDL rows are dormant and any "all rows for this customer" query
+picks up long-closed accounts at nil balance.
 
-**Every layer carries two account identifiers: the grain key, which appends the
-literal `FVOCI` on FVOCI accounts, and an unsuffixed twin.** **[C]**
+---
 
-| Layer | Grain key — **suffixed** | Twin — **unsuffixed** |
+## 3. Joins
+
+### The FVOCI suffix
+
+Every account layer carries two identifiers: the grain key, which appends the
+literal `FVOCI` on FVOCI accounts, and an unsuffixed twin.
+
+| Layer | Grain key (**suffixed**) | Twin (**unsuffixed**) |
 |---|---|---|
-| 5 product input tables, `V_T_MTH_AC_DTL` | `AC_CODE` | `ORIGINAL_ACCOUNT_NUMBER` |
+| 5 product input tables | `AC_CODE` | `ORIGINAL_ACCOUNT_NUMBER` |
 | `RDL_AC_DTL` | `UNIQUE_ID_NO` | `AC_CODE` |
 | `RDL_MSTR_LIST` | `V_ACCOUNT_NUMBER` | `V_ORIGINAL_ACCOUNT_NUMBER` |
+| `LBDWH.V_T_MTH_AC_DTL` | — | `AC_CODE` |
 
 **`AC_CODE` means opposite things either side of the engine** — suffixed on the
-product tables, unsuffixed on `RDL_AC_DTL`. A cross-layer join on
-`AC_CODE = AC_CODE` silently drops every FVOCI account. Join suffixed-to-suffixed
-(`LN_DTL.AC_CODE = RDL_AC_DTL.UNIQUE_ID_NO`) or unsuffixed-to-unsuffixed
-(`LN_DTL.ORIGINAL_ACCOUNT_NUMBER` to the DWH view). **[C]**
+product tables, unsuffixed on `RDL_AC_DTL`. Joining `AC_CODE = AC_CODE` across
+that boundary silently drops every FVOCI account. Match suffixed to suffixed, or
+unsuffixed to unsuffixed, never across.
 
 An FVOCI account appears in the product tables **once**, as `...FVOCI` only —
-no plain twin row, so nothing summing a product table double-counts it. **[C]**
+there is no plain twin row, so summing a product table cannot double-count it.
 
-`T_FRS_RT_INTF.AC_CODE` and `T_MTH_FRS9_RT_DTL.AC_CODE` are **suffixed**. **[C]**
-Whether `EIR_ADJ_SCH.ACCOUNT_NUMBER` is suffixed is **[O]** — it joins to
-`LN_DTL.AC_CODE`, so if not, FVOCI accounts in the pool drop.
+### Join map
 
-### Other table-level facts
+Add `PROC_DTE` to every join below except those to `V_T_CIF_MSTR` and
+`T_FRS9_PRD_MSTR`, which have none.
 
-**FX — `EXCHG_RT` is one unit of foreign currency in SGD.** Convert to SGD by
-**multiplying**, back out by dividing. Same on `T_MTH_CURCY_EXCHG` and
-`T_DAL_CURCY_EXCHG`. **[C]**
+| From | To | On | Rows returned |
+|---|---|---|---|
+| product tables | `RDL_AC_DTL` | `AC_CODE` = `UNIQUE_ID_NO` | 1:1 |
+| product tables | `V_T_MTH_AC_DTL` | `ORIGINAL_ACCOUNT_NUMBER` = `AC_CODE` | 1:1 |
+| `RDL_AC_DTL` | `RDL_MSTR_LIST` | `UNIQUE_ID_NO` = `V_ACCOUNT_NUMBER` | 1:1 |
+| product tables / `RDL_AC_DTL` | `PARTY_MSTR` | `CIF_NO` | many:1 |
+| `RDL_AC_DTL` | `V_T_CIF_MSTR` | `CIF_NO` | many:1 |
+| product tables | `AC_RATING_DTL` | `AC_CODE` | **1:2** — filter `ORGL_CR_RATING_FLG` |
+| `LN_DTL` | `RT_DTL` | `AC_CODE` (both suffixed) | **1:many** — one per rate period |
+| `LN_DTL` | `T_FRS_RT_INTF` | `AC_CODE` (both suffixed) | **1:many** — dedupe first (§4) |
+| product tables | `T_FRS9_PRD_MSTR` | `PRD_CODE` = `PRODUCT_HIERARCHY_CD` | many:1 |
+| `RDL_AC_DTL` | `T_FRS9_PRD_MSTR` | `SRC_PROD_TYPE_CD` = `PRODUCT_HIERARCHY_CD` | many:1 |
+| `RDL_MSTR_LIST` | `T_FRS9_PRD_MSTR` | `V_PROD_CODE` = `PRODUCT_HIERARCHY_CD` | many:1 |
+| any | `CURCY_EXCHG` | `CURCY_CODE` | many:1 |
+| `LN_DTL` | `EIR_ADJ_SCH` | `AC_CODE` = `ACCOUNT_NUMBER` | 1:1 |
+| `LN_DTL` | `FUT_REPRICING_<yymm>` | `AC_CODE` | 1:1 |
 
-**Ratings (`T_MTH_FRS9_AC_RATING_DTL`)** — up to two rows per account per month
-on `ORGL_CR_RATING_FLG`: `Y` = origination, `N` = current.
+`RDL_AC_DTL.SRC_PROD_TYPE_CD` is the product tables' `PRD_CODE` carried through,
+so RDL rows resolve to a product without joining the input tables.
 
-**`RDL_AC_DTL.GL_AC_ID` is segment 4 of the EGL account string.** It reproduces
-`GL_CODE` from the product input tables **[I]**, so it is source-held, not
-derived:
+`SG_NOSTRO` maps to `LEVEL_3 = Cash and STF`. The EGL Mapping lookup joins from
+`SRC_PROD_TYPE_CD`, so a NOSTRO row resolves only if the engine carries
+`SG_NOSTRO` through to `RDL_AC_DTL`.
 
-- **Loans and guarantees: `00000`** — the **posting convention, not a defect**.
-  ECL on a loan genuinely posts `00000` in segment 4. **[C]**
-- **Investments: a real product code**, so RDL yields the segment-4-to-product
-  mapping for investments (`57131` → `SG_REVRPO`, `58313` → the five bond
-  products) but not for loans. **[C]**
-- **NOSTRO, from Jul26: `00000`.** The §12 spec sets `INVMT_DTL.GL_CODE` to a
-  literal `00000`, so "investments carry a real product code" no longer holds
-  table-wide. **[C]**
+### Entity codes differ by layer
 
-**`LCY_LEDGER_BAL` is the only ledger balance on `RDL_AC_DTL` — no RCY twin.**
-The nearest RCY column, `RCY_CUR_PAR_BAL`, is a different concept: current par
-balance. Whether the two are an LCY/RCY pair is **[O]** — testable by checking
-they match for SGD accounts and their ratio equals `EXCHG_RT` for the rest.
-Until then, the ledger balance in account currency must be derived by dividing
-by `EXCHG_RT`. **[C]**
+`RDL_AC_DTL.LEGAL_ENTITY` uses `CO_CODE` values `001` / `003`. The product input
+tables use `MBB-SG` / `MSL` on `LEGAL_ENTITY_CODE`. Translate when joining or
+filtering on entity across layers.
 
-**`T_FRS_RT_INTF` — rate interface.** Not a `T_MTH_` table but still monthly by
-`PROC_DTE`. Several rows per account, each with an `RT_EFF_DTE` and a
-`PRM_RT_NO` peg code, so dedupe to the latest row before use. `PRM_RT_NO`
-**90 = 1-month SORA, 91 = 3-month SORA**; other codes exist (52 seen). An
-account that has moved off SORA still carries its old 90/91 rows underneath, so
-apply the peg filter **after** the dedupe, never in the read. `RT_EFF_DTE` can
-be **after** the reporting date — these are future-scheduled rates. **[C]**
+---
 
-**`T_MTH_FRS9_RT_DTL` — rate tiers.** One row per account per rate period, so a
-fixed-then-floating loan carries both its fixed and floating tiers. `RT_EFF_DTE`
-and `RT_END_DTE` are **datetimes** — a date format overflows to asterisks.
-`TIER_INT_RT` = `BASE_RT` + `VAR_RT`. **[C]**
+## 4. Column semantics
 
-**On a fixed-then-floating loan inside its fixed period, `LN_DTL.BASE_RT` holds
-the SORA rate the account is pegged to, not the fixed rate it charges.**
-`RT_TYP_DESC` reads `FIXED RATE` throughout. **[C]**
+Facts that change arithmetic or filter logic. Anything derivable from
+`PROC CONTENTS` is deliberately not repeated here.
 
-**`RDL_AC_DTL.SRC_PROD_TYPE_CD` is the `PRD_CODE`** carried through from the
-product files, so RDL rows tie back to a product without joining the input
-tables. **[C]**
+### Currency
 
-**`RDL_AC_DTL.LEGAL_ENTITY` uses the `CO_CODE` convention — `001` / `003`** —
-not the `MBB-SG` / `MSL` strings the product input tables carry on
-`LEGAL_ENTITY_CODE`. Matters wherever RDL is joined or patched on entity. **[C]**
+`EXCHG_RT` is **one unit of foreign currency expressed in SGD**. Convert to SGD
+by **multiplying**; back out by dividing. Same on the monthly and daily tables.
 
-**Market segment lives on both `RDL_AC_DTL` and `PARTY_MSTR`, either usable.**
-The trap: the description column names are **transposed** between them
-(`SUB_MKT_SEG_DESC` against `MKT_SUB_SEG_DESC`), easily misread as absent. **[C]**
-The value domain of `MKT_SUB_SEG_DESC` is not recorded anywhere in this pack and
-differs from `MKT_SUB_SEGMENT` on `RDL_MSTR_LIST`, whose six labels are in
-`LBFRS9_T_MTH_FRS9_RDL_MSTR_LIST__MKT_SUB_SEGMENT.txt`. §11.10 filters on a
-value by literal, so the domain matters — `Open_Items.md` item 10. **[O]**
+`RDL_AC_DTL.LCY_LEDGER_BAL` is the only ledger balance — there is no RCY twin,
+so the account-currency figure must be derived by dividing by `EXCHG_RT`. The
+adjacent `RCY_CUR_PAR_BAL` is a **different concept** (current par balance) and
+is not a substitute. Whether the two are in fact an LCY/RCY pair is **[O]** —
+testable by checking they match for SGD accounts and their ratio equals
+`EXCHG_RT` for the rest.
 
-### EIR columns on RDL
+### Sign conventions
 
-`RDL_AC_DTL` carries four EIR amounts; **only `LCY_EIR_ADJ_AMT` is used**:
+**RCY and LCY signs differ.** `LCY_ECL_WRITEBACK_FTM` is already negative;
+`RCY_ECL_WRITEBACK_FTM` is positive. All four RCY ECL components are positive
+magnitudes. Swapping a column for its twin without changing the arithmetic
+silently doubles the figure.
+
+RCY component identity, all components positive:
+
+    CLOSING = OPENING + CHARGE − WRITEBACK − WRITEOFF
+
+Whether it holds across the whole table is **[O]**.
+
+### Period conventions
+
+`FY` is year-to-date, `FTM` is the month alone. **EIR is the exception — a
+balance, not a movement.** `RDL_AC_DTL` carries four EIR columns:
 
 | Column | Content |
 |---|---|
-| `LCY_EIR_ADJ_AMT` | the EIR adjustment **balance** |
+| `LCY_EIR_ADJ_AMT` | the EIR **balance** — the field to use |
 | `LCY_EIR_ADJ_OPENING_AMT` | opening balance |
 | `LCY_EIR_ADJ_FY_AMT` | financial-year movement |
 | `LCY_EIR_ADJ_FTM_AMT` | movement for the month |
 
-**EIR is the exception to the `FY` convention in §2 — a balance, not a
-year-to-date movement.** So the posting is whole-balance-and-reverse rather than
-movement-based (mechanics: `MER_00` §7), and `LCY_EIR_ADJ_AMT` is the right
-field for balance-meets-balance checks against an accumulated trial balance. The
-other three are **not** substitutes. **[C]**
-
-**`FY_AMT` and `FTM_AMT` are derived from `AMT`, not independently sourced.**
-Patch `LCY_EIR_ADJ_AMT` and the loader recomputes both, so a patch file carries
-the balance alone and is still complete. **[C]** It follows that
 `OPENING_AMT + FY_AMT = AMT` holds by construction, testable only to **2dp**
 given the differing decimal formats. Whether `OPENING_AMT` is the 31 December or
-prior-month balance is **[O]**, and matters only across a year end.
+the prior-month balance is **[O]**, and matters only across a year end.
 
-**The same holds for ECL patches on the LCY side only.** Send
-`LCY_ECL_CLOSING_FY` and the LCY movement columns derive. **[C]**
+`RDL_MSTR_LIST` carries engine-native `EIR`, `EIR_OPENING` and `EIR_PREVIOUS`.
+`EIR_PREVIOUS` is the prior month's balance. **[I]**
 
-> **The RCY twins are not derived.** The loader does not recompute
-> `RCY_ECL_CHARGE_FY`, `RCY_ECL_WRITEBACK_FY` or the `FTM` pair from a patched
-> `RCY_ECL_CLOSING_FY`, so an RCY patch must carry them explicitly. **[C]** This
-> matters because `Post-Posting TB Recon` (§11.9) reconciles on the four RCY
-> **component** columns, not closing — a closing-only RCY patch breaks that
-> recon on every patched account. Whether the LCY derivation reaches the `FTM`
-> pair, and splits charge against writeback the same way, is **[O]**.
+### Which columns the loader derives
 
-`RDL_MSTR_LIST` carries the engine-native `EIR`, `EIR_OPENING` and
-`EIR_PREVIOUS`. **`EIR_PREVIOUS` is the prior month's balance** — the figure
-HO's reversal file should carry, which would let `EGL Reversal Check` test the
-EIR leg against a stated amount rather than last month's posting. **[I]**, unused.
+Patching `LCY_EIR_ADJ_AMT` makes the loader recompute `FY_AMT` and `FTM_AMT`, so
+an EIR patch file carries the balance alone and is still complete. The same
+holds for `LCY_ECL_CLOSING_FY` on the LCY side.
 
-### Fair value columns on RDL
+**The RCY twins are not derived.** `RCY_ECL_CHARGE_FY`, `RCY_ECL_WRITEBACK_FY`
+and the `FTM` pair are not recomputed from a patched `RCY_ECL_CLOSING_FY`, so an
+RCY patch must carry them explicitly. Whether the LCY derivation reaches the
+`FTM` pair, and splits charge against writeback the same way, is **[O]**.
 
-`RDL_AC_DTL` carries `RCY_FAIR_VALUE` and `LCY_FAIR_VALUE`, with
-`SEC_CLS_CD = 'FVOCI'` marking the rows they apply to.
+### Rates
 
-**The engine does not compute these — Singapore does and patches them in**
-(`FVOCI Loan MTM`, §11.12). Two things depend on them landing: next month's
-reversal reads `RCY_FAIR_VALUE` back off RDL rather than recomputing, and
-`Post-Posting TB Recon` (§11.9) uses it as the expected FVOCI GL balance. That
-second dependency is the **control** — a patch that never loads surfaces as an
-FVOCI break in the same cycle, not silently. **[C]**
+`T_FRS_RT_INTF` — **dedupe to the latest `RT_EFF_DTE` per account before use.**
+`PRM_RT_NO` is the peg code: **90 = 1-month SORA, 91 = 3-month SORA**; others
+exist (52 seen). An account that has moved off SORA still carries its old 90/91
+rows underneath, so apply the peg filter **after** the dedupe, never in the read.
+`RT_EFF_DTE` can be later than the reporting date — these are future-scheduled.
 
-### Opening-balance FX columns — not understood
+`RT_DTL` — `TIER_INT_RT` = `BASE_RT` + `VAR_RT`. `RT_EFF_DTE` and `RT_END_DTE`
+are **datetimes**; a date format overflows to asterisks.
+
+`LN_DTL.BASE_RT` on a fixed-then-floating loan inside its fixed period holds the
+**SORA rate it is pegged to, not the fixed rate it charges**, while
+`RT_TYP_DESC` reads `FIXED RATE` throughout.
+
+### Classification and GL
+
+`SEC_CLS_CD` is on `RDL_AC_DTL`; the product input tables carry
+`IFRS9_CLASS_CODE` and the engine derives one from the other. To get `AMRTCOST`
+or `FVOCI` onto RDL, set `IFRS9_CLASS_CODE` on the input.
+
+`RDL_AC_DTL.GL_AC_ID` is segment 4 of the EGL account string, reproducing
+`GL_CODE` from the product tables **[I]**:
+
+- **Loans, guarantees and NOSTRO (from Jul26): `00000`** — posting convention,
+  not a data defect.
+- **Other investments: a real product code**, so RDL yields the
+  segment-4-to-product mapping for investments (`57131` → `SG_REVRPO`,
+  `58313` → the five bond products) but never for loans.
+
+The `GL_ID_*` columns beside each amount are unused — the GL comes from the EGL
+Mapping.
+
+### Fair value
+
+`RCY_FAIR_VALUE` / `LCY_FAIR_VALUE` apply to rows with `SEC_CLS_CD = 'FVOCI'`.
+**The engine does not compute them** — they are marked locally and patched onto
+RDL, so they are absent until that patch lands.
+
+### Market segment
+
+Available on both `RDL_AC_DTL` and `PARTY_MSTR`. The description column names
+are **transposed** between them — `SUB_MKT_SEG_DESC` on RDL against
+`MKT_SUB_SEG_DESC` on `PARTY_MSTR` — which reads as the column being missing.
+The value domain of `MKT_SUB_SEG_DESC` is unrecorded and differs from
+`MKT_SUB_SEGMENT` on `RDL_MSTR_LIST`, whose six labels are in
+`LBFRS9_T_MTH_FRS9_RDL_MSTR_LIST__MKT_SUB_SEGMENT.txt`. **[O]**
+
+### Not understood
 
 `ECL_OPENING_REVAL_RCY`, `ECL_OPENING_FX_DIFF`, `ECL_OPENING_FX_DIFF_FTM`,
-`UWI_OPENING_REVAL_RCY` and `UWI_OPENING_FX_DIFF` on `RDL_AC_DTL`. No process
-reads them; whether they are posted or informational is **[O]** — relevant
-because `Post-Posting TB Recon` reconciles the opening GL against
-`RCY_ECL_OPENING_BAL` alone and records that openings always differ at account
-level.
+`UWI_OPENING_REVAL_RCY`, `UWI_OPENING_FX_DIFF` on `RDL_AC_DTL`. Unused; whether
+posted or informational is **[O]**.
 
-### GL columns stated on RDL
+---
 
-The `GL_ID_*` columns beside each amount are **unused** — every process takes
-the GL from the EGL Mapping instead. Comparing the two would independently
-confirm the mapping. **[C]**
+## 5. Query rules
 
-### Local schedule table — `EIR_ADJ_SCH`
+**Filter `PROC_DTE` with bounded datetime literals** on every `LBFRS9` and
+`LBDWH` table — `>= month end` and `< next day`, rather than equality, so a
+non-midnight timestamp cannot be missed.
 
-Not an FRS9 table. `BASE.EIR_ADJ_SCH` in `My SAS Files` is the **source of
-truth**; `LBDSFAU.EIR_ADJ_SCH` is a full mirror overwritten each month. **[C]**
+`datepart(PROC_DTE)` **does not push down to Oracle**. SAS pulls every retained
+month and filters locally, costing 4×–14× elapsed regardless of step type
+(`SET`, `PROC SORT`, `PROC SQL` all measured Aug26), and the gap widens each
+cycle. The log confirms which ran: literals appear in the `WHERE` sent to
+Oracle, `datepart()` appears as `DATEPART(PROC_DTE)=24318`.
 
-| Grain | One row = |
+Two `datepart()` uses are **fine and should stay**: filtering a WORK table, which
+has no database to push to, and `datepart()` as a conversion in an assignment
+rather than a filter.
+
+**A month's absence cannot be probed with `OBS=`.** Because the filter does not
+push down, the engine applies the row limit first and SAS filters afterwards, so
+`obs=1` tests one arbitrary physical row. Count over a datetime range on the raw
+column instead.
+
+Tables confirmed to retain months: `RDL_MSTR_LIST`, `RDL_AC_DTL`, the five
+product tables, `T_FRS_RT_INTF`, `RT_DTL`, `LBDWH.T_DAL_CURCY_EXCHG`.
+
+---
+
+## 6. Local datasets (not FRS9)
+
+### `EIR_ADJ_SCH`
+
+`BASE.EIR_ADJ_SCH` in `My SAS Files` is the source of truth;
+`LBDSFAU.EIR_ADJ_SCH` is a full mirror overwritten each month.
+
+| Grain | Notes |
 |---|---|
-| `PROC_DTE` + `ACCOUNT_NUMBER` | one pool account, one month |
+| `PROC_DTE` + `ACCOUNT_NUMBER` | key column is `ACCOUNT_NUMBER`, joins to `LN_DTL.AC_CODE` |
 
-The key column is `ACCOUNT_NUMBER`, not `AC_CODE` — it joins to
-`LN_DTL.AC_CODE`. It holds a **closed pool** of MSL accounts (the historical AEL
-catch-up), so it only shrinks; see §11.11. **[C]**
+A **closed pool** of MSL accounts, so it only shrinks. Whether
+`ACCOUNT_NUMBER` carries the FVOCI suffix is **[O]** — if not, FVOCI accounts
+in the pool drop from the join.
 
-### Local schedule table — `FUT_REPRICING_<yymm>`
+### `FUT_REPRICING_<yymm>`
 
-Not an FRS9 table. In `FUTREP` = `My SAS Files\futrep`. **One dataset per
-month**, tagged from `PROC_DTE`, e.g. `FUT_REPRICING_2606`. Written by
-`EIR Future Repricing Adjustment` and read back next month as the reversal
-(§11.13). **[C]**
+In `FUTREP` = `My SAS Files\futrep`. **One dataset per month**, tagged from
+`PROC_DTE` (e.g. `FUT_REPRICING_2606`) — so a rerun overwrites only its own
+month.
 
-| Grain | One row = |
+| Grain | Notes |
 |---|---|
-| `AC_CODE` (one month per dataset) | one future-tagged account, one month |
+| `AC_CODE`, one month per dataset | suffixed, joins to `RDL_AC_DTL.UNIQUE_ID_NO` |
 
 | Column | Note |
 |---|---|
 | `PROC_DTE` | month end, **datetime** not date |
-| `AC_CODE` | joins to `RDL_AC_DTL.UNIQUE_ID_NO`, so suffixed |
 | `PRD_CODE` | one of the four housing-loan codes |
 | `REPRICE_DATE` | later than `PROC_DTE` by construction |
 | `BIZ_UNIT_CODE` | becomes `COST_CENTRE` on the entry |
@@ -255,86 +290,34 @@ month**, tagged from `PROC_DTE`, e.g. `FUT_REPRICING_2606`. Written by
 | `PREV_MTH_EIR` | prior month, the figure the RDL patch holds at |
 | `EIR_DIFF` | current less prior; rows rounding to zero are excluded |
 
-Unlike `EIR_ADJ_SCH` — a single accumulating table with a mirror — this is
-month-per-dataset with none, which makes the write idempotent: a rerun
-overwrites only its own month. **[C]** The oldest month, migrated from Excel,
-carries narrower character widths than the `LN_DTL`-native months. Nothing
-appends months together, so this is harmless unless someone stacks them. **[C]**
+The oldest month, migrated from Excel, has narrower character widths than the
+`LN_DTL`-native months — harmless unless the datasets are stacked.
 
-`LN_DTL` also carries `REPRICE_FLAG` beside `REPRICE_DATE`; the process selects
-on the date alone and whether the flag is redundant is **[O]**.
+`LN_DTL` also carries `REPRICE_FLAG` beside `REPRICE_DATE`; whether it is
+redundant to the date is **[O]**.
 
-### Master listing extract — `MTH.MASTERLISTING_<yymm>`
+### `MTH.MASTERLISTING_<yymm>`
 
-Not an FRS9 table. A local per-month copy of the master listing HO returns, held
-in the month output folder. A **fallback source** for the four `RDL_MSTR_LIST`
-fields the account string and EGL Mapping key need, when `RDL_MSTR_LIST` has not
-yet loaded. One month only, so no date filter. Column names match
-`RDL_MSTR_LIST`. **[C]**
-
-### Product hierarchy master (`T_FRS9_PRD_MSTR`)
-
-Keyed on `PRODUCT_HIERARCHY_CD`, joined from each consuming table's product-code
-field:
-
-| Consuming table | Join field → `PRODUCT_HIERARCHY_CD` |
-|---|---|
-| 5 product input tables | `PRD_CODE` |
-| `RDL_AC_DTL` | `SRC_PROD_TYPE_CD` |
-| `RDL_MSTR_LIST` | `V_PROD_CODE` |
-
-`SG_NOSTRO` maps to `LEVEL_3 = Cash and STF`. **[C]** The EGL Mapping lookup
-joins from `SRC_PROD_TYPE_CD`, not `PRD_CODE`, so a NOSTRO row resolves only if
-the engine carries `SG_NOSTRO` through to `RDL_AC_DTL`.
-
-### Securities classification (`SEC_CLS_CD`)
-
-On `RDL_AC_DTL` only. The product input tables carry `IFRS9_CLASS_CODE` and the
-engine derives one from the other — so a spec needing `AMRTCOST` or `FVOCI` on
-RDL sets `IFRS9_CLASS_CODE` on the input, as the NOSTRO spec does (§12 field
-17). **[C]**
+Per-month copy of the master listing HO returns, in the month output folder.
+A **fallback** for `RDL_MSTR_LIST` fields before that table loads. Holds one
+month, so it needs no date filter; column names match `RDL_MSTR_LIST`.
 
 ---
 
-## 2. Structural facts about RDL
+## 7. The `.txt` companion files
 
-- **RDL accumulates through the year.** An account closed in an earlier month
-  still appears in every later month. The five product files are the opposite —
-  point-in-time, so a closed account appears in the month it closed and not
-  after. **[C]** Hence the ECL Flux filter on non-zero current-month P&L: by
-  mid-year most RDL rows are dormant. Any process taking every row under a
-  customer also picks up long-closed accounts at nil balance.
-- **`FY` is year-to-date, `FTM` is the month.** ECL and UWI postings use `FY`;
-  flux analysis uses `FTM`. EIR is the exception — see above.
-- **RCY and LCY have different sign conventions.** `LCY_ECL_WRITEBACK_FTM` is
-  already negative; `RCY_ECL_WRITEBACK_FTM` is positive. Swapping a column for
-  its twin without changing the arithmetic silently doubles the figure. **[C]**
-  All four RCY ECL components are positive magnitudes, and any hand-built RCY
-  patch must respect that.
-- **The component identity.** In RCY terms, with all four components positive:
-  `CLOSING = OPENING + CHARGE − WRITEBACK − WRITEOFF`. `ECL Manual Override`
-  (§11.15) checks it on the accounts it touches and derives the required year
-  movement as `target − opening + write-off`. Whether it holds across the whole
-  table is **[O]**.
-- **A month's absence from a `T_MTH_` table cannot be probed with `OBS=`.** A
-  `datepart(PROC_DTE)` filter does not push down to Oracle, so the engine
-  applies the row limit and SAS filters afterwards — `obs=1` tests one arbitrary
-  physical row. Count over a datetime range on the raw column instead. **[C]**
-- **That non-pushdown costs 4×–14× elapsed** (measured Aug26, identical rows
-  out). Step shape does not matter — `SET`, `PROC SORT` and `PROC SQL` all
-  gained, including `PROC SQL` joins of an Oracle table to a WORK table. The gap
-  widens by one month's rows every cycle. The log tells you which ran: fast runs
-  print the literals in the `WHERE` sent to Oracle, slow ones print
-  `DATEPART(PROC_DTE)=24318`. **[C]**
-- **Which tables retain months.** `RDL_MSTR_LIST`, `RDL_AC_DTL`, the five
-  product tables, `T_FRS_RT_INTF`, `RT_DTL` and `LBDWH.T_DAL_CURCY_EXCHG` all
-  do. Separate from the point-in-time property of the product files, which is
-  about **account** presence within a month. **[C]**
-- **Standing rule: filter `PROC_DTE` with bounded datetime literals** on every
-  `LBFRS9` and `LBDWH` table. Bounded (`>= month end`, `< next day`) rather than
-  equality, so a non-midnight timestamp cannot be missed. Rollout status:
-  `Open_Items.md` item 13. **[C]**
+| File | Contents |
+|---|---|
+| `LIBRARY_TABLENAME.txt` | `PROC CONTENTS` of one table — the authority on columns, types and lengths |
+| `LIBRARY_TABLENAME__COLUMNNAME.txt` | derivation of one column, IT's Informatica logic restated in SAS |
 
-  Two `datepart()` uses are **not** covered and should stay: a filter on a WORK
-  table, which has no database to push to, and `datepart()` as a conversion in
-  an assignment rather than a filter. **[C]**
+**Search the `__COLUMN.txt` files before answering any lineage question** —
+"where does this field come from", "is this field used anywhere". They are a
+reference library, not a production workstream.
+`FRS9_LN_DTL_pending_derivations.txt` lists columns not yet rebuilt.
+`LBFRS9_T_MTH_RSME_CMPLX_PRD_WRK_TBL.txt` is a work table feeding the
+`LN_DTL.ALLOCATED_COST` derivation, not part of the monthly flow.
+
+Two defects run through the library, fixed in `V_SEGMENT_NAME` only: unbounded
+`datepart(PROC_DTE)` filters (§5), and hash lookup variables typed numeric by
+accident (trap and fix in the sas-writing skill).
