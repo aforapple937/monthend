@@ -1,14 +1,5 @@
 # Data Dictionary
 
-Grain, join map, query rules. Facts are confirmed unless **[I]** inferred or
-**[O]** open. Column inventory (names, types, lengths) is in
-`reference/tables/` (§4), not here.
-
-**Product tables** = `LN_DTL`, `CC_DTL`, `OD_DTL`, `INVMT_DTL`,
-`GUARANTEE_DTL` (all `LBFRS9.T_MTH_FRS9_*`).
-
----
-
 ## 1. Grain
 
 `PROC_DTE` = month-end date; part of every key except where noted. All months
@@ -33,7 +24,8 @@ are retained — **every query needs a `PROC_DTE` filter** (§3).
 | `LBDWH` | `V_T_CIF_MSTR` | `CIF_NO` | **no `PROC_DTE`** — current state |
 | `LBFRS9` | `T_FRS9_PRD_MSTR` | `PRODUCT_HIERARCHY_CD` | **no `PROC_DTE`** — static |
 
-¹ Present through the month the account closes, absent after.
+¹ The five **product tables**, as referenced below. Present through the month
+the account closes, absent after.
 ² Once an account appears it stays in every later month, at nil balance after
 closure.
 
