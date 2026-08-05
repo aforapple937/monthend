@@ -93,23 +93,7 @@ Confirmed month-retaining: `RDL_MSTR_LIST`, `RDL_AC_DTL`, product tables,
 
 ---
 
-## 4. Local datasets (non-FRS9)
-
-| Dataset | Location | Grain | Note |
-|---|---|---|---|
-| `EIR_ADJ_SCH` | `BASE` (`My SAS Files`) = source of truth; `LBDSFAU` = monthly-overwritten mirror | `PROC_DTE` + `ACCOUNT_NUMBER` | Closed, shrinking pool of MSL accounts. Key joins to `LN_DTL.AC_CODE`; FVOCI-suffixed? **[O]** |
-| `FUT_REPRICING_<yymm>` | `FUTREP` = `My SAS Files\futrep` | `AC_CODE`, **one dataset per month** | Suffixed; joins to `RDL_AC_DTL.UNIQUE_ID_NO`. Rerun overwrites own month only. Oldest month has narrower char widths — don't stack |
-| `MTH.MASTERLISTING_<yymm>` | month output folder | one month per dataset | Fallback for `RDL_MSTR_LIST` fields before it loads; same column names; no date filter needed |
-
-`FUT_REPRICING` columns: `PROC_DTE` (**datetime** month end), `PRD_CODE` (4
-housing-loan codes), `REPRICE_DATE` (> `PROC_DTE`), `BIZ_UNIT_CODE` (→
-`COST_CENTRE`), `FINANCING_CODE` (`C`/`I` → `SUB_ACCOUNT`), `CURR_MTH_EIR`
-(= `LCY_EIR_ADJ_AMT`, missing → 0), `PREV_MTH_EIR`, `EIR_DIFF` (zero-rounded
-rows excluded). `LN_DTL.REPRICE_FLAG` beside `REPRICE_DATE`: redundant? **[O]**
-
----
-
-## 5. Companion `.txt` files
+## 4. Companion `.txt` files
 
 | File pattern | Contents |
 |---|---|
