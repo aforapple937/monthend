@@ -2,7 +2,7 @@
 
 ## 1. Grain
 
-`PROC_DTE` = month-end date; all months are retained (filter per §3).
+`PROC_DTE` = month-end date; all months are retained.
 
 | Library | Table | Grain | Note |
 |---|---|---|---|
@@ -74,19 +74,7 @@ Include `PROC_DTE` in every join except to `V_T_CIF_MSTR` and
 
 ---
 
-## 3. Query rules
-
-| # | Rule |
-|---|---|
-| Q1 | Filter `PROC_DTE` with **bounded datetime literals**: `>= month end` and `< next day`. Never equality (non-midnight timestamps), never `datepart()` |
-| Q2 | `datepart(PROC_DTE)` does not push down to Oracle — SAS pulls all retained months and filters locally: 4×–14× elapsed, worsening monthly. Log check: fast = literals in the `WHERE` sent to Oracle; slow = `DATEPART(PROC_DTE)=…` |
-| Q3 | `datepart()` stays fine on WORK tables and as a conversion in assignments — only database filters are affected |
-| Q4 | Never probe a month's presence with `OBS=` — the row limit applies before the local filter, so `obs=1` tests one arbitrary row. Count over a datetime range instead |
-
-
----
-
-## 4. Reference files
+## 3. Reference files
 
 | Path | Contents |
 |---|---|
