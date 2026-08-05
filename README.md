@@ -22,12 +22,10 @@ tables.
 - `My SAS Files\posttb` — post-processing trial balances.
 - `My SAS Files\eglfile` — the posting and reversal files HO returns.
 - `My SAS Files\patch` — patch files awaiting verification, cleared monthly.
-- `My SAS Files\<yymm>` — per-month outputs, created by `options dlcreatedir`;
-  `<yymm>\glte` holds that month's GL uploads.
-- The prompt variable is `PROC_DTE`, a Date prompt yielding `30JUN2026`. It
-  collides in name with the `PROC_DTE` **column** on every FRS9 table: inside a
-  DATA step reading one of those, `PROC_DTE` is the column and `&PROC_DTE` is
-  the prompt.
+- `My SAS Files\<yymm>` — per-month outputs; `<yymm>\glte` holds that month's
+  GL uploads.
+- The existing date prompt is named `PROC_DTE` (yields `30JUN2026`) — the same
+  name as the `PROC_DTE` column on every FRS9 table.
 
 ## The server is runtime truth
 
@@ -35,12 +33,8 @@ tables.
 server is what actually runs. A change is only real once it reaches the server —
 committing here does not deploy it.
 
-## What goes where
+## One fact, one home
 
-- A fact about a table, grain, key or derivation → `docs/SAS_Tables_Knowledge.md`
-- SAS conventions and traps → the sas-writing skill, never this repo
-- Environment behaviour → this file
-
-**One fact, one home.** If something is recorded elsewhere, point to it rather
-than restating it — a fact in two places becomes a contradiction the first time
-one copy changes.
+If something is recorded elsewhere, point to it rather than restating it — a
+fact in two places becomes a contradiction the first time one copy changes.
+SAS conventions and traps live in the sas-writing skill, never this repo.
