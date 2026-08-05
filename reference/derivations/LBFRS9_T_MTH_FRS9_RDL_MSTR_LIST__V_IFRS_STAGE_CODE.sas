@@ -1,5 +1,7 @@
 %let rpt_mth = 30JUN2026;
 %let rpt_dt  = %sysfunc(inputn(&rpt_mth, date9.));
+%let rpt_dtm = "&rpt_mth:00:00:00"dt;
+%let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
 
 /* V_IFRS_STAGE_CODE defaults to STAGE1 and is promoted to STAGE2 under the
    staging rules below, then to STAGE3 if any STAGE3 rule applies. STAGE3 rules
@@ -19,7 +21,7 @@ run;
 data WORK.invmt_flags(keep=AC_CODE CMA_FLAG CNTRL_BY_TREASURY_FLAG);
     length AC_CODE $50 CMA_FLAG $1 CNTRL_BY_TREASURY_FLAG $1;
     set LBFRS9.T_MTH_FRS9_INVMT_DTL(keep=PROC_DTE AC_CODE CMA_FLAG CNTRL_BY_TREASURY_FLAG);
-    where datepart(PROC_DTE) = &rpt_dt;
+    where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm;
 run;
 
 data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_SEGMENT_TYPE V_PROD_CODE
@@ -51,7 +53,8 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_SEGMENT_TYPE V_PROD_CODE
                                              F_EXPOSURE_DEFAULT_STATUS_FLAG IMPAIRED_FLAG
                                              CUSTOMER_ID
                                              N_OUTSTANDING_AMT N_UNDRAWN_AMOUNT_RCY);
-    where datepart(PROC_DTE) = &rpt_dt and V_D_ACCOUNT_STATUS = "Active";
+    where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm
+          and V_D_ACCOUNT_STATUS = "Active";
 
     if _n_ = 1 then do;
         declare hash h(dataset:"WORK.prd_hier");
@@ -158,7 +161,8 @@ quit;
 proc sql noprint;
     select EXCHG_RT into :fx_myr trimmed
     from LBDWH.T_MTH_CURCY_EXCHG
-    where datepart(PROC_DTE) = &rpt_dt and CURCY_CODE = "&thr_ccy";
+    where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm
+          and CURCY_CODE = "&thr_ccy";
 quit;
 
 /* Attach customer total. */

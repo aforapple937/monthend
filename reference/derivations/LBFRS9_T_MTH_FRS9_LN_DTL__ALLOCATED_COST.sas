@@ -1,4 +1,7 @@
-%let rpt_mth     = '30APR2026'd;
+%let rpt_mth     = 30APR2026;
+%let rpt_dt      = %sysfunc(inputn(&rpt_mth, date9.));
+%let rpt_dtm     = "&rpt_mth:00:00:00"dt;
+%let nxt_dtm     = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
 
 /*--------------------------------------------------------------------------
   ALLOCATED_COST derivation - new loans pro-rata allocation of GL movement
@@ -38,14 +41,17 @@
 
   Assumptions to confirm (no metadata available for these objects):
     - LBFRS9.T_MTH_RSME_CMPLX_PRD_WRK_TBL.PROC_DTE is a SAS datetime
-      (DATETIME20.) like the other FRS9 tables, so datepart() is used.
+      (DATETIME20.) like the other FRS9 tables, so the bounded datetime
+      literals below apply to it.
     - RSME status is taken as at &rpt_mth.
     - CIF_NO is keyed consistently between LBDWH.V_T_MTH_AC_DTL and the
       RSME table so the join matches.
 --------------------------------------------------------------------------*/
 
-%let rpt_mth_num = %sysfunc(month(&rpt_mth));
-%let prev_mth    = %sysfunc(intnx(month, &rpt_mth, -1, end));
+%let rpt_mth_num = %sysfunc(month(&rpt_dt));
+%let prev_mth    = %sysfunc(intnx(month, &rpt_dt, -1, end));
+%let prev_dtm    = "%sysfunc(putn(&prev_mth, date9.)):00:00:00"dt;
+%let prv_nxt     = "%sysfunc(putn(%eval(&prev_mth + 1), date9.)):00:00:00"dt;
 
 /*--------------------------------------------------------------------------
   STEP 1a: Current month loans
@@ -67,7 +73,7 @@ proc sql;
                 when BIZ_PRD_CODE = 'ISLMCPPTYLN'       then 'ISLMCPPTYLN'
             end as PRD_GRP length=20
     from LBDWH.V_T_MTH_AC_DTL
-    where datepart(PROC_DTE) = &rpt_mth
+    where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm
       and CO_CODE = '003'
       and LCY_TOT_OS > 0
       and CR_STS_CODE = '1'
@@ -85,7 +91,7 @@ proc sql;
     create table WORK.prev_loans as
     select distinct AC_CODE
     from LBFRS9.T_MTH_FRS9_LN_DTL
-    where datepart(PROC_DTE) = &prev_mth
+    where PROC_DTE >= &prev_dtm and PROC_DTE < &prv_nxt
     ;
 quit;
 
@@ -99,7 +105,7 @@ proc sql;
     create table WORK.repriced as
     select distinct AC_CODE
     from LBDWH.T_MSG_AC_DTL
-    where datepart(PROC_DTE) = &rpt_mth
+    where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm
       and MSG_TYP_CODE = '400'
     ;
 quit;
@@ -116,7 +122,7 @@ proc sql;
     create table WORK.rsme_cifs as
     select distinct CIF_NO
     from LBFRS9.T_MTH_RSME_CMPLX_PRD_WRK_TBL
-    where datepart(PROC_DTE) = &rpt_mth
+    where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm
       and RSME_IN_OUT_FLG = 'IN'
     ;
 quit;
@@ -193,12 +199,12 @@ quit;
                 end as COST_POOL length=4
 
               /* current month GL sum */
-              , sum(case when datepart(PROC_DTE) = &rpt_mth
+              , sum(case when PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm
                          then LCY_AGR_BAL else 0 end) as LCY_AGR_BAL_CURR
 
         %if &rpt_mth_num ne 1 %then %do;
               /* prior month GL sum */
-              , sum(case when datepart(PROC_DTE) = &prev_mth
+              , sum(case when PROC_DTE >= &prev_dtm and PROC_DTE < &prv_nxt
                          then LCY_AGR_BAL else 0 end) as LCY_AGR_BAL_PREV
 
               /* month-on-month movement */
@@ -212,10 +218,11 @@ quit;
 
         from LBDWH.T_DAL_GLBAL
         %if &rpt_mth_num ne 1 %then %do;
-        where datepart(PROC_DTE) in (&rpt_mth, &prev_mth)
+        where ( (PROC_DTE >= &rpt_dtm  and PROC_DTE < &nxt_dtm)
+             or (PROC_DTE >= &prev_dtm and PROC_DTE < &prv_nxt) )
         %end;
         %else %do;
-        where datepart(PROC_DTE) = &rpt_mth
+        where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm
         %end;
           and CO_CODE = '003'
           and (
