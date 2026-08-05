@@ -161,17 +161,6 @@ the prior-month balance is **[O]**, and matters only across a year end.
 `RDL_MSTR_LIST` carries engine-native `EIR`, `EIR_OPENING` and `EIR_PREVIOUS`.
 `EIR_PREVIOUS` is the prior month's balance. **[I]**
 
-### Which columns the loader derives
-
-Patching `LCY_EIR_ADJ_AMT` makes the loader recompute `FY_AMT` and `FTM_AMT`, so
-an EIR patch file carries the balance alone and is still complete. The same
-holds for `LCY_ECL_CLOSING_FY` on the LCY side.
-
-**The RCY twins are not derived.** `RCY_ECL_CHARGE_FY`, `RCY_ECL_WRITEBACK_FY`
-and the `FTM` pair are not recomputed from a patched `RCY_ECL_CLOSING_FY`, so an
-RCY patch must carry them explicitly. Whether the LCY derivation reaches the
-`FTM` pair, and splits charge against writeback the same way, is **[O]**.
-
 ### Rates
 
 `T_FRS_RT_INTF` — **dedupe to the latest `RT_EFF_DTE` per account before use.**
