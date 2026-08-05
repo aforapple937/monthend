@@ -2,8 +2,7 @@
 
 ## 1. Grain
 
-`PROC_DTE` = month-end date; part of every key except where noted. All months
-are retained — **every query needs a `PROC_DTE` filter** (§3).
+`PROC_DTE` = month-end date; all months are retained (filter per §3).
 
 | Library | Table | Grain | Note |
 |---|---|---|---|
