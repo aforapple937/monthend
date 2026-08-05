@@ -8,6 +8,11 @@ libname sasfiles "C:/Users/FNLNJE/Documents/My SAS Files";
 %let rpt_lbl = %sysfunc(putn(&rpt_dt, date9.));
 %let mon_lbl = %upcase(%sysfunc(putn(&rpt_dt, monyy5.)));
 
+%let rpt_dtm = "%sysfunc(putn(&rpt_dt, date9.)):00:00:00"dt;
+%let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
+%let prv_dtm = "%sysfunc(putn(&prv_dt, date9.)):00:00:00"dt;
+%let prv_nxt = "%sysfunc(putn(%eval(&prv_dt + 1), date9.)):00:00:00"dt;
+
 %let prd_scope = SG_MSTRGD;
 
 options dlcreatedir;
@@ -90,7 +95,7 @@ proc sql;
            a.RCY_ECL_WRITEBACK_FTM,
            a.RCY_ECL_WRITE_OFF_FTM
       from LBFRS9.T_MTH_FRS9_RDL_AC_DTL as a
-     where datepart(a.PROC_DTE) = &rpt_dt
+     where a.PROC_DTE >= &rpt_dtm and a.PROC_DTE < &nxt_dtm
        and a.CIF_NO in (&cif_sql)
        and a.SRC_PROD_TYPE_CD = "&prd_scope";
 quit;
@@ -127,16 +132,13 @@ proc sort data=work.pop;  by UNIQUE_ID_NO;  run;
 %mend;
 %guard_population
 
-%let dt_lo = "&rpt_lbl:00:00:00"dt;
-%let dt_hi = "&rpt_lbl:23:59:59"dt;
-
 %let ml_found = 0;
 
 proc sql noprint;
     select case when count(*) > 0 then 1 else 0 end
       into :ml_found trimmed
       from LBFRS9.T_MTH_FRS9_RDL_MSTR_LIST
-     where PROC_DTE between &dt_lo and &dt_hi;
+     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm;
 quit;
 
 %macro get_mstr;
@@ -146,7 +148,7 @@ quit;
                       (keep=PROC_DTE V_ACCOUNT_NUMBER F_SHORT_TERM_IND
                             F_SHORT_TERM_INCEP_IND
                             V_CUSTOMER_PARENT_GROUP_NAME V_FINANCING_CODE
-                       where=(datepart(PROC_DTE) = &rpt_dt))
+                       where=(PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm))
                   out=work.mstr(rename=(V_ACCOUNT_NUMBER=UNIQUE_ID_NO)
                                 drop=PROC_DTE);
             by V_ACCOUNT_NUMBER;
@@ -187,7 +189,7 @@ run;
 
 data work.fx(keep=CURCY_CODE EXCHG_RT);
     set LBDWH.T_MTH_CURCY_EXCHG(keep=PROC_DTE CURCY_CODE EXCHG_RT);
-    where datepart(PROC_DTE) = &rpt_dt;
+    where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm;
 run;
 
 proc sort data=work.fx nodupkey;  by CURCY_CODE;  run;
@@ -201,7 +203,7 @@ proc sort data=work.party nodupkey;  by CIF_NO;  run;
 data work.prv(keep=UNIQUE_ID_NO PRV_CLOSING_FY);
     set LBFRS9.T_MTH_FRS9_RDL_AC_DTL(keep=PROC_DTE UNIQUE_ID_NO RCY_ECL_CLOSING_FY
              rename=(RCY_ECL_CLOSING_FY = PRV_CLOSING_FY));
-    where datepart(PROC_DTE) = &prv_dt;
+    where PROC_DTE >= &prv_dtm and PROC_DTE < &prv_nxt;
 run;
 
 proc sort data=work.prv nodupkey;  by UNIQUE_ID_NO;  run;
