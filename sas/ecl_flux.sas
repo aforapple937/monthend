@@ -8,16 +8,23 @@ libname sasfiles "C:/Users/FNLNJE/Documents/My SAS Files";
 %let rpt_lbl = %sysfunc(putn(&rpt_dt, date9.));
 %let prv_lbl = %sysfunc(putn(&prv_dt, date9.));
 
+%let rpt_dtm = "%sysfunc(putn(&rpt_dt, date9.)):00:00:00"dt;
+%let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
+
 options dlcreatedir;
 libname mth "C:/Users/FNLNJE/Documents/My SAS Files/&yymm";
 
 %macro pull_month(dt=, out=, ftm=);
+    %local dtm nxt;
+    %let dtm = "%sysfunc(putn(&dt, date9.)):00:00:00"dt;
+    %let nxt = "%sysfunc(putn(%eval(&dt + 1), date9.)):00:00:00"dt;
+
     data work.&out;
         set LBFRS9.T_MTH_FRS9_RDL_AC_DTL
             (keep=PROC_DTE CIF_NO LEGAL_ENTITY RATING STAGE_CLASSIFICATION
                   LCY_ECL_CLOSING_FY LCY_EAD_AMT
                   %if &ftm %then LCY_ECL_CHARGE_FTM LCY_ECL_WRITEBACK_FTM;
-             where=(datepart(PROC_DTE) = &dt));
+             where=(PROC_DTE >= &dtm and PROC_DTE < &nxt));
         length ENTITY $3;
         select (strip(LEGAL_ENTITY));
             when ("001") ENTITY = "MBS";
@@ -63,7 +70,7 @@ run;
 
 proc sort data=LBFRS9.T_MTH_FRS9_PARTY_MSTR
               (keep=PROC_DTE CIF_NO MKT_SUB_SEG_DESC
-               where=(datepart(PROC_DTE) = &rpt_dt))
+               where=(PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm))
           out=work.party(drop=PROC_DTE) nodupkey;
     by CIF_NO;
 run;
