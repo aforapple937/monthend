@@ -1,8 +1,8 @@
 # Data Dictionary
 
-Grain, join map, column rules. Facts are confirmed unless **[I]** inferred or
-**[O]** open. Column inventory (names, types, lengths) is in the `.txt` files
-(§7), not here.
+Grain, join map, query rules. Facts are confirmed unless **[I]** inferred or
+**[O]** open. Column inventory (names, types, lengths) is in
+`reference/tables/` (§4), not here.
 
     LBDWH → product INPUT tables → ECL engine → RDL_MSTR_LIST → RDL_AC_DTL
 
@@ -93,15 +93,11 @@ Confirmed month-retaining: `RDL_MSTR_LIST`, `RDL_AC_DTL`, product tables,
 
 ---
 
-## 4. Companion `.txt` files
+## 4. Reference files
 
-| File pattern | Contents |
+| Path | Contents |
 |---|---|
-| `LIBRARY_TABLE.txt` | `PROC CONTENTS` — the authority on columns, types, lengths |
-| `LIBRARY_TABLE__COLUMN.txt` | one column's derivation (IT's Informatica logic in SAS) — **search before any lineage question** |
-| `FRS9_LN_DTL_pending_derivations.txt` | columns not yet rebuilt |
-| `LBFRS9_T_MTH_RSME_CMPLX_PRD_WRK_TBL.txt` | work table for `LN_DTL.ALLOCATED_COST`; not in the monthly flow |
-
-Library-wide defects (fixed in `V_SEGMENT_NAME` only): unbounded
-`datepart(PROC_DTE)` filters (§3), hash lookup variables typed numeric (fix in
-the sas-writing skill).
+| `reference/tables/LIBRARY_TABLE.txt` | `PROC CONTENTS` — the authority on columns, types, lengths |
+| `reference/derivations/LIBRARY_TABLE__COLUMN.sas` | one column's derivation (IT's Informatica logic in SAS) — **search before any lineage question** |
+| `reference/derivations/FRS9_LN_DTL_pending_derivations.txt` | columns not yet rebuilt |
+| `reference/tables/LBFRS9_T_MTH_RSME_CMPLX_PRD_WRK_TBL.txt` | work table for `LN_DTL.ALLOCATED_COST`; not in the monthly flow |
