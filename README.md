@@ -27,12 +27,6 @@ tables.
 - The existing date prompt is named `PROC_DTE` (yields `30JUN2026`) — the same
   name as the `PROC_DTE` column on every FRS9 table.
 
-## The server is runtime truth
-
-`sas/` holds the reference copy of each program. The stored process on the SAS
-server is what actually runs. A change is only real once it reaches the server —
-committing here does not deploy it.
-
 ## One fact, one home
 
 If something is recorded elsewhere, point to it rather than restating it — a
