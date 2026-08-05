@@ -1,6 +1,10 @@
 %let rpt_mth  = 30JUN2026;
 %let rpt_dt   = %sysfunc(inputn(&rpt_mth, date9.));
+%let rpt_dtm  = "&rpt_mth:00:00:00"dt;
+%let nxt_dtm  = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
 %let prev_dt  = %sysfunc(intnx(month, &rpt_dt, -1, end));
+%let prev_dtm = "%sysfunc(putn(&prev_dt, date9.)):00:00:00"dt;
+%let prv_nxt  = "%sysfunc(putn(%eval(&prev_dt + 1), date9.)):00:00:00"dt;
 
 /* ORIG_RATING is resolved in three steps, in order:
      1. RATING from AC_RATING_DTL where ORGL_CR_RATING_FLG = Y (the origination
@@ -12,7 +16,8 @@ data WORK.orig_rtg(keep=AC_CODE ORGL_RATING);
     length AC_CODE $50 ORGL_RATING $20;
     set LBFRS9.T_MTH_FRS9_AC_RATING_DTL(keep=PROC_DTE AC_CODE RATING ORGL_CR_RATING_FLG
                                         rename=(RATING=ORGL_RATING));
-    where datepart(PROC_DTE) = &rpt_dt and ORGL_CR_RATING_FLG = 'Y';
+    where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm
+          and ORGL_CR_RATING_FLG = 'Y';
 run;
 
 data WORK.prev_orig(keep=V_ACCOUNT_NUMBER PREV_ORIG_RATING);
@@ -20,7 +25,7 @@ data WORK.prev_orig(keep=V_ACCOUNT_NUMBER PREV_ORIG_RATING);
     set LBFRS9.T_MTH_FRS9_RDL_AC_DTL(keep=PROC_DTE UNIQUE_ID_NO ORIGINAL_RATING
                                      rename=(UNIQUE_ID_NO=V_ACCOUNT_NUMBER
                                              ORIGINAL_RATING=PREV_ORIG_RATING));
-    where datepart(PROC_DTE) = &prev_dt;
+    where PROC_DTE >= &prev_dtm and PROC_DTE < &prv_nxt;
 run;
 
 data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER ORGL_RATING PREV_ORIG_RATING
@@ -30,7 +35,8 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER ORGL_RATING PREV_ORIG_RATI
     length ORIG_RATING $20 AC_CODE $50 ORGL_RATING $20 PREV_ORIG_RATING $20;
     set LBFRS9.T_MTH_FRS9_RDL_MSTR_LIST(keep=PROC_DTE V_ACCOUNT_NUMBER V_D_ACCOUNT_STATUS
                                              CURR_RATING);
-    where datepart(PROC_DTE) = &rpt_dt and V_D_ACCOUNT_STATUS = "Active";
+    where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm
+          and V_D_ACCOUNT_STATUS = "Active";
 
     if _n_ = 1 then do;
         declare hash o(dataset:"WORK.orig_rtg");
