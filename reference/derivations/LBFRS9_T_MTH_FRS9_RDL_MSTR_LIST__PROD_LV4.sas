@@ -31,6 +31,8 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_PROD_CODE LEVEL_4 PROD_L
     rc = h.find();
 
     PROD_LV4 = LEVEL_4;
+    if PROD_LV4 = "STD with Other Bank and FI" then
+        PROD_LV4 = "Short Term Deposit with Other Bank and FI";
 run;
 
 proc datasets library=WORK nolist;
