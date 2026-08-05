@@ -6,7 +6,7 @@
 /* CE_TYPE is reached in two hops from V_PROD_CODE:
    V_PROD_CODE -> N_PRODUCT_DISPLAY_CODE (stg_products_b_intf_SG)
                -> V_ATTRIBUTE_ASSIGN_VALUE (stg_products_attr_intf_SG, where the
-                  attribute label is CE Type).
+                  attribute label is CE_PRODUCT_TYPE).
    A product with no attribute row is left blank. */
 data WORK.prod_disp(keep=V_PROD_CODE N_PRODUCT_DISPLAY_CODE);
     length V_PROD_CODE $50;
@@ -17,7 +17,7 @@ run;
    lookup 1:1 on N_PRODUCT_DISPLAY_CODE. */
 data WORK.ce_attr(keep=N_PRODUCT_DISPLAY_CODE V_ATTRIBUTE_ASSIGN_VALUE);
     set WORK.stg_products_attr_intf_SG;
-    where strip(V_ATTRIBUTE_VARCHAR_LABEL) = 'CE Type';
+    where strip(V_ATTRIBUTE_VARCHAR_LABEL) = 'CE_PRODUCT_TYPE';
 run;
 
 data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_PROD_CODE
