@@ -99,5 +99,4 @@ Confirmed month-retaining: `RDL_MSTR_LIST`, `RDL_AC_DTL`, product tables,
 |---|---|
 | `reference/tables/LIBRARY_TABLE.txt` | `PROC CONTENTS` — the authority on columns, types, lengths |
 | `reference/derivations/LIBRARY_TABLE__COLUMN.sas` | one column's derivation (IT's Informatica logic in SAS) — **search before any lineage question** |
-| `reference/derivations/FRS9_LN_DTL_pending_derivations.txt` | columns not yet rebuilt |
 | `reference/tables/LBFRS9_T_MTH_RSME_CMPLX_PRD_WRK_TBL.txt` | work table for `LN_DTL.ALLOCATED_COST`; not in the monthly flow |
