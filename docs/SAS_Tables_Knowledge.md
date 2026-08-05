@@ -14,8 +14,9 @@ Grain, join map, query rules. Facts are confirmed unless **[I]** inferred or
 `PROC_DTE` = month-end date; part of every key except where noted. All months
 are retained — **every query needs a `PROC_DTE` filter** (§3).
 
-Library is `LBFRS9` unless prefixed `LBDWH.`; short names elide the
-`T_MTH_FRS9_` prefix.
+Library is `LBFRS9` unless prefixed `LBDWH.`. Names not starting `T_` elide
+the `T_MTH_FRS9_` prefix (`RDL_AC_DTL` = `LBFRS9.T_MTH_FRS9_RDL_AC_DTL`);
+names starting `T_` are already full (`T_FRS_RT_INTF` = `LBFRS9.T_FRS_RT_INTF`).
 
 | Table | Grain | Note |
 |---|---|---|
