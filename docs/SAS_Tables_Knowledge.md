@@ -25,7 +25,7 @@ are retained — **every query needs a `PROC_DTE` filter** (§3).
 | `PARTY_MSTR` | `PROC_DTE` + `CIF_NO` | |
 | `AC_RATING_DTL` | `PROC_DTE` + `AC_CODE` + `ORGL_CR_RATING_FLG` | **2 rows/account**: `Y` orig, `N` current |
 | `RT_DTL` | `PROC_DTE` + `AC_CODE` + rate period | **many rows/account** |
-| `T_FRS_RT_INTF` | `PROC_DTE` + `AC_CODE` + `RT_EFF_DTE` | **many rows/account** — dedupe to latest `RT_EFF_DTE` |
+| `T_FRS_RT_INTF` | `PROC_DTE` + `AC_CODE` + `RT_EFF_DTE` | **many rows/account** |
 | `LBDWH.T_MTH_CURCY_EXCHG` | `PROC_DTE` + `CURCY_CODE` | monthly rate |
 | `LBDWH.T_DAL_CURCY_EXCHG` | `PROC_DTE` + `CURCY_CODE` | daily rate |
 | `LBDWH.V_T_CIF_MSTR` | `CIF_NO` | **no `PROC_DTE`** — current state |
