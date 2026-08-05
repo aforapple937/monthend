@@ -96,17 +96,6 @@ Whether `EIR_ADJ_SCH.ACCOUNT_NUMBER` is suffixed is **[O]** — it joins to
 **multiplying**, back out by dividing. Same on `T_MTH_CURCY_EXCHG` and
 `T_DAL_CURCY_EXCHG`. **[C]**
 
-**Variant currency codes sit alongside the standard ones.** At 30JUN2026: `CNO`
-and `CNH` beside `CNY`; `INO`/`INH`, `KRO`/`KRH`, `TWO`, `IDO`/`IDH`, `MYO`,
-`PHO`/`PHH`, `THO`/`THH`, `VNO` beside their bases. Rates are sometimes
-identical, sometimes slightly different; `CNH` is the offshore renminbi code, so
-these look like onshore/offshore book splits. **[I]** on `O` and `H`.
-
-This bites wherever `CURCY_CODE` is a grouping or join key, since a variant and
-its base are unrelated currencies: a `CNY` benchmark will not match a `CNO`
-account, and a journal keyed on the code posts them as separate lines. Whether
-any account carries a variant code is **[O]**.
-
 **Ratings (`T_MTH_FRS9_AC_RATING_DTL`)** — up to two rows per account per month
 on `ORGL_CR_RATING_FLG`: `Y` = origination, `N` = current.
 
