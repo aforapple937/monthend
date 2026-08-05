@@ -3,7 +3,6 @@
 %let rpt_dtm = "&rpt_mth:00:00:00"dt;
 %let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
 
-/* CUSTOMER_ID is the CIF_NO from the product input tables, prefixed with SG. */
 data WORK.cif(keep=AC_CODE CIF_NO);
     length AC_CODE $50 CIF_NO $50;
     set LBFRS9.T_MTH_FRS9_LN_DTL        (keep=PROC_DTE AC_CODE CIF_NO)

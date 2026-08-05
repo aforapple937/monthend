@@ -3,7 +3,6 @@
 %let rpt_dtm = "&rpt_mth:00:00:00"dt;
 %let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
 
-/* V_LV_CODE sources from LEGAL_ENTITY_CODE on the product input tables. */
 data WORK.legal_ent(keep=AC_CODE LEGAL_ENTITY_CODE);
     length LEGAL_ENTITY_CODE $20;
     set LBFRS9.T_MTH_FRS9_LN_DTL        (keep=PROC_DTE AC_CODE LEGAL_ENTITY_CODE)

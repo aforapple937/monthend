@@ -3,11 +3,6 @@
 %let rpt_dtm = "&rpt_mth:00:00:00"dt;
 %let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
 
-/* CORPORATE_SCORECARD sources from the credit-score-source field on the product
-   input tables. Four tables (LN, CC, INVMT, GUARANTEE) carry CREDIT_SCORE_SOURCE;
-   OD carries the equivalent under ORGL_EXT_CREDIT_SCORE_SOURCE. Both are kept as
-   separate columns; an account appears in only one input table, so exactly one of
-   them is populated and CORPORATE_SCORECARD takes whichever it is. */
 data WORK.credit_src(keep=AC_CODE CREDIT_SCORE_SOURCE ORGL_EXT_CREDIT_SCORE_SOURCE);
     length CREDIT_SCORE_SOURCE $10 ORGL_EXT_CREDIT_SCORE_SOURCE $40;
     set LBFRS9.T_MTH_FRS9_LN_DTL        (keep=PROC_DTE AC_CODE CREDIT_SCORE_SOURCE)

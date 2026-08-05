@@ -3,10 +3,6 @@
 %let rpt_dtm = "&rpt_mth:00:00:00"dt;
 %let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
 
-/* ECL_METHOD is resolved in three steps, in order:
-     1. STAGE3 accounts are provisioned specifically.
-     2. Otherwise, an UNRATED current rating has no PD/LGD to model.
-     3. Otherwise: the standard PD/LGD method. */
 data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_IFRS_STAGE_CODE
                             CURR_RATING ECL_METHOD);
     retain PROC_DTE V_ACCOUNT_NUMBER V_IFRS_STAGE_CODE

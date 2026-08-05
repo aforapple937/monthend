@@ -3,8 +3,6 @@
 %let rpt_dtm = "&rpt_mth:00:00:00"dt;
 %let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
 
-/* MKT_SUB_SEGMENT maps the V_CUST_MKT_SUB_SEG code to its label.
-   Unmapped codes are left blank. */
 data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_CUST_MKT_SUB_SEG MKT_SUB_SEGMENT);
     retain PROC_DTE V_ACCOUNT_NUMBER V_CUST_MKT_SUB_SEG MKT_SUB_SEGMENT;
     length MKT_SUB_SEGMENT $20;

@@ -3,8 +3,6 @@
 %let rpt_dtm = "&rpt_mth:00:00:00"dt;
 %let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
 
-/* V_SEGMENT_TYPE maps V_SEGMENT_NAME to a segment class.
-   Unmapped names are left blank. */
 data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_SEGMENT_NAME V_SEGMENT_TYPE);
     retain PROC_DTE V_ACCOUNT_NUMBER V_SEGMENT_NAME V_SEGMENT_TYPE;
     length V_SEGMENT_TYPE $60;

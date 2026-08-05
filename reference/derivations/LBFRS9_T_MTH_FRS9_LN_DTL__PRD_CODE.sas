@@ -2,9 +2,6 @@
 %let rpt_dt  = %sysfunc(inputn(&rpt_mth, date9.));
 %let rpt_dtm = "&rpt_mth:00:00:00"dt;
 %let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
-/*--------------------------------------------------------------------------
-  STEP 1: V_T_MTH_AC_DTL logic fields for the reporting month
---------------------------------------------------------------------------*/
 proc sql;
     create table WORK.v_ref as
     select  AC_CODE
@@ -18,20 +15,14 @@ proc sql;
     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm
     ;
 quit;
-/*--------------------------------------------------------------------------
-  STEP 2: MSG accounts for the month (NOT ISNULL existence check)
---------------------------------------------------------------------------*/
 proc sql;
     create table WORK.msg_ac as
     select distinct AC_CODE
     from LBDWH.T_MSG_AC_DTL
     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm
-      and MSG_TYP_CODE in ('225','XXX')   
+      and MSG_TYP_CODE in ('225','XXX')
     ;
 quit;
-/*--------------------------------------------------------------------------
-  STEP 3: LN_DTL keys + V logic fields (V_*) + MSG existence flag
---------------------------------------------------------------------------*/
 proc sql;
     create table WORK.ln_with_ref as
     select  l.PROC_DTE
@@ -50,9 +41,6 @@ proc sql;
       and l.ACCT_STATUS_CODE = "Active"
     ;
 quit;
-/*--------------------------------------------------------------------------
-  STEP 4: Apply the nested IIF logic -> PRD_CODE
---------------------------------------------------------------------------*/
 data WORK.ln_derived;
     set WORK.ln_with_ref;
     length PRD_CODE $30;
@@ -74,9 +62,6 @@ data WORK.ln_derived;
     else
         PRD_CODE = 'SG_' || strip(V_BIZ_PRD_CODE);
 run;
-/*--------------------------------------------------------------------------
-  STEP 5: Drop intermediates (keep WORK.LN_DERIVED)
---------------------------------------------------------------------------*/
 proc datasets library=WORK nolist;
     delete v_ref msg_ac ln_with_ref;
 quit;

@@ -3,7 +3,6 @@
 %let rpt_dtm = "&rpt_mth:00:00:00"dt;
 %let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
 
-/* V_CCY_CODE sources from CURCY_CODE on the product input tables. */
 data WORK.ccy(keep=AC_CODE CURCY_CODE);
     length CURCY_CODE $3;
     set LBFRS9.T_MTH_FRS9_LN_DTL        (keep=PROC_DTE AC_CODE CURCY_CODE)
