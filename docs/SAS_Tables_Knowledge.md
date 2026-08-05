@@ -187,39 +187,6 @@ are **datetimes**; a date format overflows to asterisks.
 **SORA rate it is pegged to, not the fixed rate it charges**, while
 `RT_TYP_DESC` reads `FIXED RATE` throughout.
 
-### Classification and GL
-
-`SEC_CLS_CD` is on `RDL_AC_DTL`; the product input tables carry
-`IFRS9_CLASS_CODE` and the engine derives one from the other. To get `AMRTCOST`
-or `FVOCI` onto RDL, set `IFRS9_CLASS_CODE` on the input.
-
-`RDL_AC_DTL.GL_AC_ID` is segment 4 of the EGL account string, reproducing
-`GL_CODE` from the product tables **[I]**:
-
-- **Loans, guarantees and NOSTRO (from Jul26): `00000`** — posting convention,
-  not a data defect.
-- **Other investments: a real product code**, so RDL yields the
-  segment-4-to-product mapping for investments (`57131` → `SG_REVRPO`,
-  `58313` → the five bond products) but never for loans.
-
-The `GL_ID_*` columns beside each amount are unused — the GL comes from the EGL
-Mapping.
-
-### Fair value
-
-`RCY_FAIR_VALUE` / `LCY_FAIR_VALUE` apply to rows with `SEC_CLS_CD = 'FVOCI'`.
-**The engine does not compute them** — they are marked locally and patched onto
-RDL, so they are absent until that patch lands.
-
-### Market segment
-
-Available on both `RDL_AC_DTL` and `PARTY_MSTR`. The description column names
-are **transposed** between them — `SUB_MKT_SEG_DESC` on RDL against
-`MKT_SUB_SEG_DESC` on `PARTY_MSTR` — which reads as the column being missing.
-The value domain of `MKT_SUB_SEG_DESC` is unrecorded and differs from
-`MKT_SUB_SEGMENT` on `RDL_MSTR_LIST`, whose six labels are in
-`LBFRS9_T_MTH_FRS9_RDL_MSTR_LIST__MKT_SUB_SEGMENT.txt`. **[O]**
-
 ### Not understood
 
 `ECL_OPENING_REVAL_RCY`, `ECL_OPENING_FX_DIFF`, `ECL_OPENING_FX_DIFF_FTM`,
