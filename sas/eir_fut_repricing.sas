@@ -2,8 +2,10 @@
 
 %let rpt_dt     = %sysfunc(inputn(&PROC_DTE, date9.));
 %let prv_dt     = %sysfunc(intnx(month, &rpt_dt, -1, e));
-%let rpt_lit    = "%sysfunc(putn(&rpt_dt, date9.)):00:00:00"dt;
-%let prv_lit    = "%sysfunc(putn(&prv_dt, date9.)):00:00:00"dt;
+%let rpt_dtm    = "%sysfunc(putn(&rpt_dt, date9.)):00:00:00"dt;
+%let nxt_dtm    = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
+%let prv_dtm    = "%sysfunc(putn(&prv_dt, date9.)):00:00:00"dt;
+%let prv_nxt    = "%sysfunc(putn(%eval(&prv_dt + 1), date9.)):00:00:00"dt;
 %let curr_yymm  = %sysfunc(putn(&rpt_dt, yymmn4.));
 %let prev_yymm  = %sysfunc(putn(&prv_dt, yymmn4.));
 %let rpt_lbl    = %sysfunc(putn(&rpt_dt, date9.));
@@ -41,7 +43,7 @@ options nodlcreatedir;
               , FINANCING_CODE
               , LEGAL_ENTITY_CODE
         from LBFRS9.T_MTH_FRS9_LN_DTL
-        where PROC_DTE = &rpt_lit
+        where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm
           and REPRICE_DATE > PROC_DTE
           and PRD_CODE in ('SG_HDBHL', 'SG_HL', 'SG_ISLMHL', 'SG_STFHL')
         ;
@@ -70,10 +72,12 @@ options nodlcreatedir;
         from        WORK.TARGET_ACCOUNTS            as a
         left join   LBFRS9.T_MTH_FRS9_RDL_AC_DTL    as cur
             on  a.AC_CODE     = cur.UNIQUE_ID_NO
-            and cur.PROC_DTE  = &rpt_lit
+            and cur.PROC_DTE >= &rpt_dtm
+            and cur.PROC_DTE <  &nxt_dtm
         left join   LBFRS9.T_MTH_FRS9_RDL_AC_DTL    as prv
             on  a.AC_CODE     = prv.UNIQUE_ID_NO
-            and prv.PROC_DTE  = &prv_lit
+            and prv.PROC_DTE >= &prv_dtm
+            and prv.PROC_DTE <  &prv_nxt
         ;
 
         select count(*) into :n_no_curr trimmed
