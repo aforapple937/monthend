@@ -15,8 +15,8 @@ tables.
 ## Environment
 
 - SAS 9.4 M8 via Enterprise Guide, `SASApp`, host `SGDWVAPP01SAS` — a **remote
-  server**, not the local PC. The server has its own `C:\Users\FNLNJE` profile,
-  so `fileexist` on a desktop path returns 1 while pointing at a different,
+  server**, not the local PC. The server has its own user profile, so
+  `fileexist` on a desktop path returns 1 while pointing at a different,
   near-empty folder. Files reach the server through EG's Servers pane.
 - `My SAS Files\PRETB` — trial balances, cleared monthly.
 - `My SAS Files\posttb` — post-processing trial balances.
