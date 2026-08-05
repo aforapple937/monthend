@@ -26,9 +26,3 @@ tables.
   GL uploads.
 - The existing date prompt is named `PROC_DTE` (yields `30JUN2026`) — the same
   name as the `PROC_DTE` column on every FRS9 table.
-
-## One fact, one home
-
-If something is recorded elsewhere, point to it rather than restating it — a
-fact in two places becomes a contradiction the first time one copy changes.
-SAS conventions and traps live in the sas-writing skill, never this repo.
