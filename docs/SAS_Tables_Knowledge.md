@@ -1,4 +1,4 @@
-# FRS9 / DWH Data Dictionary
+# Data Dictionary
 
 Grain, join map, column rules. Facts are confirmed unless **[I]** inferred or
 **[O]** open. Column inventory (names, types, lengths) is in the `.txt` files
