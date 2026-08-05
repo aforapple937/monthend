@@ -2,8 +2,6 @@
 
 %let rpt_dt  = %sysfunc(inputn(&PROC_DTE, date9.));
 %let prv_dt  = %sysfunc(intnx(month, &rpt_dt, -1, e));
-%let rpt_lit = "%sysfunc(putn(&rpt_dt, date9.)):00:00:00"dt;
-%let prv_lit = "%sysfunc(putn(&prv_dt, date9.)):00:00:00"dt;
 %let yymm    = %sysfunc(putn(&rpt_dt, yymmn4.));
 %let rpt_lbl = %sysfunc(putn(&rpt_dt, date9.));
 %let prv_lbl = %sysfunc(putn(&prv_dt, date9.));
@@ -50,11 +48,16 @@ proc sql noprint;
 quit;
 
 %macro pull_month(dt=, out=);
+    %local dtm nxt;
+    %let dtm = "%sysfunc(putn(&dt, date9.)):00:00:00"dt;
+    %let nxt = "%sysfunc(putn(%eval(&dt + 1), date9.)):00:00:00"dt;
+
     data work.&out;
         set LBFRS9.T_MTH_FRS9_RDL_AC_DTL
             (keep=PROC_DTE CIF_NO LEGAL_ENTITY RATING STAGE_CLASSIFICATION
                   LCY_ECL_CLOSING_FY LCY_EAD_AMT
-             where=(PROC_DTE = &dt and CIF_NO in (&cif_in)));
+             where=(PROC_DTE >= &dtm and PROC_DTE < &nxt
+                    and CIF_NO in (&cif_in)));
         length ENTITY $3;
         select (strip(LEGAL_ENTITY));
             when ("001") ENTITY = "MBS";
@@ -94,8 +97,8 @@ quit;
         %return;
     %end;
 
-    %pull_month(dt=&rpt_lit, out=cur)
-    %pull_month(dt=&prv_lit, out=prv)
+    %pull_month(dt=&rpt_dt, out=cur)
+    %pull_month(dt=&prv_dt, out=prv)
 
     data work.cif_all;
         length CIF_NO $50 CIF_NAME $255;
