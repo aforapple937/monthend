@@ -14,27 +14,28 @@ Grain, join map, query rules. Facts are confirmed unless **[I]** inferred or
 `PROC_DTE` = month-end date; part of every key except where noted. All months
 are retained — **every query needs a `PROC_DTE` filter** (§3).
 
-Library is `LBFRS9` unless prefixed `LBDWH.`. Names not starting `T_` elide
-the `T_MTH_FRS9_` prefix (`RDL_AC_DTL` = `LBFRS9.T_MTH_FRS9_RDL_AC_DTL`);
-names starting `T_` are already full (`T_FRS_RT_INTF` = `LBFRS9.T_FRS_RT_INTF`).
+| Library | Table | Grain | Note |
+|---|---|---|---|
+| `LBFRS9` | `T_MTH_FRS9_LN_DTL` | `PROC_DTE` + `AC_CODE` | point-in-time¹ |
+| `LBFRS9` | `T_MTH_FRS9_CC_DTL` | `PROC_DTE` + `AC_CODE` | point-in-time¹ |
+| `LBFRS9` | `T_MTH_FRS9_OD_DTL` | `PROC_DTE` + `AC_CODE` | point-in-time¹ |
+| `LBFRS9` | `T_MTH_FRS9_INVMT_DTL` | `PROC_DTE` + `AC_CODE` | point-in-time¹ |
+| `LBFRS9` | `T_MTH_FRS9_GUARANTEE_DTL` | `PROC_DTE` + `AC_CODE` | point-in-time¹ |
+| `LBDWH` | `V_T_MTH_AC_DTL` | `PROC_DTE` + `AC_CODE` | `AC_CODE` **unsuffixed** here |
+| `LBFRS9` | `T_MTH_FRS9_RDL_AC_DTL` | `PROC_DTE` + `UNIQUE_ID_NO` | accumulates YTD² |
+| `LBFRS9` | `T_MTH_FRS9_RDL_MSTR_LIST` | `PROC_DTE` + `V_ACCOUNT_NUMBER` | accumulates YTD² |
+| `LBFRS9` | `T_MTH_FRS9_PARTY_MSTR` | `PROC_DTE` + `CIF_NO` | |
+| `LBFRS9` | `T_MTH_FRS9_AC_RATING_DTL` | `PROC_DTE` + `AC_CODE` + `ORGL_CR_RATING_FLG` | **2 rows/account**: `Y` orig, `N` current |
+| `LBFRS9` | `T_MTH_FRS9_RT_DTL` | `PROC_DTE` + `AC_CODE` + rate period | **many rows/account** |
+| `LBFRS9` | `T_FRS_RT_INTF` | `PROC_DTE` + `AC_CODE` + `RT_EFF_DTE` | **many rows/account** |
+| `LBDWH` | `T_MTH_CURCY_EXCHG` | `PROC_DTE` + `CURCY_CODE` | monthly rate |
+| `LBDWH` | `T_DAL_CURCY_EXCHG` | `PROC_DTE` + `CURCY_CODE` | daily rate |
+| `LBDWH` | `V_T_CIF_MSTR` | `CIF_NO` | **no `PROC_DTE`** — current state |
+| `LBFRS9` | `T_FRS9_PRD_MSTR` | `PRODUCT_HIERARCHY_CD` | **no `PROC_DTE`** — static |
 
-| Table | Grain | Note |
-|---|---|---|
-| product tables (×5) | `PROC_DTE` + `AC_CODE` | point-in-time: present through the month it closes, absent after |
-| `LBDWH.V_T_MTH_AC_DTL` | `PROC_DTE` + `AC_CODE` | `AC_CODE` **unsuffixed** here |
-| `RDL_AC_DTL` | `PROC_DTE` + `UNIQUE_ID_NO` | accumulates YTD¹ |
-| `RDL_MSTR_LIST` | `PROC_DTE` + `V_ACCOUNT_NUMBER` | accumulates YTD¹ |
-| `PARTY_MSTR` | `PROC_DTE` + `CIF_NO` | |
-| `AC_RATING_DTL` | `PROC_DTE` + `AC_CODE` + `ORGL_CR_RATING_FLG` | **2 rows/account**: `Y` orig, `N` current |
-| `RT_DTL` | `PROC_DTE` + `AC_CODE` + rate period | **many rows/account** |
-| `T_FRS_RT_INTF` | `PROC_DTE` + `AC_CODE` + `RT_EFF_DTE` | **many rows/account** |
-| `LBDWH.T_MTH_CURCY_EXCHG` | `PROC_DTE` + `CURCY_CODE` | monthly rate |
-| `LBDWH.T_DAL_CURCY_EXCHG` | `PROC_DTE` + `CURCY_CODE` | daily rate |
-| `LBDWH.V_T_CIF_MSTR` | `CIF_NO` | **no `PROC_DTE`** — current state |
-| `T_FRS9_PRD_MSTR` | `PRODUCT_HIERARCHY_CD` | **no `PROC_DTE`** — static |
-
-¹ Once an account appears in RDL it stays in every later month, at nil balance
-after closure.
+¹ Present through the month the account closes, absent after.
+² Once an account appears it stays in every later month, at nil balance after
+closure.
 
 ---
 
