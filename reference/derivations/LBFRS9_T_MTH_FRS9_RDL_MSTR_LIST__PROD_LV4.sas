@@ -3,9 +3,6 @@
 %let rpt_dtm = "&rpt_mth:00:00:00"dt;
 %let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
 
-/* PROD_LV4 is LEVEL_4 from the product hierarchy master, keyed
-   V_PROD_CODE -> PRODUCT_HIERARCHY_CD. A code with no hierarchy row is left
-   blank. The master is static - no PROC_DTE. */
 data WORK.prd_hier(keep=V_PROD_CODE LEVEL_4);
     length V_PROD_CODE $50 LEVEL_4 $100;
     set LBFRS9.T_FRS9_PRD_MSTR(keep=PRODUCT_HIERARCHY_CD LEVEL_4
@@ -31,6 +28,10 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_PROD_CODE LEVEL_4 PROD_L
     rc = h.find();
 
     PROD_LV4 = LEVEL_4;
+    /* T_FRS9_PRD_MSTR holds "STD with Other Bank and FI", but the engine
+       output carries the spelt-out value - the MFRS9 engine's product level
+       derivation is sourced from HO REDW, not T_FRS9_PRD_MSTR. Remap to
+       match. */
     if PROD_LV4 = "STD with Other Bank and FI" then
         PROD_LV4 = "Short Term Deposit with Other Bank and FI";
 run;
