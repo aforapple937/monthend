@@ -1,14 +1,14 @@
-# FRS9 Month-End
+# Month-End
 
-IFRS 9 ECL and EIR adjustment reporting for the Singapore entities. This repo
-holds the SAS programs and the reasoning behind them.
+SAS programs for the monthly reporting cycle, and the reference material
+needed to write against its tables.
 
 ## Layout
 
 | Path | Contents |
 |---|---|
 | `sas/` | one file per program, bare code, copy-and-run |
-| `docs/SAS_Tables_Knowledge.md` | data model — tables, grains, keys, conventions |
+| `docs/SAS_Tables_Knowledge.md` | data dictionary — grain, join map, reference files |
 | `reference/tables/` | `PROC CONTENTS` of each source table |
 | `reference/derivations/` | finalised SAS derivation for one column each, `TABLE__COLUMN.sas` |
 
@@ -20,8 +20,6 @@ holds the SAS programs and the reasoning behind them.
 | TB shorthand | MBS | MSL |
 | FRS9 `LEGAL_ENTITY_CODE` | `MBB-SG` | `MSL` |
 | FRS9 `CO_CODE` | `001` | `003` |
-
-Which convention sits on which table is in `docs/SAS_Tables_Knowledge.md`.
 
 ## Environment
 
@@ -39,16 +37,6 @@ Which convention sits on which table is in `docs/SAS_Tables_Knowledge.md`.
   collides in name with the `PROC_DTE` **column** on every FRS9 table: inside a
   DATA step reading one of those, `PROC_DTE` is the column and `&PROC_DTE` is
   the prompt.
-- A multi-value prompt arrives as `&NAME_count` plus `&NAME1..&NAMEn`, never as
-  one delimited string. A single value still comes through as `&NAME1` with
-  `_count = 1`. There is no `&NAME0`.
-- `*ProcessBody;` must be the first line of any stored process.
-- **A wrapper macro must not take the name of a SAS autocall macro.** `%STPEND`
-  calls `%QLEFT`, which calls `%VERIFY`, so a stored process defining its own
-  `%macro verify` has that macro re-entered from inside a macro expression where
-  no step can execute. The code all runs, then `%STPEND` aborts and no result
-  package is returned. Names to avoid: `VERIFY`, `LEFT`, `TRIM`, `CMPRES`,
-  `QLEFT`, `QTRIM`, `DATATYP`, `SYSRC`. Prefix with the process name instead.
 
 ## The server is runtime truth
 
@@ -65,10 +53,3 @@ committing here does not deploy it.
 **One fact, one home.** If something is recorded elsewhere, point to it rather
 than restating it — a fact in two places becomes a contradiction the first time
 one copy changes.
-
-## What the docs are for
-
-They hold what the code cannot say: why it is done this way. Each process
-section is **Confirmed** and **Open questions**, bullets only. Not included:
-anything readable off the code, general SAS or accounting knowledge, inferences
-stated as fact, or version history.
