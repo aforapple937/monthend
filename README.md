@@ -11,8 +11,6 @@ holds the SAS programs and the reasoning behind them.
 | `docs/MER_11_Stored_Processes.md` | why each stored process works the way it does — §11.1 to §11.16 |
 | `docs/MER_00_Cycle_and_Posting.md` | shared machinery: cycle sequence, EGL mapping, account string, posting mechanics, TB exports, HO's files |
 | `docs/SAS_Tables_Knowledge.md` | data model — tables, grains, keys, conventions |
-| `docs/Open_Items.md` | in-flight work, UAT, blocked questions |
-| `docs/Accounting_Positions.md` | accounting positions and working notes |
 | `docs/MER_12_NOSTRO_Enhancement.md` | NOSTRO ECL enhancement spec |
 | `reference/tables/` | `PROC CONTENTS` of each source table |
 | `reference/derivations/` | finalised SAS derivation for one column each, `TABLE__COLUMN.sas` |
@@ -67,8 +65,6 @@ committing here does not deploy it.
 - Anything about one stored process → its section in
   `docs/MER_11_Stored_Processes.md`
 - Shared machinery → `docs/MER_00_Cycle_and_Posting.md`
-- In-flight work, blocked questions → `docs/Open_Items.md`
-- Accounting positions → `docs/Accounting_Positions.md`
 - SAS conventions and traps → the sas-writing skill, never this repo
 - Environment behaviour → this file
 
