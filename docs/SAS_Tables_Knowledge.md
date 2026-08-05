@@ -12,7 +12,7 @@ are retained — **every query needs a `PROC_DTE` filter** (§3).
 | `LBFRS9` | `T_MTH_FRS9_OD_DTL` | `PROC_DTE` + `AC_CODE` | point-in-time¹ |
 | `LBFRS9` | `T_MTH_FRS9_INVMT_DTL` | `PROC_DTE` + `AC_CODE` | point-in-time¹ |
 | `LBFRS9` | `T_MTH_FRS9_GUARANTEE_DTL` | `PROC_DTE` + `AC_CODE` | point-in-time¹ |
-| `LBDWH` | `V_T_MTH_AC_DTL` | `PROC_DTE` + `AC_CODE` | `AC_CODE` **unsuffixed** here |
+| `LBDWH` | `V_T_MTH_AC_DTL` | `PROC_DTE` + `AC_CODE` | |
 | `LBFRS9` | `T_MTH_FRS9_RDL_AC_DTL` | `PROC_DTE` + `UNIQUE_ID_NO` | accumulates YTD² |
 | `LBFRS9` | `T_MTH_FRS9_RDL_MSTR_LIST` | `PROC_DTE` + `V_ACCOUNT_NUMBER` | accumulates YTD² |
 | `LBFRS9` | `T_MTH_FRS9_PARTY_MSTR` | `PROC_DTE` + `CIF_NO` | |
@@ -24,8 +24,7 @@ are retained — **every query needs a `PROC_DTE` filter** (§3).
 | `LBDWH` | `V_T_CIF_MSTR` | `CIF_NO` | **no `PROC_DTE`** — current state |
 | `LBFRS9` | `T_FRS9_PRD_MSTR` | `PRODUCT_HIERARCHY_CD` | **no `PROC_DTE`** — static |
 
-¹ The five **product tables**, as referenced below. Present through the month
-the account closes, absent after.
+¹ Present through the month the account closes, absent after.
 ² Once an account appears it stays in every later month, at nil balance after
 closure.
 
@@ -36,22 +35,43 @@ closure.
 Include `PROC_DTE` in every join except to `V_T_CIF_MSTR` and
 `T_FRS9_PRD_MSTR`.
 
+`On` reads from-column = to-column.
+
 | From | To | On | Cardinality |
 |---|---|---|---|
-| product tables | `RDL_AC_DTL` | `AC_CODE` = `UNIQUE_ID_NO` | 1:1 |
-| product tables | `V_T_MTH_AC_DTL` | `ORIGINAL_ACCOUNT_NUMBER` = `AC_CODE` | 1:1 |
-| `RDL_AC_DTL` | `RDL_MSTR_LIST` | `UNIQUE_ID_NO` = `V_ACCOUNT_NUMBER` | 1:1 |
-| product tables / `RDL_AC_DTL` | `PARTY_MSTR` | `CIF_NO` | many:1 |
-| `RDL_AC_DTL` | `V_T_CIF_MSTR` | `CIF_NO` | many:1 |
-| product tables | `AC_RATING_DTL` | `AC_CODE` | **1:2** — filter `ORGL_CR_RATING_FLG` |
-| `LN_DTL` | `RT_DTL` | `AC_CODE` | **1:many** |
-| `LN_DTL` | `T_FRS_RT_INTF` | `AC_CODE` | **1:many** — dedupe first |
-| product tables | `T_FRS9_PRD_MSTR` | `PRD_CODE` = `PRODUCT_HIERARCHY_CD` | many:1 |
-| `RDL_AC_DTL` | `T_FRS9_PRD_MSTR` | `SRC_PROD_TYPE_CD` = `PRODUCT_HIERARCHY_CD` | many:1 |
-| `RDL_MSTR_LIST` | `T_FRS9_PRD_MSTR` | `V_PROD_CODE` = `PRODUCT_HIERARCHY_CD` | many:1 |
-| any | `CURCY_EXCHG` | `CURCY_CODE` | many:1 |
-| `LN_DTL` | `EIR_ADJ_SCH` | `AC_CODE` = `ACCOUNT_NUMBER` | 1:1 |
-| `LN_DTL` | `FUT_REPRICING_<yymm>` | `AC_CODE` | 1:1 |
+| `LBFRS9.T_MTH_FRS9_LN_DTL` | `LBFRS9.T_MTH_FRS9_RDL_AC_DTL` | `AC_CODE` = `UNIQUE_ID_NO` | 1:1 |
+| `LBFRS9.T_MTH_FRS9_CC_DTL` | `LBFRS9.T_MTH_FRS9_RDL_AC_DTL` | `AC_CODE` = `UNIQUE_ID_NO` | 1:1 |
+| `LBFRS9.T_MTH_FRS9_OD_DTL` | `LBFRS9.T_MTH_FRS9_RDL_AC_DTL` | `AC_CODE` = `UNIQUE_ID_NO` | 1:1 |
+| `LBFRS9.T_MTH_FRS9_INVMT_DTL` | `LBFRS9.T_MTH_FRS9_RDL_AC_DTL` | `AC_CODE` = `UNIQUE_ID_NO` | 1:1 |
+| `LBFRS9.T_MTH_FRS9_GUARANTEE_DTL` | `LBFRS9.T_MTH_FRS9_RDL_AC_DTL` | `AC_CODE` = `UNIQUE_ID_NO` | 1:1 |
+| `LBFRS9.T_MTH_FRS9_LN_DTL` | `LBDWH.V_T_MTH_AC_DTL` | `ORIGINAL_ACCOUNT_NUMBER` = `AC_CODE` | 1:1 |
+| `LBFRS9.T_MTH_FRS9_CC_DTL` | `LBDWH.V_T_MTH_AC_DTL` | `ORIGINAL_ACCOUNT_NUMBER` = `AC_CODE` | 1:1 |
+| `LBFRS9.T_MTH_FRS9_OD_DTL` | `LBDWH.V_T_MTH_AC_DTL` | `ORIGINAL_ACCOUNT_NUMBER` = `AC_CODE` | 1:1 |
+| `LBFRS9.T_MTH_FRS9_INVMT_DTL` | `LBDWH.V_T_MTH_AC_DTL` | `ORIGINAL_ACCOUNT_NUMBER` = `AC_CODE` | 1:1 |
+| `LBFRS9.T_MTH_FRS9_GUARANTEE_DTL` | `LBDWH.V_T_MTH_AC_DTL` | `ORIGINAL_ACCOUNT_NUMBER` = `AC_CODE` | 1:1 |
+| `LBFRS9.T_MTH_FRS9_RDL_AC_DTL` | `LBFRS9.T_MTH_FRS9_RDL_MSTR_LIST` | `UNIQUE_ID_NO` = `V_ACCOUNT_NUMBER` | 1:1 |
+| `LBFRS9.T_MTH_FRS9_LN_DTL` | `LBFRS9.T_MTH_FRS9_PARTY_MSTR` | `CIF_NO` = `CIF_NO` | many:1 |
+| `LBFRS9.T_MTH_FRS9_CC_DTL` | `LBFRS9.T_MTH_FRS9_PARTY_MSTR` | `CIF_NO` = `CIF_NO` | many:1 |
+| `LBFRS9.T_MTH_FRS9_OD_DTL` | `LBFRS9.T_MTH_FRS9_PARTY_MSTR` | `CIF_NO` = `CIF_NO` | many:1 |
+| `LBFRS9.T_MTH_FRS9_INVMT_DTL` | `LBFRS9.T_MTH_FRS9_PARTY_MSTR` | `CIF_NO` = `CIF_NO` | many:1 |
+| `LBFRS9.T_MTH_FRS9_GUARANTEE_DTL` | `LBFRS9.T_MTH_FRS9_PARTY_MSTR` | `CIF_NO` = `CIF_NO` | many:1 |
+| `LBFRS9.T_MTH_FRS9_RDL_AC_DTL` | `LBFRS9.T_MTH_FRS9_PARTY_MSTR` | `CIF_NO` = `CIF_NO` | many:1 |
+| `LBFRS9.T_MTH_FRS9_RDL_AC_DTL` | `LBDWH.V_T_CIF_MSTR` | `CIF_NO` = `CIF_NO` | many:1 |
+| `LBFRS9.T_MTH_FRS9_LN_DTL` | `LBFRS9.T_MTH_FRS9_AC_RATING_DTL` | `AC_CODE` = `AC_CODE` | **1:2** — filter `ORGL_CR_RATING_FLG` |
+| `LBFRS9.T_MTH_FRS9_CC_DTL` | `LBFRS9.T_MTH_FRS9_AC_RATING_DTL` | `AC_CODE` = `AC_CODE` | **1:2** — filter `ORGL_CR_RATING_FLG` |
+| `LBFRS9.T_MTH_FRS9_OD_DTL` | `LBFRS9.T_MTH_FRS9_AC_RATING_DTL` | `AC_CODE` = `AC_CODE` | **1:2** — filter `ORGL_CR_RATING_FLG` |
+| `LBFRS9.T_MTH_FRS9_INVMT_DTL` | `LBFRS9.T_MTH_FRS9_AC_RATING_DTL` | `AC_CODE` = `AC_CODE` | **1:2** — filter `ORGL_CR_RATING_FLG` |
+| `LBFRS9.T_MTH_FRS9_GUARANTEE_DTL` | `LBFRS9.T_MTH_FRS9_AC_RATING_DTL` | `AC_CODE` = `AC_CODE` | **1:2** — filter `ORGL_CR_RATING_FLG` |
+| `LBFRS9.T_MTH_FRS9_LN_DTL` | `LBFRS9.T_MTH_FRS9_RT_DTL` | `AC_CODE` = `AC_CODE` | **1:many** |
+| `LBFRS9.T_MTH_FRS9_LN_DTL` | `LBFRS9.T_FRS_RT_INTF` | `AC_CODE` = `AC_CODE` | **1:many** — dedupe first |
+| `LBFRS9.T_MTH_FRS9_LN_DTL` | `LBFRS9.T_FRS9_PRD_MSTR` | `PRD_CODE` = `PRODUCT_HIERARCHY_CD` | many:1 |
+| `LBFRS9.T_MTH_FRS9_CC_DTL` | `LBFRS9.T_FRS9_PRD_MSTR` | `PRD_CODE` = `PRODUCT_HIERARCHY_CD` | many:1 |
+| `LBFRS9.T_MTH_FRS9_OD_DTL` | `LBFRS9.T_FRS9_PRD_MSTR` | `PRD_CODE` = `PRODUCT_HIERARCHY_CD` | many:1 |
+| `LBFRS9.T_MTH_FRS9_INVMT_DTL` | `LBFRS9.T_FRS9_PRD_MSTR` | `PRD_CODE` = `PRODUCT_HIERARCHY_CD` | many:1 |
+| `LBFRS9.T_MTH_FRS9_GUARANTEE_DTL` | `LBFRS9.T_FRS9_PRD_MSTR` | `PRD_CODE` = `PRODUCT_HIERARCHY_CD` | many:1 |
+| `LBFRS9.T_MTH_FRS9_RDL_AC_DTL` | `LBFRS9.T_FRS9_PRD_MSTR` | `SRC_PROD_TYPE_CD` = `PRODUCT_HIERARCHY_CD` | many:1 |
+| `LBFRS9.T_MTH_FRS9_RDL_MSTR_LIST` | `LBFRS9.T_FRS9_PRD_MSTR` | `V_PROD_CODE` = `PRODUCT_HIERARCHY_CD` | many:1 |
+| any table with `CURCY_CODE` | `LBDWH.T_MTH_CURCY_EXCHG` or `LBDWH.T_DAL_CURCY_EXCHG` | `CURCY_CODE` = `CURCY_CODE` | many:1 |
 
 ---
 
@@ -64,8 +84,6 @@ Include `PROC_DTE` in every join except to `V_T_CIF_MSTR` and
 | Q3 | `datepart()` stays fine on WORK tables and as a conversion in assignments — only database filters are affected |
 | Q4 | Never probe a month's presence with `OBS=` — the row limit applies before the local filter, so `obs=1` tests one arbitrary row. Count over a datetime range instead |
 
-Confirmed month-retaining: `RDL_MSTR_LIST`, `RDL_AC_DTL`, product tables,
-`T_FRS_RT_INTF`, `RT_DTL`, `T_DAL_CURCY_EXCHG`.
 
 ---
 
