@@ -14,6 +14,9 @@ Grain, join map, query rules. Facts are confirmed unless **[I]** inferred or
 `PROC_DTE` = month-end date; part of every key except where noted. All months
 are retained — **every query needs a `PROC_DTE` filter** (§3).
 
+Library is `LBFRS9` unless prefixed `LBDWH.`; short names elide the
+`T_MTH_FRS9_` prefix.
+
 | Table | Grain | Note |
 |---|---|---|
 | product tables (×5) | `PROC_DTE` + `AC_CODE` | point-in-time: present through the month it closes, absent after |
@@ -34,26 +37,7 @@ after closure.
 
 ---
 
-## 2. Joins
-
-### FVOCI suffix
-
-Grain keys append literal `FVOCI` to the account number on FVOCI accounts;
-each layer also carries an unsuffixed twin. **Join suffixed↔suffixed or
-unsuffixed↔unsuffixed, never across** — `AC_CODE = AC_CODE` across the engine
-silently drops every FVOCI account.
-
-| Layer | Suffixed (grain) | Unsuffixed (twin) |
-|---|---|---|
-| product tables | `AC_CODE` | `ORIGINAL_ACCOUNT_NUMBER` |
-| `RDL_AC_DTL` | `UNIQUE_ID_NO` | `AC_CODE` |
-| `RDL_MSTR_LIST` | `V_ACCOUNT_NUMBER` | `V_ORIGINAL_ACCOUNT_NUMBER` |
-| `V_T_MTH_AC_DTL` | — | `AC_CODE` |
-
-FVOCI accounts appear **once** in the product tables (`...FVOCI` row only) —
-no double-count risk when summing.
-
-### Join map
+## 2. Join map
 
 Include `PROC_DTE` in every join except to `V_T_CIF_MSTR` and
 `T_FRS9_PRD_MSTR`.
