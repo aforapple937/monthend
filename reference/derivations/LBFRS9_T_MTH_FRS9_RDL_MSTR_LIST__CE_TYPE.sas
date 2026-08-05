@@ -3,18 +3,11 @@
 %let rpt_dtm = "&rpt_mth:00:00:00"dt;
 %let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
 
-/* CE_TYPE is reached in two hops from V_PROD_CODE:
-   V_PROD_CODE -> N_PRODUCT_DISPLAY_CODE (stg_products_b_intf_SG)
-               -> V_ATTRIBUTE_ASSIGN_VALUE (stg_products_attr_intf_SG, where the
-                  attribute label is CE_PRODUCT_TYPE).
-   A product with no attribute row is left blank. */
 data WORK.prod_disp(keep=V_PROD_CODE N_PRODUCT_DISPLAY_CODE);
     length V_PROD_CODE $50;
     set WORK.stg_products_b_intf_SG;
 run;
 
-/* One row per product per attribute, so the label filter is what makes the
-   lookup 1:1 on N_PRODUCT_DISPLAY_CODE. */
 data WORK.ce_attr(keep=N_PRODUCT_DISPLAY_CODE V_ATTRIBUTE_ASSIGN_VALUE);
     set WORK.stg_products_attr_intf_SG;
     where strip(V_ATTRIBUTE_VARCHAR_LABEL) = 'CE_PRODUCT_TYPE';
@@ -26,10 +19,6 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_PROD_CODE
            N_PRODUCT_DISPLAY_CODE V_ATTRIBUTE_ASSIGN_VALUE CE_TYPE;
     length CE_TYPE $20;
 
-    /* Types and lengths for the two hash lookup variables, taken from the lookup
-       datasets. Neither is defined anywhere else in the step, so without this
-       both are created numeric by the RETAIN above and definedone() fails on the
-       character one. After the RETAIN so column order is unchanged. */
     if 0 then set WORK.prod_disp WORK.ce_attr;
 
     set LBFRS9.T_MTH_FRS9_RDL_MSTR_LIST(keep=PROC_DTE V_ACCOUNT_NUMBER V_D_ACCOUNT_STATUS
