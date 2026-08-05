@@ -4,8 +4,6 @@ Grain, join map, query rules. Facts are confirmed unless **[I]** inferred or
 **[O]** open. Column inventory (names, types, lengths) is in
 `reference/tables/` (§4), not here.
 
-    LBDWH → product INPUT tables → ECL engine → RDL_MSTR_LIST → RDL_AC_DTL
-
 **Product tables** = `LN_DTL`, `CC_DTL`, `OD_DTL`, `INVMT_DTL`,
 `GUARANTEE_DTL` (all `LBFRS9.T_MTH_FRS9_*`).
 
