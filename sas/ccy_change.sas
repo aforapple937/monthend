@@ -12,8 +12,10 @@ options dlcreatedir;
 libname mth "C:/Users/FNLNJE/Documents/My SAS Files/&yymm";
 
 %macro stack_ccy(dt=, out=);
-    %local i tbl;
+    %local i tbl dtm nxt;
     %let tbl = LN_DTL CC_DTL OD_DTL INVMT_DTL GUARANTEE_DTL;
+    %let dtm = "%sysfunc(putn(&dt, date9.)):00:00:00"dt;
+    %let nxt = "%sysfunc(putn(%eval(&dt + 1), date9.)):00:00:00"dt;
 
     data work.&out._raw(keep=AC_CODE CURCY_CODE ENTITY SRC);
         length ENTITY $3 SRC $14;
@@ -23,7 +25,7 @@ libname mth "C:/Users/FNLNJE/Documents/My SAS Files/&yymm";
                 (keep=PROC_DTE AC_CODE CURCY_CODE LEGAL_ENTITY_CODE in=in&i)
         %end;
         ;
-        where datepart(PROC_DTE) = &dt;
+        where PROC_DTE >= &dtm and PROC_DTE < &nxt;
 
         %do i = 1 %to 5;
             %if &i = 1 %then if; %else else if;
