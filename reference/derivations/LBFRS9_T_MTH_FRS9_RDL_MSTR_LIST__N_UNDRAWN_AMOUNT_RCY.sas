@@ -3,6 +3,13 @@
 %let rpt_dtm = "&rpt_mth:00:00:00"dt;
 %let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
 
+proc sort data=LBDWH.T_MTH_CURCY_EXCHG
+              (keep=PROC_DTE CURCY_CODE EXCHG_RT
+               where=(PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm))
+          out=WORK.fx(drop=PROC_DTE) nodupkey;
+    by CURCY_CODE;
+run;
+
 data WORK.undrawn(keep=AC_CODE RCY_UNDRAWN_AMT);
     length AC_CODE $50;
     set LBFRS9.T_MTH_FRS9_LN_DTL        (keep=PROC_DTE AC_CODE RCY_UNDRAWN_AMT)
@@ -12,12 +19,16 @@ data WORK.undrawn(keep=AC_CODE RCY_UNDRAWN_AMT);
     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm;
 run;
 
-data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER RCY_UNDRAWN_AMT
-                            N_UNDRAWN_AMOUNT_RCY);
-    retain PROC_DTE V_ACCOUNT_NUMBER RCY_UNDRAWN_AMT N_UNDRAWN_AMOUNT_RCY;
-    length AC_CODE $50;
+data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_CCY_CODE RCY_UNDRAWN_AMT
+                            EXCHG_RT N_UNDRAWN_AMOUNT_RCY);
+    retain PROC_DTE V_ACCOUNT_NUMBER V_CCY_CODE RCY_UNDRAWN_AMT
+           EXCHG_RT N_UNDRAWN_AMOUNT_RCY;
     format N_UNDRAWN_AMOUNT_RCY 24.3;
-    set LBFRS9.T_MTH_FRS9_RDL_MSTR_LIST(keep=PROC_DTE V_ACCOUNT_NUMBER V_D_ACCOUNT_STATUS);
+
+    if 0 then set WORK.undrawn WORK.fx;
+
+    set LBFRS9.T_MTH_FRS9_RDL_MSTR_LIST(keep=PROC_DTE V_ACCOUNT_NUMBER V_D_ACCOUNT_STATUS
+                                             V_CCY_CODE);
     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm
           and V_D_ACCOUNT_STATUS = "Active";
 
@@ -26,15 +37,26 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER RCY_UNDRAWN_AMT
         u.definekey("AC_CODE");
         u.definedata("RCY_UNDRAWN_AMT");
         u.definedone();
+
+        declare hash f(dataset:"WORK.fx");
+        f.definekey("CURCY_CODE");
+        f.definedata("EXCHG_RT");
+        f.definedone();
     end;
 
-    call missing(RCY_UNDRAWN_AMT, N_UNDRAWN_AMOUNT_RCY);
-    AC_CODE = V_ACCOUNT_NUMBER;
-    rc = u.find();
+    call missing(RCY_UNDRAWN_AMT, EXCHG_RT, N_UNDRAWN_AMOUNT_RCY);
 
-    N_UNDRAWN_AMOUNT_RCY = coalesce(RCY_UNDRAWN_AMT, 0);
+    AC_CODE = V_ACCOUNT_NUMBER;
+    rc_u = u.find();
+
+    CURCY_CODE = V_CCY_CODE;
+    rc_f = f.find();
+
+    RCY_UNDRAWN_AMT = coalesce(RCY_UNDRAWN_AMT, 0);
+    if RCY_UNDRAWN_AMT = 0 then N_UNDRAWN_AMOUNT_RCY = 0;
+    else N_UNDRAWN_AMOUNT_RCY = round(RCY_UNDRAWN_AMT * EXCHG_RT, 0.001);
 run;
 
 proc datasets library=WORK nolist;
-    delete undrawn;
+    delete undrawn fx;
 quit;
