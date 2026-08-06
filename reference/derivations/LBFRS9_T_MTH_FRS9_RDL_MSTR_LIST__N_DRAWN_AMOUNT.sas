@@ -49,8 +49,9 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_CCY_CODE RCY_DRAWN_AMT
     CURCY_CODE = V_CCY_CODE;
     rc_f = f.find();
 
-    if not missing(RCY_DRAWN_AMT) then
-        N_DRAWN_AMOUNT = round(RCY_DRAWN_AMT * EXCHG_RT, 0.001);
+    RCY_DRAWN_AMT = coalesce(RCY_DRAWN_AMT, 0);
+    if RCY_DRAWN_AMT = 0 then N_DRAWN_AMOUNT = 0;
+    else N_DRAWN_AMOUNT = round(RCY_DRAWN_AMT * EXCHG_RT, 0.001);
 run;
 
 proc datasets library=WORK nolist;
