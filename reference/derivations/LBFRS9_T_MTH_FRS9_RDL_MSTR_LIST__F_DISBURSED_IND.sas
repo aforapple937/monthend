@@ -16,7 +16,7 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_SEGMENT_NAME
 
     call missing(F_DISBURSED_IND);
 
-    if strip(V_SEGMENT_NAME) in ('SG_Housing','SG_EquityTermLoan') then do;
+    if strip(V_SEGMENT_NAME) in ('SG_Housing','SG_EquityTermLoan','SG_RSME') then do;
         if      strip(V_RELEASE_TYPE_CD) = 'F' then F_DISBURSED_IND = 'F';
         else if strip(V_RELEASE_TYPE_CD) = 'P' then F_DISBURSED_IND = 'P';
         else if missing(V_RELEASE_TYPE_CD)     then do;
