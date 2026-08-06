@@ -52,7 +52,7 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_CCY_CODE RCY_ACCRUED_INT
 
     RCY_ACCRUED_INT = coalesce(RCY_ACCRUED_INT, 0);
     if RCY_ACCRUED_INT = 0 then N_ACCRUED_INTEREST = 0;
-    else N_ACCRUED_INTEREST = round(RCY_ACCRUED_INT * EXCHG_RT, 0.001);
+    else N_ACCRUED_INTEREST = RCY_ACCRUED_INT * EXCHG_RT;
 run;
 
 proc datasets library=WORK nolist;

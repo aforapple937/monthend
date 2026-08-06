@@ -51,7 +51,7 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_CCY_CODE RCY_FACE_VAL_AM
 
     RCY_FACE_VAL_AMT = coalesce(RCY_FACE_VAL_AMT, 0);
     if RCY_FACE_VAL_AMT = 0 then N_FACE_VALUE = 0;
-    else N_FACE_VALUE = round(RCY_FACE_VAL_AMT * EXCHG_RT, 0.001);
+    else N_FACE_VALUE = RCY_FACE_VAL_AMT * EXCHG_RT;
 run;
 
 proc datasets library=WORK nolist;
