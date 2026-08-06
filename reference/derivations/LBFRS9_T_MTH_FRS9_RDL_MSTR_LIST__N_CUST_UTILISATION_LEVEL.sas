@@ -3,6 +3,9 @@
 %let rpt_dtm = "&rpt_mth:00:00:00"dt;
 %let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
 
+/* Observed: N_CUST_UTILISATION_LEVEL on RDL_MSTR_LIST comes through all blank,
+   even though CUST_UTILISATION on the FRS9 product tables is populated. */
+
 data WORK.util(keep=AC_CODE CUST_UTILISATION);
     length AC_CODE $50;
     set LBFRS9.T_MTH_FRS9_LN_DTL        (keep=PROC_DTE AC_CODE CUST_UTILISATION)
