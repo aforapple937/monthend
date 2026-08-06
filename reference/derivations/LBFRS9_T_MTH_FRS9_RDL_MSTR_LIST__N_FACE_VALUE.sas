@@ -10,19 +10,19 @@ proc sort data=LBDWH.T_MTH_CURCY_EXCHG
     by CURCY_CODE;
 run;
 
-data WORK.drawn(keep=AC_CODE RCY_DRAWN_AMT);
+data WORK.face(keep=AC_CODE RCY_FACE_VAL_AMT);
     length AC_CODE $50;
-    set LBFRS9.T_MTH_FRS9_LN_DTL(keep=PROC_DTE AC_CODE RCY_DRAWN_AMT);
+    set LBFRS9.T_MTH_FRS9_INVMT_DTL(keep=PROC_DTE AC_CODE RCY_FACE_VAL_AMT);
     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm;
 run;
 
-data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_CCY_CODE RCY_DRAWN_AMT
-                            EXCHG_RT N_DRAWN_AMOUNT);
-    retain PROC_DTE V_ACCOUNT_NUMBER V_CCY_CODE RCY_DRAWN_AMT
-           EXCHG_RT N_DRAWN_AMOUNT;
-    format N_DRAWN_AMOUNT 24.3;
+data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_CCY_CODE RCY_FACE_VAL_AMT
+                            EXCHG_RT N_FACE_VALUE);
+    retain PROC_DTE V_ACCOUNT_NUMBER V_CCY_CODE RCY_FACE_VAL_AMT
+           EXCHG_RT N_FACE_VALUE;
+    format N_FACE_VALUE 24.3;
 
-    if 0 then set WORK.drawn WORK.fx;
+    if 0 then set WORK.face WORK.fx;
 
     set LBFRS9.T_MTH_FRS9_RDL_MSTR_LIST(keep=PROC_DTE V_ACCOUNT_NUMBER V_D_ACCOUNT_STATUS
                                              V_CCY_CODE);
@@ -30,10 +30,10 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_CCY_CODE RCY_DRAWN_AMT
           and V_D_ACCOUNT_STATUS = "Active";
 
     if _n_ = 1 then do;
-        declare hash d(dataset:"WORK.drawn");
-        d.definekey("AC_CODE");
-        d.definedata("RCY_DRAWN_AMT");
-        d.definedone();
+        declare hash v(dataset:"WORK.face");
+        v.definekey("AC_CODE");
+        v.definedata("RCY_FACE_VAL_AMT");
+        v.definedone();
 
         declare hash f(dataset:"WORK.fx");
         f.definekey("CURCY_CODE");
@@ -41,19 +41,19 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_CCY_CODE RCY_DRAWN_AMT
         f.definedone();
     end;
 
-    call missing(RCY_DRAWN_AMT, EXCHG_RT, N_DRAWN_AMOUNT);
+    call missing(RCY_FACE_VAL_AMT, EXCHG_RT, N_FACE_VALUE);
 
     AC_CODE = V_ACCOUNT_NUMBER;
-    rc_d = d.find();
+    rc_v = v.find();
 
     CURCY_CODE = V_CCY_CODE;
     rc_f = f.find();
 
-    RCY_DRAWN_AMT = coalesce(RCY_DRAWN_AMT, 0);
-    if RCY_DRAWN_AMT = 0 then N_DRAWN_AMOUNT = 0;
-    else N_DRAWN_AMOUNT = RCY_DRAWN_AMT * EXCHG_RT;
+    RCY_FACE_VAL_AMT = coalesce(RCY_FACE_VAL_AMT, 0);
+    if RCY_FACE_VAL_AMT = 0 then N_FACE_VALUE = 0;
+    else N_FACE_VALUE = RCY_FACE_VAL_AMT * EXCHG_RT;
 run;
 
 proc datasets library=WORK nolist;
-    delete drawn fx;
+    delete face fx;
 quit;

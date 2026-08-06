@@ -54,7 +54,7 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_CCY_CODE RCY_UNDRAWN_AMT
 
     RCY_UNDRAWN_AMT = coalesce(RCY_UNDRAWN_AMT, 0);
     if RCY_UNDRAWN_AMT = 0 then N_UNDRAWN_AMOUNT_RCY = 0;
-    else N_UNDRAWN_AMOUNT_RCY = round(RCY_UNDRAWN_AMT * EXCHG_RT, 0.001);
+    else N_UNDRAWN_AMOUNT_RCY = RCY_UNDRAWN_AMT * EXCHG_RT;
 run;
 
 proc datasets library=WORK nolist;

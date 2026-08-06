@@ -57,7 +57,7 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_CCY_CODE EXPOSURE_LMT
 
     EXPOSURE_LMT = coalesce(EXPOSURE_LMT, 0);
     if EXPOSURE_LMT = 0 then N_EXPOSURE_LIMIT = 0;
-    else N_EXPOSURE_LIMIT = round(EXPOSURE_LMT * EXCHG_RT, 0.001);
+    else N_EXPOSURE_LIMIT = EXPOSURE_LMT * EXCHG_RT;
 run;
 
 proc datasets library=WORK nolist;
