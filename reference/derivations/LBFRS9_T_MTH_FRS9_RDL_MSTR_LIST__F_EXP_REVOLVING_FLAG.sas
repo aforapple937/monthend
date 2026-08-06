@@ -31,7 +31,7 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_PROD_CODE
 
     if strip(PROD_LV4) = 'Term Loans'
        or strip(LEVEL_5) = 'Hire Purchase'
-       or strip(LEVEL_3) in ('Interbank Placement','Investments','Cash','STF')
+       or strip(LEVEL_3) in ('Interbank Placement','Investments','Cash and STF')
         then F_EXP_REVOLVING_FLAG = 'N';
     else F_EXP_REVOLVING_FLAG = 'Y';
 run;
