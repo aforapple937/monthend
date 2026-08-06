@@ -41,7 +41,7 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_CCY_CODE RCY_DRAWN_AMT
         f.definedone();
     end;
 
-    call missing(RCY_DRAWN_AMT, EXCHG_RT);
+    call missing(RCY_DRAWN_AMT, EXCHG_RT, N_DRAWN_AMOUNT);
 
     AC_CODE = V_ACCOUNT_NUMBER;
     rc_d = d.find();
