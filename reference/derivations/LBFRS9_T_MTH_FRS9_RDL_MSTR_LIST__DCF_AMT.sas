@@ -64,8 +64,10 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER CUSTOMER_ID
     rc_c = c.find();
     rc_t = t.find();
 
-    if missing(CF_LCY) or missing(TOT_LEDGER) or TOT_LEDGER = 0 then DCF_AMT = 0;
-    else DCF_AMT = CF_LCY * coalesce(N_LEDGER_BALANCE_AMT, 0) / TOT_LEDGER;
+    if not missing(CF_LCY) then do;
+        if missing(TOT_LEDGER) or TOT_LEDGER = 0 then DCF_AMT = 0;
+        else DCF_AMT = CF_LCY * coalesce(N_LEDGER_BALANCE_AMT, 0) / TOT_LEDGER;
+    end;
 run;
 
 proc datasets library=WORK nolist;
