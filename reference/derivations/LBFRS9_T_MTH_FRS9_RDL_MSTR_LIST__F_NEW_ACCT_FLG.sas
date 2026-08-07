@@ -6,6 +6,9 @@
 %let prev_dtm = "%sysfunc(putn(&prev_dt, date9.)):00:00:00"dt;
 %let prv_nxt  = "%sysfunc(putn(%eval(&prev_dt + 1), date9.)):00:00:00"dt;
 
+/* Observed: around 50 accounts are present in the previous month yet still
+   carry F_NEW_ACCT_FLG = Y. */
+
 data WORK.prev(keep=V_ACCOUNT_NUMBER);
     set LBFRS9.T_MTH_FRS9_RDL_MSTR_LIST(keep=PROC_DTE V_ACCOUNT_NUMBER);
     where PROC_DTE >= &prev_dtm and PROC_DTE < &prv_nxt;
