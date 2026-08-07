@@ -38,13 +38,14 @@ proc summary data=LBFRS9.T_MTH_FRS9_RDL_MSTR_LIST
     output out=WORK.tot(drop=_type_ _freq_) sum=TOT_LEDGER;
 run;
 
-data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER CUSTOMER_ID
+data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER CUSTOMER_ID IMPAIRED_FLAG
                             N_LEDGER_BALANCE_AMT TOT_LEDGER CF_LCY DCF_AMT);
-    retain PROC_DTE V_ACCOUNT_NUMBER CUSTOMER_ID
+    retain PROC_DTE V_ACCOUNT_NUMBER CUSTOMER_ID IMPAIRED_FLAG
            N_LEDGER_BALANCE_AMT TOT_LEDGER CF_LCY DCF_AMT;
     format DCF_AMT 24.3;
     set LBFRS9.T_MTH_FRS9_RDL_MSTR_LIST(keep=PROC_DTE V_ACCOUNT_NUMBER V_D_ACCOUNT_STATUS
-                                             CUSTOMER_ID N_LEDGER_BALANCE_AMT);
+                                             CUSTOMER_ID IMPAIRED_FLAG
+                                             N_LEDGER_BALANCE_AMT);
     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm
           and V_D_ACCOUNT_STATUS = "Active";
 
@@ -65,7 +66,8 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER CUSTOMER_ID
     rc_t = t.find();
 
     if not missing(CF_LCY) then do;
-        if missing(TOT_LEDGER) or TOT_LEDGER = 0 then DCF_AMT = 0;
+        if      strip(IMPAIRED_FLAG) ne 'Y'          then DCF_AMT = 0;
+        else if missing(TOT_LEDGER) or TOT_LEDGER = 0 then DCF_AMT = 0;
         else DCF_AMT = CF_LCY * coalesce(N_LEDGER_BALANCE_AMT, 0) / TOT_LEDGER;
     end;
 run;
