@@ -182,9 +182,8 @@ data work.pop_m;
     if not a then delete;
 run;
 
-proc sort data=LBFRS9.T_FRS9_PRD_MSTR(keep=PRODUCT_HIERARCHY_CD LEVEL_3)
-          out=work.prd nodupkey;
-    by PRODUCT_HIERARCHY_CD;
+data work.prd(keep=PRODUCT_HIERARCHY_CD LEVEL_3);
+    set LBFRS9.T_FRS9_PRD_MSTR(keep=PRODUCT_HIERARCHY_CD LEVEL_3);
 run;
 
 data work.fx(keep=CURCY_CODE EXCHG_RT);
@@ -192,21 +191,15 @@ data work.fx(keep=CURCY_CODE EXCHG_RT);
     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm;
 run;
 
-proc sort data=work.fx nodupkey;  by CURCY_CODE;  run;
-
 data work.party(keep=CIF_NO CIF_NAME);
     set LBDWH.V_T_CIF_MSTR(keep=CIF_NO CIF_NAME);
 run;
-
-proc sort data=work.party nodupkey;  by CIF_NO;  run;
 
 data work.prv(keep=UNIQUE_ID_NO PRV_CLOSING_FY);
     set LBFRS9.T_MTH_FRS9_RDL_AC_DTL(keep=PROC_DTE UNIQUE_ID_NO RCY_ECL_CLOSING_FY
              rename=(RCY_ECL_CLOSING_FY = PRV_CLOSING_FY));
     where PROC_DTE >= &prv_dtm and PROC_DTE < &prv_nxt;
 run;
-
-proc sort data=work.prv nodupkey;  by UNIQUE_ID_NO;  run;
 
 data work.derived;
     length LEVEL_3 $50 CIF_NAME $80;

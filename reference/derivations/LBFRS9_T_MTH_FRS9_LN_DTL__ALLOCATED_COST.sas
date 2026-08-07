@@ -31,7 +31,7 @@ quit;
 
 proc sql;
     create table WORK.prev_loans as
-    select distinct AC_CODE
+    select AC_CODE
     from LBFRS9.T_MTH_FRS9_LN_DTL
     where PROC_DTE >= &prev_dtm and PROC_DTE < &prv_nxt
     ;

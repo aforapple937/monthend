@@ -95,9 +95,8 @@ run;
 proc sort data=work.fmt_excl nodupkey;  by start hlo;  run;
 proc format cntlin=work.fmt_excl;       run;
 
-proc sort data=LBFRS9.T_FRS9_PRD_MSTR(keep=PRODUCT_HIERARCHY_CD LEVEL_3)
-          out=work.prd nodupkey;
-    by PRODUCT_HIERARCHY_CD;
+data work.prd(keep=PRODUCT_HIERARCHY_CD LEVEL_3);
+    set LBFRS9.T_FRS9_PRD_MSTR(keep=PRODUCT_HIERARCHY_CD LEVEL_3);
 run;
 
 %let ml_found = 0;

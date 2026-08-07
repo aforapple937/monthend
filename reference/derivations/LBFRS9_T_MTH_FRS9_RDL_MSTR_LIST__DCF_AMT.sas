@@ -28,12 +28,6 @@ data WORK.cf_raw(keep=CUSTOMER_ID CF_LCY);
     CF_LCY = RCY_EXP_CF_AMT * EXCHG_RT;
 run;
 
-proc summary data=WORK.cf_raw nway missing;
-    class CUSTOMER_ID;
-    var CF_LCY;
-    output out=WORK.cf(drop=_type_ _freq_) sum=CF_LCY;
-run;
-
 proc summary data=LBFRS9.T_MTH_FRS9_RDL_MSTR_LIST
                   (keep=PROC_DTE V_D_ACCOUNT_STATUS CUSTOMER_ID N_LEDGER_BALANCE_AMT
                    where=(PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm
@@ -55,7 +49,7 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER CUSTOMER_ID
           and V_D_ACCOUNT_STATUS = "Active";
 
     if _n_ = 1 then do;
-        declare hash c(dataset:"WORK.cf");
+        declare hash c(dataset:"WORK.cf_raw");
         c.definekey("CUSTOMER_ID");
         c.definedata("CF_LCY");
         c.definedone();
@@ -75,5 +69,5 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER CUSTOMER_ID
 run;
 
 proc datasets library=WORK nolist;
-    delete fx cf_raw cf tot;
+    delete fx cf_raw tot;
 quit;

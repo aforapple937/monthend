@@ -26,11 +26,9 @@ libname mth  "C:/Users/FNLNJE/Documents/My SAS Files/&yymm";
 libname glte "C:/Users/FNLNJE/Documents/My SAS Files/&yymm/glte";
 options nodlcreatedir;
 
-proc sort data=LBDWH.T_DAL_CURCY_EXCHG
-              (keep=PROC_DTE CURCY_CODE EXCHG_RT
-               where=(PROC_DTE >= &rpt_lo and PROC_DTE < &rpt_hi))
-          out=work.fx(drop=PROC_DTE) nodupkey;
-    by CURCY_CODE;
+data work.fx(keep=CURCY_CODE EXCHG_RT);
+    set LBDWH.T_DAL_CURCY_EXCHG(keep=PROC_DTE CURCY_CODE EXCHG_RT);
+    where PROC_DTE >= &rpt_lo and PROC_DTE < &rpt_hi;
 run;
 
 data work.ln_cur;

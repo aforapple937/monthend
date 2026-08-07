@@ -63,16 +63,13 @@ libname mth "C:/Users/FNLNJE/Documents/My SAS Files/&yymm";
 %pull_month(dt=&rpt_dt, out=cur, ftm=1)
 %pull_month(dt=&prv_dt, out=prv, ftm=0)
 
-proc sort data=LBDWH.V_T_CIF_MSTR(keep=CIF_NO CIF_NAME)
-          out=work.cifname nodupkey;
-    by CIF_NO;
+data work.cifname(keep=CIF_NO CIF_NAME);
+    set LBDWH.V_T_CIF_MSTR(keep=CIF_NO CIF_NAME);
 run;
 
-proc sort data=LBFRS9.T_MTH_FRS9_PARTY_MSTR
-              (keep=PROC_DTE CIF_NO MKT_SUB_SEG_DESC
-               where=(PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm))
-          out=work.party(drop=PROC_DTE) nodupkey;
-    by CIF_NO;
+data work.party(keep=CIF_NO MKT_SUB_SEG_DESC);
+    set LBFRS9.T_MTH_FRS9_PARTY_MSTR(keep=PROC_DTE CIF_NO MKT_SUB_SEG_DESC);
+    where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm;
 run;
 
 data mth.eclflux;
