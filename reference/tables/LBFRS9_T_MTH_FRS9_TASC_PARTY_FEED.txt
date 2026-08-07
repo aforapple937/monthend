@@ -1,0 +1,24 @@
+## Table: LBFRS9.T_MTH_FRS9_TASC_PARTY_FEED
+Library   : LBFRS9
+Schema    : FRSPOWR
+Engine    : ODBC (Oracle)
+Variables : 13
+
+## Variable Reference
+# Num = Numeric, Char = Character
+
+#  | Variable                       | Type | Len | Format      | Label
+---|--------------------------------|------|-----|-------------|--------------------------------
+1  | LEGAL_ENTITY                   | Char | 20  | $20.        | LEGAL_ENTITY
+2  | PROC_DTE                       | Num  | 8   | DATETIME20. | PROC_DTE
+3  | CIF_NO                         | Char | 50  | $50.        | CIF_NO
+4  | CURCY_CODE                     | Char | 3   | $3.         | CURCY_CODE
+5  | RCY_EXP_CF_AMT                 | Num  | 8   | 24.3        | RCY_EXP_CF_AMT
+6  | EXPOSURE_ID                    | Char | 50  | $50.        | EXPOSURE_ID
+7  | MITIGATION_FLG                 | Char | 1   | $1.         | MITIGATION_FLG
+8  | IMPAIRMENT_FLG                 | Char | 1   | $1.         | IMPAIRMENT_FLG
+9  | CR_STS_BEF_OVERRIDE            | Char | 50  | $50.        | CR_STS_BEF_OVERRIDE
+10 | CR_STS_AFT_OVERRIDE            | Char | 50  | $50.        | CR_STS_AFT_OVERRIDE
+11 | UPDT_DTE                       | Num  | 8   | DATETIME20. | UPDT_DTE
+12 | UPDT_PRG                       | Char | 50  | $50.        | UPDT_PRG
+13 | UPDT_USR                       | Char | 20  | $20.        | UPDT_USR
