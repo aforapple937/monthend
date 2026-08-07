@@ -3,11 +3,9 @@
 %let rpt_dtm = "&rpt_mth:00:00:00"dt;
 %let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
 
-proc sort data=LBDWH.T_MTH_CURCY_EXCHG
-              (keep=PROC_DTE CURCY_CODE EXCHG_RT
-               where=(PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm))
-          out=WORK.fx(drop=PROC_DTE) nodupkey;
-    by CURCY_CODE;
+data WORK.fx(keep=CURCY_CODE EXCHG_RT);
+    set LBDWH.T_MTH_CURCY_EXCHG(keep=PROC_DTE CURCY_CODE EXCHG_RT);
+    where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm;
 run;
 
 data WORK.undrawn(keep=AC_CODE RCY_UNDRAWN_AMT);

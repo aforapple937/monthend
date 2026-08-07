@@ -28,9 +28,8 @@ data work.egl_map;
          EIR_BS EIR_PNL FVOCI_BS FVOCI_OCI;
 run;
 
-proc sort data=LBFRS9.T_FRS9_PRD_MSTR(keep=PRODUCT_HIERARCHY_CD LEVEL_3)
-          out=work.prd nodupkey;
-    by PRODUCT_HIERARCHY_CD;
+data work.prd(keep=PRODUCT_HIERARCHY_CD LEVEL_3);
+    set LBFRS9.T_FRS9_PRD_MSTR(keep=PRODUCT_HIERARCHY_CD LEVEL_3);
 run;
 
 %let ml_found = 0;
