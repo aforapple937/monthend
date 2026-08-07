@@ -34,7 +34,7 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER LEDGER_BALANCE_AMT
     AC_CODE = V_ACCOUNT_NUMBER;
     rc = l.find();
 
-    N_LEDGER_BALANCE_AMT = LEDGER_BALANCE_AMT;
+    N_LEDGER_BALANCE_AMT = coalesce(LEDGER_BALANCE_AMT, 0);
 run;
 
 proc datasets library=WORK nolist;
