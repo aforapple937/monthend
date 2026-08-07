@@ -15,6 +15,7 @@
 | `LBFRS9` | `T_MTH_FRS9_RDL_AC_DTL` | `PROC_DTE` + `UNIQUE_ID_NO` | accumulates YTD² |
 | `LBFRS9` | `T_MTH_FRS9_RDL_MSTR_LIST` | `PROC_DTE` + `V_ACCOUNT_NUMBER` | accumulates YTD² |
 | `LBFRS9` | `T_MTH_FRS9_PARTY_MSTR` | `PROC_DTE` + `CIF_NO` | |
+| `LBFRS9` | `T_MTH_FRS9_TASC_PARTY_FEED` | `PROC_DTE` + `CIF_NO` | |
 | `LBFRS9` | `T_MTH_FRS9_AC_RATING_DTL` | `PROC_DTE` + `AC_CODE` + `ORGL_CR_RATING_FLG` | **2 rows/account**: `Y` orig, `N` current |
 | `LBFRS9` | `T_MTH_FRS9_RT_DTL` | `PROC_DTE` + `AC_CODE` + rate period | **many rows/account** |
 | `LBFRS9` | `T_FRS_RT_INTF` | `PROC_DTE` + `AC_CODE` + `RT_EFF_DTE` | **many rows/account** |
