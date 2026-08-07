@@ -24,8 +24,8 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER F_NEW_ACCT_FLG);
         p.definedone();
     end;
 
-    if p.check() = 0 then F_NEW_ACCT_FLG = 'N';
-    else F_NEW_ACCT_FLG = 'Y';
+    call missing(F_NEW_ACCT_FLG);
+    if p.check() ne 0 then F_NEW_ACCT_FLG = 'Y';
 run;
 
 proc datasets library=WORK nolist;
