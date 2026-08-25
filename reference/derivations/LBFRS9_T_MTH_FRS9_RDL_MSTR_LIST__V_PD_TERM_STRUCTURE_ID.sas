@@ -20,6 +20,7 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER ECL_METHOD V_SEGMENT_NAME
        and strip(V_SEGMENT_NAME) in ('SG_Bank', 'SG_CreditCard',
                                      'SG_EquityTermLoan', 'SG_HirePurchase',
                                      'SG_Housing', 'SG_IRRS', 'SG_Non-Retail',
-                                     'SG_ProjectFinance', 'SG_RSME')
+                                     'SG_ProjectFinance', 'SG_RSME',
+                                     'SG_Sovereign')
         then V_PD_TERM_STRUCTURE_ID = strip(V_SEGMENT_NAME);
 run;
