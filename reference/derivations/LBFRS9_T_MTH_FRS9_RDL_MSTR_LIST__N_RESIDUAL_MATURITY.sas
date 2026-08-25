@@ -2,6 +2,7 @@
 %let rpt_dt  = %sysfunc(inputn(&rpt_mth, date9.));
 %let rpt_dtm = "&rpt_mth:00:00:00"dt;
 %let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
+%let far_dt  = '31DEC9999'd;
 
 data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER D_REVISED_MATURITY_DATE
                             N_RESIDUAL_MATURITY);
@@ -16,7 +17,8 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER D_REVISED_MATURITY_DATE
 
     call missing(N_RESIDUAL_MATURITY);
 
-    if not missing(D_REVISED_MATURITY_DATE) then do;
+    if not missing(D_REVISED_MATURITY_DATE)
+       and datepart(D_REVISED_MATURITY_DATE) ne &far_dt then do;
         _from = datepart(PROC_DTE);
         _to   = datepart(D_REVISED_MATURITY_DATE);
         _mth  = intck('MONTH', _from, _to, 'C');
