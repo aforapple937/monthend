@@ -25,9 +25,9 @@ data WORK.matr(keep=AC_CODE SRC MATURITY_DTE);
     else if in_od  then SRC = 'OD';
 run;
 
-data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER SRC MATURITY_DTE
+data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER MATURITY_DTE
                             D_REVISED_MATURITY_DATE);
-    retain PROC_DTE V_ACCOUNT_NUMBER SRC MATURITY_DTE
+    retain PROC_DTE V_ACCOUNT_NUMBER MATURITY_DTE
            D_REVISED_MATURITY_DATE;
     length AC_CODE $50 SRC $5;
     format MATURITY_DTE D_REVISED_MATURITY_DATE datetime20.;
