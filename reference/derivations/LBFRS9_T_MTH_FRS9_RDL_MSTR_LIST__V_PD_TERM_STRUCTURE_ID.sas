@@ -24,8 +24,7 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER ECL_METHOD V_SEGMENT_NAME
                                      'SG_Sovereign') then do;
 
         /* OPEN: every segment takes the term structure of the same name,
-           but SG_Sovereign is mapped to SG_Non-Retail. Confirm with IT why
-           Sovereign does not get its own term structure. */
+           but SG_Sovereign is mapped to SG_Non-Retail. */
         if strip(V_SEGMENT_NAME) = 'SG_Sovereign' then
             V_PD_TERM_STRUCTURE_ID = 'SG_Non-Retail';
         else V_PD_TERM_STRUCTURE_ID = strip(V_SEGMENT_NAME);
