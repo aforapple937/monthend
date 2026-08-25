@@ -35,7 +35,8 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_SEGMENT_TYPE ECL_METHOD
     AC_CODE = V_ACCOUNT_NUMBER;
     rc = b.find();
 
-    if strip(V_SEGMENT_TYPE) = 'RETAIL'
+    if missing(BASEL_LGD_CLS)
+       and strip(V_SEGMENT_TYPE) = 'RETAIL'
        and strip(ECL_METHOD) = 'Specific Provision Methodology'
         then V_BASEL_LGD_POOL_ID = 'S3';
     else V_BASEL_LGD_POOL_ID = BASEL_LGD_CLS;
