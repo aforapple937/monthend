@@ -20,7 +20,7 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER ECL_METHOD V_SEGMENT_NAME
            MKT_SUB_SEGMENT LGD_PROD_TYPE ENG_LGD_TS
            V_LGD_TERM_STRUCTURE_ID;
     length AC_CODE $50 LGD_PROD_TYPE $7 V_LGD_TERM_STRUCTURE_ID $40
-           _x $10 _y $20;
+           _pfx $20 _x $10 _y $20;
     set LBFRS9.T_MTH_FRS9_RDL_MSTR_LIST(keep=PROC_DTE V_ACCOUNT_NUMBER
                                              V_D_ACCOUNT_STATUS ECL_METHOD
                                              V_SEGMENT_NAME MKT_SUB_SEGMENT
@@ -36,7 +36,7 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER ECL_METHOD V_SEGMENT_NAME
         p.definedone();
     end;
 
-    call missing(LGD_PROD_TYPE, V_LGD_TERM_STRUCTURE_ID, _x, _y);
+    call missing(LGD_PROD_TYPE, V_LGD_TERM_STRUCTURE_ID, _pfx, _x, _y);
     AC_CODE = V_ACCOUNT_NUMBER;
     rc = p.find();
 
@@ -48,7 +48,11 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER ECL_METHOD V_SEGMENT_NAME
             then V_LGD_TERM_STRUCTURE_ID = strip(V_SEGMENT_NAME);
 
         else if strip(V_SEGMENT_NAME) in ('SG_Non-Retail', 'SG_ProjectFinance',
-                                          'SG_Sovereign', 'SG_Bank') then do;
+                                          'SG_Sovereign', 'SG_Bank',
+                                          'SG_IRRS') then do;
+
+            if strip(V_SEGMENT_NAME) = 'SG_IRRS' then _pfx = 'SG_IRRS';
+            else _pfx = 'SG_Non-Retail';
 
             select (strip(MKT_SUB_SEGMENT));
                 when ('BUSINESS BANKING')   _x = 'BB';
@@ -71,11 +75,11 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER ECL_METHOD V_SEGMENT_NAME
             _y = scan(ENG_LGD_TS, -1, '_');
 
             if not missing(_x) and not missing(_y) then
-                V_LGD_TERM_STRUCTURE_ID = catx('_', 'SG_Non-Retail', _x, _y);
+                V_LGD_TERM_STRUCTURE_ID = catx('_', _pfx, _x, _y);
         end;
     end;
 
-    drop _x _y;
+    drop _pfx _x _y;
 run;
 
 proc datasets library=WORK nolist;
