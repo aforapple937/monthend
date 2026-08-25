@@ -33,7 +33,8 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER RATING_OUTLOOK_WATCH
     AC_CODE = V_ACCOUNT_NUMBER;
     rc = w.find();
 
-    F_RATING_OUTLOOK_WATCH = RATING_OUTLOOK_WATCH;
+    if missing(RATING_OUTLOOK_WATCH) then F_RATING_OUTLOOK_WATCH = 'N';
+    else F_RATING_OUTLOOK_WATCH = RATING_OUTLOOK_WATCH;
 run;
 
 proc datasets library=WORK nolist;
