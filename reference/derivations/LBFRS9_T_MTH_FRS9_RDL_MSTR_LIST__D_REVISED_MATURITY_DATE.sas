@@ -2,6 +2,7 @@
 %let rpt_dt  = %sysfunc(inputn(&rpt_mth, date9.));
 %let rpt_dtm = "&rpt_mth:00:00:00"dt;
 %let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
+%let far_dtm = '31DEC9999:00:00:00'dt;
 
 data WORK.matr(keep=AC_CODE SRC MATURITY_DTE);
     length AC_CODE $50 SRC $5;
@@ -41,11 +42,12 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER SRC MATURITY_DTE
         m.definedone();
     end;
 
-    call missing(SRC, MATURITY_DTE);
+    call missing(SRC, MATURITY_DTE, D_REVISED_MATURITY_DATE);
     AC_CODE = V_ACCOUNT_NUMBER;
     rc = m.find();
 
-    D_REVISED_MATURITY_DATE = MATURITY_DTE;
+    if not missing(SRC) and strip(SRC) ne 'CC' then
+        D_REVISED_MATURITY_DATE = coalesce(MATURITY_DTE, &far_dtm);
 run;
 
 proc datasets library=WORK nolist;
