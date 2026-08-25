@@ -13,5 +13,6 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER N_LEDGER_BALANCE_AMT
     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm
           and V_D_ACCOUNT_STATUS = "Active";
 
+    /* OPEN: does not tie for INVMT accounts. */
     N_OUTSTANDING_AMT = N_LEDGER_BALANCE_AMT;
 run;
