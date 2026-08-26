@@ -47,9 +47,6 @@ data WORK.od_derived(keep=PROC_DTE AC_CODE CURCY_CODE AC_STS_CODE RCY_TOT_OS
 
     if strip(AC_STS_CODE) = '2' then LEDGER_BALANCE_AMT = 0;
     else do;
-        /* Only a negative RCY_TOT_OS contributes, as its absolute value; a
-           missing one must not, so the sign test is guarded - SAS orders
-           missing below every number. */
         if not missing(RCY_TOT_OS) and RCY_TOT_OS < 0 then _os = abs(RCY_TOT_OS);
         else _os = 0;
 
