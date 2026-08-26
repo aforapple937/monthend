@@ -6,7 +6,7 @@
 %let prev_dtm = "%sysfunc(putn(&prev_dt, date9.)):00:00:00"dt;
 %let prv_nxt  = "%sysfunc(putn(%eval(&prev_dt + 1), date9.)):00:00:00"dt;
 
-/* Observed: around 50 accounts are present in the previous month yet still
+/* VARIANCE: around 50 accounts are present in the previous month yet still
    carry F_NEW_ACCT_FLG = Y. */
 
 data WORK.prev(keep=V_ACCOUNT_NUMBER);

@@ -3,7 +3,7 @@
 %let rpt_dtm = "&rpt_mth:00:00:00"dt;
 %let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
 
-/* Open queries on the FSD, raised against this derivation:
+/* CLARIFY: open queries on the FSD, raised against this derivation:
 
    1. The FSD does not mention Bank and Sovereign applying CCF 0. Why is it not
       left blank like Housing and ETL? If blank, it would be treated as 1 when
