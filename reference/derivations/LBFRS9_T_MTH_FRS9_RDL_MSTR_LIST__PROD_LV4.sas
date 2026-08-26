@@ -28,7 +28,7 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_PROD_CODE LEVEL_4 PROD_L
     rc = h.find();
 
     PROD_LV4 = LEVEL_4;
-    /* T_FRS9_PRD_MSTR holds "STD with Other Bank and FI", but the engine
+    /* NOTE: T_FRS9_PRD_MSTR holds "STD with Other Bank and FI", but the engine
        output carries the spelt-out value - the MFRS9 engine's product level
        derivation is sourced from HO REDW, not T_FRS9_PRD_MSTR. Remap to
        match. */

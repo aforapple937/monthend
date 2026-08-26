@@ -65,7 +65,7 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER ECL_METHOD V_SEGMENT_NAME
             if not missing(_x) and strip(LGD_PROD_TYPE) = 'ESG' then
                 _x = cats(_x, 'ESG');
 
-            /* OPEN:
+            /* CLARIFY:
                1. Y is the collateralisation status, but how it is derived is
                   not known, so it is lifted from the engine's own
                   V_LGD_TERM_STRUCTURE_ID rather than built.
