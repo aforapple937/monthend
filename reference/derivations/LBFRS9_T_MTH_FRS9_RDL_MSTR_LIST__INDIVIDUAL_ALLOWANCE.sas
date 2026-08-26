@@ -17,6 +17,6 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_IFRS_STAGE_CODE
 
     call missing(INDIVIDUAL_ALLOWANCE);
 
-    if strip(V_IFRS_STAGE_CODE) = 'STAGE3' then
+    if strip(V_IFRS_STAGE_CODE) = 'STAGE3' and not missing(DCF_AMT) then
         INDIVIDUAL_ALLOWANCE = max(0, N_EAD_AMOUNT_RCY - DCF_AMT);
 run;
