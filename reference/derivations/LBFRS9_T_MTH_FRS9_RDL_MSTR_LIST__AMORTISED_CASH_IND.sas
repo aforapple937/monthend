@@ -14,9 +14,8 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER F_EXP_REVOLVING_FLAG
     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm
           and V_D_ACCOUNT_STATUS = "Active";
 
-    call missing(AMORTISED_CASH_IND);
-
     if strip(F_EXP_REVOLVING_FLAG) = 'N'
        and strip(PROD_LV4) in ('Auto', 'Term Loans')
         then AMORTISED_CASH_IND = 'Y';
+    else AMORTISED_CASH_IND = 'N';
 run;
