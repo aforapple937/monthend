@@ -17,13 +17,13 @@ data WORK.fx(keep=CURCY_CODE EXCHG_RT);
     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm;
 run;
 
-data WORK.ln_derived(keep=PROC_DTE AC_CODE CURCY_CODE AC_STS_CODE RCY_TOT_OS
+data WORK.od_derived(keep=PROC_DTE AC_CODE CURCY_CODE AC_STS_CODE RCY_TOT_OS
                           REM_INST_AMT RCY_INT_OS EXCHG_RT LEDGER_BALANCE_AMT);
     retain PROC_DTE AC_CODE CURCY_CODE AC_STS_CODE RCY_TOT_OS REM_INST_AMT
            RCY_INT_OS EXCHG_RT LEDGER_BALANCE_AMT;
     length DWH_AC_CODE $50 AC_STS_CODE $1;
     format LEDGER_BALANCE_AMT 24.3;
-    set LBFRS9.T_MTH_FRS9_LN_DTL(keep=PROC_DTE AC_CODE ORIGINAL_ACCOUNT_NUMBER
+    set LBFRS9.T_MTH_FRS9_OD_DTL(keep=PROC_DTE AC_CODE ORIGINAL_ACCOUNT_NUMBER
                                       CURCY_CODE ACCT_STATUS_CODE);
     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm
           and ACCT_STATUS_CODE = "Active";
