@@ -32,7 +32,8 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER RSME_FLG
     AC_CODE = V_ACCOUNT_NUMBER;
     rc = r.find();
 
-    F_RSME_INCLUSION_IND = RSME_FLG;
+    if missing(RSME_FLG) then F_RSME_INCLUSION_IND = 'N';
+    else F_RSME_INCLUSION_IND = RSME_FLG;
 run;
 
 proc datasets library=WORK nolist;
