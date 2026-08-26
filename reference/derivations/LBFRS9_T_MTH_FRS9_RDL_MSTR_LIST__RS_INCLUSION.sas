@@ -5,7 +5,17 @@
 
 data WORK.cls(keep=AC_CODE CREDIT_CLS_TYP_CODE);
     length AC_CODE $50 CREDIT_CLS_TYP_CODE $20;
-    set LBFRS9.T_MTH_FRS9_LN_DTL(keep=PROC_DTE AC_CODE CREDIT_CLS_TYP_CODE);
+    set LBFRS9.T_MTH_FRS9_LN_DTL        (keep=PROC_DTE AC_CODE
+                                              CREDIT_CLS_TYP_CODE)
+        LBFRS9.T_MTH_FRS9_CC_DTL        (keep=PROC_DTE AC_CODE
+                                              CREDIT_CLASS_TYP_CODE
+                                         rename=(CREDIT_CLASS_TYP_CODE=CREDIT_CLS_TYP_CODE))
+        LBFRS9.T_MTH_FRS9_GUARANTEE_DTL (keep=PROC_DTE AC_CODE
+                                              CREDIT_CLASS_TYP_CODE
+                                         rename=(CREDIT_CLASS_TYP_CODE=CREDIT_CLS_TYP_CODE))
+        LBFRS9.T_MTH_FRS9_OD_DTL        (keep=PROC_DTE AC_CODE
+                                              CREDIT_CLASS_TYP_CODE
+                                         rename=(CREDIT_CLASS_TYP_CODE=CREDIT_CLS_TYP_CODE));
     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm;
 run;
 
