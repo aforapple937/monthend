@@ -1,0 +1,44 @@
+## Table: LBDWH.T_DAL_BORR_AC_RATING_DTL
+Library   : LBDWH
+Schema    : DWHOWR
+Engine    : ODBC (Oracle)
+Variables : 33
+
+## Variable Reference
+# Num = Numeric, Char = Character
+
+#  | Variable                       | Type | Len | Format      | Label
+---|--------------------------------|------|-----|-------------|--------------------------------
+1  | PROC_DTE                       | Num  | 8   | DATETIME20. | PROC_DTE
+2  | RATING_MODEL_CODE              | Char | 10  | $10.        | RATING_MODEL_CODE
+3  | RATING_EFF_DTE                 | Num  | 8   | DATETIME20. | RATING_EFF_DTE
+4  | RATING_END_DTE                 | Num  | 8   | DATETIME20. | RATING_END_DTE
+5  | ORIG_CR_RATING_IND             | Char | 20  | $20.        | ORIG_CR_RATING_IND
+6  | AC_CODE                        | Char | 50  | $50.        | AC_CODE
+7  | INT_RATING_CODE                | Char | 20  | $20.        | INT_RATING_CODE
+8  | RATING_SRC_CODE                | Char | 10  | $10.        | RATING_SRC_CODE
+9  | INT_ORIG_RATING_CODE           | Char | 20  | $20.        | INT_ORIG_RATING_CODE
+10 | CIF_NO                         | Char | 20  | $20.        | CIF_NO
+11 | UPDT_DTE                       | Num  | 8   | DATETIME20. | UPDT_DTE
+12 | UPDT_USR                       | Char | 20  | $20.        | UPDT_USR
+13 | UPDT_PRG                       | Char | 50  | $50.        | UPDT_PRG
+14 | BIZ_SEG                        | Char | 50  | $50.        | BIZ_SEG
+15 | PDT_GRP                        | Char | 50  | $50.        | PDT_GRP
+16 | NEW_AC_FLAG                    | Char | 1   | $1.         | NEW_AC_FLAG
+17 | SYS_CODE                       | Char | 3   | $3.         | SYS_CODE
+18 | AA_FAC_REF                     | Char | 50  | $50.        | AA_FAC_REF
+19 | SELECTION_CRITERIA             | Char | 50  | $50.        | SELECTION_CRITERIA
+20 | CO_CODE                        | Char | 3   | $3.         | CO_CODE
+21 | TC_DIV                         | Char | 20  | $20.        | TC_DIV
+22 | TC_SEG                         | Char | 20  | $20.        | TC_SEG
+23 | SUB_SEG_CODE                   | Char | 5   | $5.         | SUB_SEG_CODE
+24 | CIF_TYP_CODE                   | Char | 10  | $10.        | CIF_TYP_CODE
+25 | EXTERNAL_RATING_SOURCE         | Char | 10  | $10.        | EXTERNAL_RATING_SOURCE
+26 | EXTERNAL_RATING                | Char | 10  | $10.        | EXTERNAL_RATING
+27 | INTERNAL_RATING_SOURCE         | Char | 10  | $10.        | INTERNAL_RATING_SOURCE
+28 | INTERNAL_RATING                | Char | 10  | $10.        | INTERNAL_RATING
+29 | ORGL_CR_RATING_FLG             | Char | 20  | $20.        | ORGL_CR_RATING_FLG
+30 | RATING_MODEL_CODE_CUR          | Char | 10  | $10.        | RATING_MODEL_CODE_CUR
+31 | RATING_EFF_DTE_CUR             | Num  | 8   | DATETIME20. | RATING_EFF_DTE_CUR
+32 | RATING_END_DTE_CUR             | Num  | 8   | DATETIME20. | RATING_END_DTE_CUR
+33 | INSERT_DTE                     | Num  | 8   | DATETIME20. | INSERT_DTE
