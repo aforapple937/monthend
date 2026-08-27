@@ -9,10 +9,11 @@ data WORK.party(keep=CIF_NO MKT_SUB_SEG_DESC);
     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm;
 run;
 
-data WORK.invmt_derived(keep=PROC_DTE AC_CODE CIF_NO MKT_SUB_SEG_DESC RSME_FLG);
-    retain PROC_DTE AC_CODE CIF_NO MKT_SUB_SEG_DESC RSME_FLG;
+data WORK.invmt_derived(keep=PROC_DTE AC_CODE PRD_CODE CIF_NO MKT_SUB_SEG_DESC
+                             RSME_FLG);
+    retain PROC_DTE AC_CODE PRD_CODE CIF_NO MKT_SUB_SEG_DESC RSME_FLG;
     length MKT_SUB_SEG_DESC $60 RSME_FLG $1;
-    set LBFRS9.T_MTH_FRS9_INVMT_DTL(keep=PROC_DTE AC_CODE CIF_NO
+    set LBFRS9.T_MTH_FRS9_INVMT_DTL(keep=PROC_DTE AC_CODE CIF_NO PRD_CODE
                                          ACCT_STATUS_CODE);
     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm
           and ACCT_STATUS_CODE = "Active";
@@ -24,13 +25,13 @@ data WORK.invmt_derived(keep=PROC_DTE AC_CODE CIF_NO MKT_SUB_SEG_DESC RSME_FLG);
         p.definedone();
     end;
 
-    call missing(MKT_SUB_SEG_DESC);
+    call missing(MKT_SUB_SEG_DESC, RSME_FLG);
     rc = p.find();
 
-    /* VARIANCE: some INVMT accounts carry a blank RSME_FLG in the engine
-       output, where this derivation always resolves to Y or N. */
-    if strip(MKT_SUB_SEG_DESC) = 'CFS-SME' then RSME_FLG = 'Y';
-    else RSME_FLG = 'N';
+    if strip(PRD_CODE) ne 'SG_NOSTRO' then do;
+        if strip(MKT_SUB_SEG_DESC) = 'CFS-SME' then RSME_FLG = 'Y';
+        else RSME_FLG = 'N';
+    end;
 run;
 
 proc datasets library=WORK nolist;
