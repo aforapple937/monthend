@@ -2,7 +2,8 @@
 
 ## 1. Grain
 
-`PROC_DTE` = month-end date; all months are retained.
+`PROC_DTE` = month-end date; all months are retained. The one exception is
+`T_DAL_BORR_AC_RATING_DTL`, where `PROC_DTE` is a daily date.
 
 | Library | Table | Grain | Note |
 |---|---|---|---|
@@ -19,7 +20,7 @@
 | `LBFRS9` | `T_MTH_FRS9_AC_RATING_DTL` | `PROC_DTE` + `AC_CODE` + `ORGL_CR_RATING_FLG` | **2 rows/account**: `Y` orig, `N` current |
 | `LBFRS9` | `T_MTH_FRS9_RT_DTL` | `PROC_DTE` + `AC_CODE` + rate period | **many rows/account** |
 | `LBFRS9` | `T_FRS_RT_INTF` | `PROC_DTE` + `AC_CODE` + `RT_EFF_DTE` | **many rows/account** |
-| `LBDWH` | `T_DAL_BORR_AC_RATING_DTL` | `PROC_DTE` + `AC_CODE` | **daily**³ |
+| `LBDWH` | `T_DAL_BORR_AC_RATING_DTL` | `PROC_DTE` + `AC_CODE` | **daily** |
 | `LBDWH` | `T_MTH_CURCY_EXCHG` | `PROC_DTE` + `CURCY_CODE` | monthly rate |
 | `LBDWH` | `T_DAL_CURCY_EXCHG` | `PROC_DTE` + `CURCY_CODE` | daily rate |
 | `LBDWH` | `V_T_CIF_MSTR` | `CIF_NO` | **no `PROC_DTE`** — current state |
@@ -28,8 +29,6 @@
 ¹ Present through the month the account closes, absent after.
 ² Once an account appears it stays in every later month, at nil balance after
 closure.
-³ `PROC_DTE` is a daily date, not month-end — bound the filter to the single
-day being reported.
 
 ---
 
