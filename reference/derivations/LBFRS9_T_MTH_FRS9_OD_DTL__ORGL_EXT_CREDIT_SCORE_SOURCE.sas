@@ -11,11 +11,11 @@ data WORK.rating(keep=DWH_AC_CODE RATING_MODEL_CODE);
     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm;
 run;
 
-data WORK.od_derived(keep=PROC_DTE AC_CODE RATING_MODEL_CODE ORGL_EXT_CREDIT_SCORE_SOURCE);
-    retain PROC_DTE AC_CODE RATING_MODEL_CODE ORGL_EXT_CREDIT_SCORE_SOURCE;
+data WORK.od_derived(keep=PROC_DTE AC_CODE RSME_FLG RATING_MODEL_CODE ORGL_EXT_CREDIT_SCORE_SOURCE);
+    retain PROC_DTE AC_CODE RSME_FLG RATING_MODEL_CODE ORGL_EXT_CREDIT_SCORE_SOURCE;
     length DWH_AC_CODE $50 RATING_MODEL_CODE $10 ORGL_EXT_CREDIT_SCORE_SOURCE $40;
     set LBFRS9.T_MTH_FRS9_OD_DTL(keep=PROC_DTE AC_CODE ORIGINAL_ACCOUNT_NUMBER
-                                      ACCT_STATUS_CODE);
+                                      RSME_FLG ACCT_STATUS_CODE);
     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm
           and ACCT_STATUS_CODE = "Active";
 
@@ -26,11 +26,21 @@ data WORK.od_derived(keep=PROC_DTE AC_CODE RATING_MODEL_CODE ORGL_EXT_CREDIT_SCO
         r.definedone();
     end;
 
-    call missing(RATING_MODEL_CODE);
+    call missing(RATING_MODEL_CODE, ORGL_EXT_CREDIT_SCORE_SOURCE);
     DWH_AC_CODE = ORIGINAL_ACCOUNT_NUMBER;
     rc = r.find();
 
-    ORGL_EXT_CREDIT_SCORE_SOURCE = RATING_MODEL_CODE;
+    if strip(RSME_FLG) ne 'Y' then
+    select (strip(RATING_MODEL_CODE));
+        when ('CT') ORGL_EXT_CREDIT_SCORE_SOURCE = 'CN';
+        when ('LC') ORGL_EXT_CREDIT_SCORE_SOURCE = 'LG';
+        when ('MD') ORGL_EXT_CREDIT_SCORE_SOURCE = 'MP';
+        when ('MS') ORGL_EXT_CREDIT_SCORE_SOURCE = 'MD';
+        when ('RE') ORGL_EXT_CREDIT_SCORE_SOURCE = 'DI';
+        when ('SM') ORGL_EXT_CREDIT_SCORE_SOURCE = 'SM';
+        when ('CR') ORGL_EXT_CREDIT_SCORE_SOURCE = 'XX';
+        otherwise   ORGL_EXT_CREDIT_SCORE_SOURCE = RATING_MODEL_CODE;
+    end;
 run;
 
 proc datasets library=WORK nolist;
