@@ -27,6 +27,8 @@ data WORK.invmt_derived(keep=PROC_DTE AC_CODE CIF_NO MKT_SUB_SEG_DESC RSME_FLG);
     call missing(MKT_SUB_SEG_DESC);
     rc = p.find();
 
+    /* VARIANCE: some INVMT accounts carry a blank RSME_FLG in the engine
+       output, where this derivation always resolves to Y or N. */
     if strip(MKT_SUB_SEG_DESC) = 'CFS-SME' then RSME_FLG = 'Y';
     else RSME_FLG = 'N';
 run;
