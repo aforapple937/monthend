@@ -2,8 +2,9 @@
 
 ## 1. Grain
 
-`PROC_DTE` = month-end date; all months are retained. The one exception is
-`T_DAL_BORR_AC_RATING_DTL`, where `PROC_DTE` is a daily date.
+`PROC_DTE` = month-end date; all months are retained. The exceptions are the
+`LBDWH` `T_DAL_` tables — `T_DAL_CURCY_EXCHG`, `T_DAL_BORR_AC_RATING_DTL` —
+where `PROC_DTE` is a daily date.
 
 | Library | Table | Grain | Note |
 |---|---|---|---|
