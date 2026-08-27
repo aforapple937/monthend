@@ -11,17 +11,24 @@ data WORK.v_ref(keep=DWH_AC_CODE ARREAR_NO SYS_CODE CIF_TYP_CODE CR_STS_CODE);
     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm;
 run;
 
-data WORK.ln_derived(keep=PROC_DTE AC_CODE SYS_CODE CIF_TYP_CODE CR_STS_CODE
-                          ARREAR_NO MTH_ARREARS);
-    retain PROC_DTE AC_CODE SYS_CODE CIF_TYP_CODE CR_STS_CODE ARREAR_NO
-           MTH_ARREARS;
+data WORK.term_ln(keep=PRD_CODE);
+    length PRD_CODE $50;
+    set LBFRS9.T_FRS9_PRD_MSTR(keep=PRODUCT_HIERARCHY_CD LEVEL_4
+                               rename=(PRODUCT_HIERARCHY_CD=PRD_CODE));
+    where strip(LEVEL_4) = 'Term Loans';
+run;
+
+data WORK.ln_derived(keep=PROC_DTE AC_CODE PRD_CODE SYS_CODE CIF_TYP_CODE
+                          CR_STS_CODE ARREAR_NO MTH_ARREARS);
+    retain PROC_DTE AC_CODE PRD_CODE SYS_CODE CIF_TYP_CODE CR_STS_CODE
+           ARREAR_NO MTH_ARREARS;
     length DWH_AC_CODE $50;
     format ARREAR_NO MTH_ARREARS 6.;
 
     if 0 then set WORK.v_ref;
 
     set LBFRS9.T_MTH_FRS9_LN_DTL(keep=PROC_DTE AC_CODE ORIGINAL_ACCOUNT_NUMBER
-                                      ACCT_STATUS_CODE);
+                                      ACCT_STATUS_CODE PRD_CODE);
     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm
           and ACCT_STATUS_CODE = "Active";
 
@@ -30,29 +37,28 @@ data WORK.ln_derived(keep=PROC_DTE AC_CODE SYS_CODE CIF_TYP_CODE CR_STS_CODE
         v.definekey("DWH_AC_CODE");
         v.definedata("ARREAR_NO", "SYS_CODE", "CIF_TYP_CODE", "CR_STS_CODE");
         v.definedone();
+
+        declare hash t(dataset:"WORK.term_ln");
+        t.definekey("PRD_CODE");
+        t.definedone();
     end;
 
     call missing(ARREAR_NO, SYS_CODE, CIF_TYP_CODE, CR_STS_CODE);
     DWH_AC_CODE = ORIGINAL_ACCOUNT_NUMBER;
     rc = v.find();
 
-    /* VARIANCE: only the fallback arm is implemented. The full expression is
+    _is_term = (t.check() = 0);
 
-           IIF( SYS_CODE = 'TS'
-                AND IN(CIF_TYP_CODE,'INDV','STAFF')
-                AND CR_STS_CODE = '2'
-                AND NOT ISNULL(:LKP.LKP_T_FRS9_PRD_MSTR_TERM_LOANS(v_PRD_CODE)),
-                2,
-                DECODE(ARREAR_NO,NULL,0,ARREAR_NO) )
+    if strip(SYS_CODE) = 'TS'
+       and strip(CIF_TYP_CODE) in ('INDV', 'STAFF')
+       and strip(CR_STS_CODE) = '2'
+       and _is_term
+        then MTH_ARREARS = 2;
+    else MTH_ARREARS = coalesce(ARREAR_NO, 0);
 
-       so a TS individual or staff account at credit status 2 whose product
-       is found by the lookup is forced to 2 rather than taking ARREAR_NO.
-       What LKP_T_FRS9_PRD_MSTR_TERM_LOANS resolves to is not known, so that
-       arm is left out. SYS_CODE, CIF_TYP_CODE and CR_STS_CODE are carried on
-       the output to size the population the missing arm would affect. */
-    MTH_ARREARS = coalesce(ARREAR_NO, 0);
+    drop _is_term;
 run;
 
 proc datasets library=WORK nolist;
-    delete v_ref;
+    delete v_ref term_ln;
 quit;
