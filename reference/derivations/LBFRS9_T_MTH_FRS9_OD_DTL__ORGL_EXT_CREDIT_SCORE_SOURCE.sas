@@ -37,8 +37,9 @@ data WORK.od_derived(keep=PROC_DTE AC_CODE RSME_FLG RATING_MODEL_CODE ORGL_EXT_C
         when ('MD') ORGL_EXT_CREDIT_SCORE_SOURCE = 'MP';
         when ('MS') ORGL_EXT_CREDIT_SCORE_SOURCE = 'MD';
         when ('RE') ORGL_EXT_CREDIT_SCORE_SOURCE = 'DI';
-        when ('SM') ORGL_EXT_CREDIT_SCORE_SOURCE = 'SM';
+        when ('SB') ORGL_EXT_CREDIT_SCORE_SOURCE = 'SM';
         when ('CR') ORGL_EXT_CREDIT_SCORE_SOURCE = 'XX';
+        when ('BK', 'FM') call missing(ORGL_EXT_CREDIT_SCORE_SOURCE);
         otherwise   ORGL_EXT_CREDIT_SCORE_SOURCE = RATING_MODEL_CODE;
     end;
 run;

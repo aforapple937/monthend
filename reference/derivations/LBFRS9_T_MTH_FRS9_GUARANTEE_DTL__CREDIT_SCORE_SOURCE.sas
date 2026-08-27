@@ -37,8 +37,9 @@ data WORK.guar_derived(keep=PROC_DTE AC_CODE RSME_FLG RATING_MODEL_CODE CREDIT_S
         when ('MD') CREDIT_SCORE_SOURCE = 'MP';
         when ('MS') CREDIT_SCORE_SOURCE = 'MD';
         when ('RE') CREDIT_SCORE_SOURCE = 'DI';
-        when ('SM') CREDIT_SCORE_SOURCE = 'SM';
+        when ('SB') CREDIT_SCORE_SOURCE = 'SM';
         when ('CR') CREDIT_SCORE_SOURCE = 'XX';
+        when ('BK', 'FM') call missing(CREDIT_SCORE_SOURCE);
         otherwise   CREDIT_SCORE_SOURCE = RATING_MODEL_CODE;
     end;
 run;
