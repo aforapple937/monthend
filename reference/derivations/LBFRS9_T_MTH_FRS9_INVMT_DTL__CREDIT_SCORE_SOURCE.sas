@@ -10,11 +10,9 @@ data WORK.rating(keep=DWH_AC_CODE RATING_MODEL_CODE);
     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm;
 run;
 
-data WORK.acdtl(keep=DWH_AC_CODE CIF_TYP_CODE);
-    length DWH_AC_CODE $50 CIF_TYP_CODE $10;
-    set LBDWH.V_T_MTH_AC_DTL(keep=PROC_DTE AC_CODE CIF_TYP_CODE
-                             rename=(AC_CODE=DWH_AC_CODE));
-    where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm;
+data WORK.cif(keep=CIF_NO CIF_TYP_CODE);
+    length CIF_NO $50 CIF_TYP_CODE $10;
+    set LBDWH.V_T_CIF_MSTR(keep=CIF_NO CIF_TYP_CODE);
 run;
 
 data WORK.intrtg(keep=AC_CODE INTERNAL_RATING);
@@ -48,8 +46,8 @@ data WORK.invmt_derived(keep=PROC_DTE AC_CODE RSME_FLG RATING_MODEL_CODE
         r.definedata("RATING_MODEL_CODE");
         r.definedone();
 
-        declare hash a(dataset:"WORK.acdtl");
-        a.definekey("DWH_AC_CODE");
+        declare hash a(dataset:"WORK.cif");
+        a.definekey("CIF_NO");
         a.definedata("CIF_TYP_CODE");
         a.definedone();
 
@@ -99,5 +97,5 @@ data WORK.invmt_derived(keep=PROC_DTE AC_CODE RSME_FLG RATING_MODEL_CODE
 run;
 
 proc datasets library=WORK nolist;
-    delete rating acdtl intrtg party;
+    delete rating cif intrtg party;
 quit;
