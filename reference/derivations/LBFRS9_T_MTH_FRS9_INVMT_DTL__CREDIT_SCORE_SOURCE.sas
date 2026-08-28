@@ -29,14 +29,16 @@ data WORK.party(keep=CIF_NO MKT_SUB_SEG);
     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm;
 run;
 
-data WORK.invmt_derived(keep=PROC_DTE AC_CODE RSME_FLG RATING_MODEL_CODE
-                            CIF_TYP_CODE INTERNAL_RATING MKT_SUB_SEG CREDIT_SCORE_SOURCE);
-    retain PROC_DTE AC_CODE RSME_FLG RATING_MODEL_CODE CIF_TYP_CODE
+data WORK.invmt_derived(keep=PROC_DTE AC_CODE PRD_CODE RSME_FLG
+                             RATING_MODEL_CODE CIF_TYP_CODE INTERNAL_RATING
+                             MKT_SUB_SEG CREDIT_SCORE_SOURCE);
+    retain PROC_DTE AC_CODE PRD_CODE RSME_FLG RATING_MODEL_CODE CIF_TYP_CODE
            INTERNAL_RATING MKT_SUB_SEG CREDIT_SCORE_SOURCE;
     length DWH_AC_CODE $50 RATING_MODEL_CODE $10 CIF_TYP_CODE $10
            INTERNAL_RATING $20 MKT_SUB_SEG $15 CREDIT_SCORE_SOURCE $10;
     set LBFRS9.T_MTH_FRS9_INVMT_DTL(keep=PROC_DTE AC_CODE ORIGINAL_ACCOUNT_NUMBER
-                                         CIF_NO RSME_FLG ACCT_STATUS_CODE);
+                                         CIF_NO PRD_CODE RSME_FLG
+                                         ACCT_STATUS_CODE);
     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm
           and ACCT_STATUS_CODE = "Active";
 
@@ -70,7 +72,7 @@ data WORK.invmt_derived(keep=PROC_DTE AC_CODE RSME_FLG RATING_MODEL_CODE
     rc_i = i.find();
     rc_p = p.find();
 
-    if strip(RSME_FLG) ne 'Y' then do;
+    if strip(RSME_FLG) ne 'Y' and strip(PRD_CODE) ne 'SG_NOSTRO' then do;
 
         if missing(RATING_MODEL_CODE) then do;
             if strip(CIF_TYP_CODE) in ('CLUB', 'COY', 'NBANKFI', 'SCHOOL',
