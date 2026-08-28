@@ -72,7 +72,9 @@ data WORK.invmt_derived(keep=PROC_DTE AC_CODE PRD_CODE RSME_FLG
     rc_i = i.find();
     rc_p = p.find();
 
-    if strip(RSME_FLG) ne 'Y' and strip(PRD_CODE) ne 'SG_NOSTRO' then do;
+    /* NOTE: SG_NOSTRO accounts follow a different logic, not covered here.
+       PRD_CODE is carried on the output so those rows can be isolated. */
+    if strip(RSME_FLG) ne 'Y' then do;
 
         if missing(RATING_MODEL_CODE) then do;
             if strip(CIF_TYP_CODE) in ('CLUB', 'COY', 'NBANKFI', 'SCHOOL',
