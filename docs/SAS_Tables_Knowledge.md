@@ -2,7 +2,7 @@
 
 ## 1. Grain
 
-`PROC_DTE` = month-end date; all months are retained. The exceptions are the
+`PROC_DTE` = month-end date. The exceptions are the
 `LBDWH` `T_DAL_` tables — `T_DAL_CURCY_EXCHG`, `T_DAL_BORR_AC_RATING_DTL` —
 where `PROC_DTE` is a daily date.
 
@@ -18,15 +18,15 @@ where `PROC_DTE` is a daily date.
 | `LBFRS9` | `T_MTH_FRS9_RDL_MSTR_LIST` | `PROC_DTE` + `V_ACCOUNT_NUMBER` | |
 | `LBFRS9` | `T_MTH_FRS9_PARTY_MSTR` | `PROC_DTE` + `CIF_NO` | |
 | `LBFRS9` | `T_MTH_FRS9_TASC_PARTY_FEED` | `PROC_DTE` + `CIF_NO` | |
-| `LBFRS9` | `T_MTH_FRS9_AC_RATING_DTL` | `PROC_DTE` + `AC_CODE` + `ORGL_CR_RATING_FLG` | **2 rows/account**: `Y` orig, `N` current |
+| `LBFRS9` | `T_MTH_FRS9_AC_RATING_DTL` | `PROC_DTE` + `AC_CODE` + `ORGL_CR_RATING_FLG` | 2 rows/account: `Y` orig, `N` current |
 | `LBFRS9` | `T_MTH_FRS9_RT_DTL` | `PROC_DTE` + `AC_CODE` + rate period | |
 | `LBFRS9` | `T_FRS_RT_INTF` | `PROC_DTE` + `AC_CODE` + `RT_EFF_DTE` | |
-| `LBFRS9` | `T_RT_TYP_MSTR` | `RT_TYP_CODE` | **no `PROC_DTE`** — current state |
-| `LBDWH` | `T_DAL_BORR_AC_RATING_DTL` | `PROC_DTE` + `AC_CODE` | **daily** |
+| `LBFRS9` | `T_RT_TYP_MSTR` | `RT_TYP_CODE` | no `PROC_DTE` — current state |
+| `LBDWH` | `T_DAL_BORR_AC_RATING_DTL` | `PROC_DTE` + `AC_CODE` | daily |
 | `LBDWH` | `T_MTH_CURCY_EXCHG` | `PROC_DTE` + `CURCY_CODE` | monthly rate |
 | `LBDWH` | `T_DAL_CURCY_EXCHG` | `PROC_DTE` + `CURCY_CODE` | daily rate |
-| `LBDWH` | `V_T_CIF_MSTR` | `CIF_NO` | **no `PROC_DTE`** — current state |
-| `LBFRS9` | `T_FRS9_PRD_MSTR` | `PRODUCT_HIERARCHY_CD` | **no `PROC_DTE`** — static |
+| `LBDWH` | `V_T_CIF_MSTR` | `CIF_NO` | no `PROC_DTE` — current state |
+| `LBFRS9` | `T_FRS9_PRD_MSTR` | `PRODUCT_HIERARCHY_CD` | no `PROC_DTE` — static |
 
 ---
 
@@ -63,13 +63,13 @@ Include `PROC_DTE` in every join except to `V_T_CIF_MSTR` and
 | `LBFRS9.T_MTH_FRS9_GUARANTEE_DTL` | `LBFRS9.T_MTH_FRS9_TASC_PARTY_FEED` | `CIF_NO` = `CIF_NO` | many:1 |
 | `LBFRS9.T_MTH_FRS9_RDL_AC_DTL` | `LBFRS9.T_MTH_FRS9_TASC_PARTY_FEED` | `CIF_NO` = `CIF_NO` | many:1 |
 | `LBFRS9.T_MTH_FRS9_RDL_AC_DTL` | `LBDWH.V_T_CIF_MSTR` | `CIF_NO` = `CIF_NO` | many:1 |
-| `LBFRS9.T_MTH_FRS9_LN_DTL` | `LBFRS9.T_MTH_FRS9_AC_RATING_DTL` | `AC_CODE` = `AC_CODE` | **1:2** |
-| `LBFRS9.T_MTH_FRS9_CC_DTL` | `LBFRS9.T_MTH_FRS9_AC_RATING_DTL` | `AC_CODE` = `AC_CODE` | **1:2** |
-| `LBFRS9.T_MTH_FRS9_OD_DTL` | `LBFRS9.T_MTH_FRS9_AC_RATING_DTL` | `AC_CODE` = `AC_CODE` | **1:2** |
-| `LBFRS9.T_MTH_FRS9_INVMT_DTL` | `LBFRS9.T_MTH_FRS9_AC_RATING_DTL` | `AC_CODE` = `AC_CODE` | **1:2** |
-| `LBFRS9.T_MTH_FRS9_GUARANTEE_DTL` | `LBFRS9.T_MTH_FRS9_AC_RATING_DTL` | `AC_CODE` = `AC_CODE` | **1:2** |
-| `LBFRS9.T_MTH_FRS9_LN_DTL` | `LBFRS9.T_MTH_FRS9_RT_DTL` | `AC_CODE` = `AC_CODE` | **1:many** |
-| `LBFRS9.T_MTH_FRS9_LN_DTL` | `LBFRS9.T_FRS_RT_INTF` | `ORIGINAL_ACCOUNT_NUMBER` = `AC_CODE` | **1:many** |
+| `LBFRS9.T_MTH_FRS9_LN_DTL` | `LBFRS9.T_MTH_FRS9_AC_RATING_DTL` | `AC_CODE` = `AC_CODE` | 1:2 |
+| `LBFRS9.T_MTH_FRS9_CC_DTL` | `LBFRS9.T_MTH_FRS9_AC_RATING_DTL` | `AC_CODE` = `AC_CODE` | 1:2 |
+| `LBFRS9.T_MTH_FRS9_OD_DTL` | `LBFRS9.T_MTH_FRS9_AC_RATING_DTL` | `AC_CODE` = `AC_CODE` | 1:2 |
+| `LBFRS9.T_MTH_FRS9_INVMT_DTL` | `LBFRS9.T_MTH_FRS9_AC_RATING_DTL` | `AC_CODE` = `AC_CODE` | 1:2 |
+| `LBFRS9.T_MTH_FRS9_GUARANTEE_DTL` | `LBFRS9.T_MTH_FRS9_AC_RATING_DTL` | `AC_CODE` = `AC_CODE` | 1:2 |
+| `LBFRS9.T_MTH_FRS9_LN_DTL` | `LBFRS9.T_MTH_FRS9_RT_DTL` | `AC_CODE` = `AC_CODE` | 1:many |
+| `LBFRS9.T_MTH_FRS9_LN_DTL` | `LBFRS9.T_FRS_RT_INTF` | `ORIGINAL_ACCOUNT_NUMBER` = `AC_CODE` | 1:many |
 | `LBFRS9.T_FRS_RT_INTF` | `LBFRS9.T_RT_TYP_MSTR` | `put(PRM_RT_NO, z3.)` = `RT_TYP_CODE` | many:1 |
 | `LBFRS9.T_MTH_FRS9_LN_DTL` | `LBFRS9.T_FRS9_PRD_MSTR` | `PRD_CODE` = `PRODUCT_HIERARCHY_CD` | many:1 |
 | `LBFRS9.T_MTH_FRS9_CC_DTL` | `LBFRS9.T_FRS9_PRD_MSTR` | `PRD_CODE` = `PRODUCT_HIERARCHY_CD` | many:1 |
