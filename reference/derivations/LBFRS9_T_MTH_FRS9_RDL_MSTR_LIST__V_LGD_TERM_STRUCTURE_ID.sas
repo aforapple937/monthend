@@ -1,7 +1,17 @@
-%let rpt_mth = 31JUL2026;
+%let rpt_mth = 31AUG2026;
 %let rpt_dt  = %sysfunc(inputn(&rpt_mth, date9.));
 %let rpt_dtm = "&rpt_mth:00:00:00"dt;
 %let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
+
+%let mode = DERIVE;
+%let tgt  = V_LGD_TERM_STRUCTURE_ID;
+
+%if %upcase(&mode) = CHECK %then %do;
+    %let act_out = MATCH;
+%end;
+%else %do;
+    %let act_out = ;
+%end;
 
 data WORK.prd(keep=AC_CODE LGD_PROD_TYPE);
     length AC_CODE $50 LGD_PROD_TYPE $7;
@@ -15,10 +25,10 @@ run;
 
 data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER ECL_METHOD V_SEGMENT_NAME
                             MKT_SUB_SEGMENT LGD_PROD_TYPE ENG_LGD_TS
-                            V_LGD_TERM_STRUCTURE_ID);
+                            V_LGD_TERM_STRUCTURE_ID &act_out);
     retain PROC_DTE V_ACCOUNT_NUMBER ECL_METHOD V_SEGMENT_NAME
            MKT_SUB_SEGMENT LGD_PROD_TYPE ENG_LGD_TS
-           V_LGD_TERM_STRUCTURE_ID;
+           V_LGD_TERM_STRUCTURE_ID &act_out;
     length AC_CODE $50 LGD_PROD_TYPE $7 V_LGD_TERM_STRUCTURE_ID $40
            _pfx $20 _x $10 _y $20;
     set LBFRS9.T_MTH_FRS9_RDL_MSTR_LIST(keep=PROC_DTE V_ACCOUNT_NUMBER
@@ -80,6 +90,14 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER ECL_METHOD V_SEGMENT_NAME
     end;
 
     drop _pfx _x _y;
+
+    %if %upcase(&mode) = CHECK %then %do;
+        length MATCH $1;
+        if      missing(&tgt) and missing(ENG_LGD_TS) then MATCH = 'Y';
+        else if missing(&tgt) or  missing(ENG_LGD_TS) then MATCH = 'N';
+        else if strip(&tgt) = strip(ENG_LGD_TS)       then MATCH = 'Y';
+        else MATCH = 'N';
+    %end;
 run;
 
 proc datasets library=WORK nolist;

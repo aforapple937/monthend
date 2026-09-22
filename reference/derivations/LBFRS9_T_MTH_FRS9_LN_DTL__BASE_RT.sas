@@ -1,7 +1,22 @@
-%let rpt_mth = 31JUL2026;
+%let rpt_mth = 31AUG2026;
 %let rpt_dt  = %sysfunc(inputn(&rpt_mth, date9.));
 %let rpt_dtm = "&rpt_mth:00:00:00"dt;
 %let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
+
+%let mode    = DERIVE;
+%let tgt     = BASE_RT;
+%let num_tol = 0.0005;
+
+%if %upcase(&mode) = CHECK %then %do;
+    %let act_keep = &tgt;
+    %let act_ren  = rename=(&tgt = ACT_&tgt);
+    %let act_out  = ACT_&tgt MATCH;
+%end;
+%else %do;
+    %let act_keep = ;
+    %let act_ren  = ;
+    %let act_out  = ;
+%end;
 
 data WORK.ac_ref(keep=DWH_AC_CODE DWH_BASE_RT);
     length DWH_AC_CODE $50;
@@ -39,12 +54,12 @@ data WORK.rt_typ(keep=RT_TYP_CODE CURR_RT);
 run;
 
 data WORK.ln_derived(keep=PROC_DTE AC_CODE PRM_RT_NO RT_TYP_CODE CURR_RT
-                          DWH_BASE_RT BASE_RT);
-    retain PROC_DTE AC_CODE PRM_RT_NO RT_TYP_CODE CURR_RT DWH_BASE_RT BASE_RT;
+                          DWH_BASE_RT BASE_RT &act_out);
+    retain PROC_DTE AC_CODE PRM_RT_NO RT_TYP_CODE CURR_RT DWH_BASE_RT BASE_RT &act_out;
     length DWH_AC_CODE $50 RT_TYP_CODE $7;
     format PRM_RT_NO 4. CURR_RT 14.9 DWH_BASE_RT 20.9 BASE_RT 17.9;
     set LBFRS9.T_MTH_FRS9_LN_DTL(keep=PROC_DTE AC_CODE ORIGINAL_ACCOUNT_NUMBER
-                                      ACCT_STATUS_CODE);
+                                      ACCT_STATUS_CODE &act_keep &act_ren);
     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm
           and ACCT_STATUS_CODE = "Active";
 
@@ -76,6 +91,14 @@ data WORK.ln_derived(keep=PROC_DTE AC_CODE PRM_RT_NO RT_TYP_CODE CURR_RT
         BASE_RT = CURR_RT * 100;
     end;
     else BASE_RT = DWH_BASE_RT * 100;
+
+    %if %upcase(&mode) = CHECK %then %do;
+        length MATCH $1;
+        if      missing(&tgt) and missing(ACT_&tgt) then MATCH = 'Y';
+        else if missing(&tgt) or  missing(ACT_&tgt) then MATCH = 'N';
+        else if abs(&tgt - ACT_&tgt) <= &num_tol    then MATCH = 'Y';
+        else MATCH = 'N';
+    %end;
 run;
 
 proc datasets library=WORK nolist;

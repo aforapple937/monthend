@@ -1,7 +1,21 @@
-%let rpt_mth = 30JUN2026;
+%let rpt_mth = 31AUG2026;
 %let rpt_dt  = %sysfunc(inputn(&rpt_mth, date9.));
 %let rpt_dtm = "&rpt_mth:00:00:00"dt;
 %let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
+
+%let mode    = DERIVE;
+%let tgt     = CURR_RATING;
+
+%if %upcase(&mode) = CHECK %then %do;
+    %let act_keep = &tgt;
+    %let act_ren  = rename=(&tgt = ACT_&tgt);
+    %let act_out  = ACT_&tgt MATCH;
+%end;
+%else %do;
+    %let act_keep = ;
+    %let act_ren  = ;
+    %let act_out  = ;
+%end;
 
 data WORK.curr_rtg(keep=AC_CODE RATING);
     length AC_CODE $50 RATING $20;
@@ -10,10 +24,10 @@ data WORK.curr_rtg(keep=AC_CODE RATING);
           and ORGL_CR_RATING_FLG = 'N';
 run;
 
-data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER RATING CURR_RATING);
-    retain PROC_DTE V_ACCOUNT_NUMBER RATING CURR_RATING;
+data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER RATING CURR_RATING &act_out);
+    retain PROC_DTE V_ACCOUNT_NUMBER RATING CURR_RATING &act_out;
     length CURR_RATING $20 AC_CODE $50 RATING $20;
-    set LBFRS9.T_MTH_FRS9_RDL_MSTR_LIST(keep=PROC_DTE V_ACCOUNT_NUMBER V_D_ACCOUNT_STATUS);
+    set LBFRS9.T_MTH_FRS9_RDL_MSTR_LIST(keep=PROC_DTE V_ACCOUNT_NUMBER V_D_ACCOUNT_STATUS &act_keep &act_ren);
     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm
           and V_D_ACCOUNT_STATUS = "Active";
 
@@ -30,6 +44,14 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER RATING CURR_RATING);
 
     if missing(RATING) then CURR_RATING = 'UNRATED';
     else CURR_RATING = RATING;
+
+    %if %upcase(&mode) = CHECK %then %do;
+        length MATCH $1;
+        if      missing(&tgt) and missing(ACT_&tgt) then MATCH = 'Y';
+        else if missing(&tgt) or  missing(ACT_&tgt) then MATCH = 'N';
+        else if strip(&tgt) = strip(ACT_&tgt)       then MATCH = 'Y';
+        else MATCH = 'N';
+    %end;
 run;
 
 proc datasets library=WORK nolist;

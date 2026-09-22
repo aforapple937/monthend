@@ -1,7 +1,21 @@
-%let rpt_mth = 31JUL2026;
+%let rpt_mth = 31AUG2026;
 %let rpt_dt  = %sysfunc(inputn(&rpt_mth, date9.));
 %let rpt_dtm = "&rpt_mth:00:00:00"dt;
 %let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
+
+%let mode    = DERIVE;
+%let tgt     = V_BASEL_LGD_POOL_ID;
+
+%if %upcase(&mode) = CHECK %then %do;
+    %let act_keep = &tgt;
+    %let act_ren  = rename=(&tgt = ACT_&tgt);
+    %let act_out  = ACT_&tgt MATCH;
+%end;
+%else %do;
+    %let act_keep = ;
+    %let act_ren  = ;
+    %let act_out  = ;
+%end;
 
 data WORK.bas(keep=AC_CODE BASEL_LGD_CLS);
     length AC_CODE $50 BASEL_LGD_CLS $20;
@@ -14,13 +28,13 @@ data WORK.bas(keep=AC_CODE BASEL_LGD_CLS);
 run;
 
 data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_SEGMENT_TYPE ECL_METHOD
-                            BASEL_LGD_CLS V_BASEL_LGD_POOL_ID);
+                            BASEL_LGD_CLS V_BASEL_LGD_POOL_ID &act_out);
     retain PROC_DTE V_ACCOUNT_NUMBER V_SEGMENT_TYPE ECL_METHOD
-           BASEL_LGD_CLS V_BASEL_LGD_POOL_ID;
+           BASEL_LGD_CLS V_BASEL_LGD_POOL_ID &act_out;
     length AC_CODE $50 BASEL_LGD_CLS $20 V_BASEL_LGD_POOL_ID $20;
     set LBFRS9.T_MTH_FRS9_RDL_MSTR_LIST(keep=PROC_DTE V_ACCOUNT_NUMBER
                                              V_D_ACCOUNT_STATUS
-                                             V_SEGMENT_TYPE ECL_METHOD);
+                                             V_SEGMENT_TYPE ECL_METHOD &act_keep &act_ren);
     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm
           and V_D_ACCOUNT_STATUS = "Active";
 
@@ -40,6 +54,14 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_SEGMENT_TYPE ECL_METHOD
        and strip(ECL_METHOD) = 'Specific Provision Methodology'
         then V_BASEL_LGD_POOL_ID = 'S3';
     else V_BASEL_LGD_POOL_ID = BASEL_LGD_CLS;
+
+    %if %upcase(&mode) = CHECK %then %do;
+        length MATCH $1;
+        if      missing(&tgt) and missing(ACT_&tgt) then MATCH = 'Y';
+        else if missing(&tgt) or  missing(ACT_&tgt) then MATCH = 'N';
+        else if strip(&tgt) = strip(ACT_&tgt)       then MATCH = 'Y';
+        else MATCH = 'N';
+    %end;
 run;
 
 proc datasets library=WORK nolist;

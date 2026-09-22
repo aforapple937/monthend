@@ -1,7 +1,22 @@
-%let rpt_mth = 31JUL2026;
+%let rpt_mth = 31AUG2026;
 %let rpt_dt  = %sysfunc(inputn(&rpt_mth, date9.));
 %let rpt_dtm = "&rpt_mth:00:00:00"dt;
 %let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
+
+%let mode    = DERIVE;
+%let tgt     = N_UNDRAWN_AMOUNT_RCY;
+%let num_tol = 0.0005;
+
+%if %upcase(&mode) = CHECK %then %do;
+    %let act_keep = &tgt;
+    %let act_ren  = rename=(&tgt = ACT_&tgt);
+    %let act_out  = ACT_&tgt MATCH;
+%end;
+%else %do;
+    %let act_keep = ;
+    %let act_ren  = ;
+    %let act_out  = ;
+%end;
 
 data WORK.fx(keep=CURCY_CODE EXCHG_RT);
     set LBDWH.T_MTH_CURCY_EXCHG(keep=PROC_DTE CURCY_CODE EXCHG_RT);
@@ -18,15 +33,15 @@ data WORK.undrawn(keep=AC_CODE RCY_UNDRAWN_AMT);
 run;
 
 data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_CCY_CODE RCY_UNDRAWN_AMT
-                            EXCHG_RT N_UNDRAWN_AMOUNT_RCY);
+                            EXCHG_RT N_UNDRAWN_AMOUNT_RCY &act_out);
     retain PROC_DTE V_ACCOUNT_NUMBER V_CCY_CODE RCY_UNDRAWN_AMT
-           EXCHG_RT N_UNDRAWN_AMOUNT_RCY;
+           EXCHG_RT N_UNDRAWN_AMOUNT_RCY &act_out;
     format N_UNDRAWN_AMOUNT_RCY 24.3;
 
     if 0 then set WORK.undrawn WORK.fx;
 
     set LBFRS9.T_MTH_FRS9_RDL_MSTR_LIST(keep=PROC_DTE V_ACCOUNT_NUMBER V_D_ACCOUNT_STATUS
-                                             V_CCY_CODE);
+                                             V_CCY_CODE &act_keep &act_ren);
     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm
           and V_D_ACCOUNT_STATUS = "Active";
 
@@ -53,6 +68,14 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_CCY_CODE RCY_UNDRAWN_AMT
     RCY_UNDRAWN_AMT = coalesce(RCY_UNDRAWN_AMT, 0);
     if RCY_UNDRAWN_AMT = 0 then N_UNDRAWN_AMOUNT_RCY = 0;
     else N_UNDRAWN_AMOUNT_RCY = RCY_UNDRAWN_AMT * EXCHG_RT;
+
+    %if %upcase(&mode) = CHECK %then %do;
+        length MATCH $1;
+        if      missing(&tgt) and missing(ACT_&tgt) then MATCH = 'Y';
+        else if missing(&tgt) or  missing(ACT_&tgt) then MATCH = 'N';
+        else if abs(&tgt - ACT_&tgt) <= &num_tol    then MATCH = 'Y';
+        else MATCH = 'N';
+    %end;
 run;
 
 proc datasets library=WORK nolist;

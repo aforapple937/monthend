@@ -1,7 +1,21 @@
-%let rpt_mth = 30JUN2026;
+%let rpt_mth = 31AUG2026;
 %let rpt_dt  = %sysfunc(inputn(&rpt_mth, date9.));
 %let rpt_dtm = "&rpt_mth:00:00:00"dt;
 %let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
+
+%let mode    = DERIVE;
+%let tgt     = V_IFRS_STAGE_CODE;
+
+%if %upcase(&mode) = CHECK %then %do;
+    %let act_keep = &tgt;
+    %let act_ren  = rename=(&tgt = ACT_&tgt);
+    %let act_out  = ACT_&tgt MATCH;
+%end;
+%else %do;
+    %let act_keep = ;
+    %let act_ren  = ;
+    %let act_out  = ;
+%end;
 
 data WORK.prd_hier(keep=V_PROD_CODE LEVEL_3);
     length V_PROD_CODE $50 LEVEL_3 $20;
@@ -23,7 +37,7 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_SEGMENT_TYPE V_PROD_CODE
                             CNTRL_BY_TREASURY_FLAG
                             CUSTOMER_ID
                             N_OUTSTANDING_AMT N_UNDRAWN_AMOUNT_RCY
-                            V_IFRS_STAGE_CODE);
+                            V_IFRS_STAGE_CODE &act_out);
     retain PROC_DTE V_ACCOUNT_NUMBER V_SEGMENT_TYPE V_PROD_CODE
            LEVEL_3 N_DELINQUENT_DAYS F_AKPK_FLAG
            ORIG_RATING CURR_RATING CMA_FLAG
@@ -33,7 +47,7 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_SEGMENT_TYPE V_PROD_CODE
            CNTRL_BY_TREASURY_FLAG
            CUSTOMER_ID
            N_OUTSTANDING_AMT N_UNDRAWN_AMOUNT_RCY
-           V_IFRS_STAGE_CODE;
+           V_IFRS_STAGE_CODE &act_out;
     length V_IFRS_STAGE_CODE $10 LEVEL_3 $20 AC_CODE $50 CMA_FLAG $1 CNTRL_BY_TREASURY_FLAG $1;
     set LBFRS9.T_MTH_FRS9_RDL_MSTR_LIST(keep=PROC_DTE V_ACCOUNT_NUMBER V_D_ACCOUNT_STATUS
                                              V_SEGMENT_TYPE V_PROD_CODE N_DELINQUENT_DAYS
@@ -42,7 +56,7 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_SEGMENT_TYPE V_PROD_CODE
                                              PROD_LV4 N_MONTH_IN_ARREARS
                                              F_EXPOSURE_DEFAULT_STATUS_FLAG IMPAIRED_FLAG
                                              CUSTOMER_ID
-                                             N_OUTSTANDING_AMT N_UNDRAWN_AMOUNT_RCY);
+                                             N_OUTSTANDING_AMT N_UNDRAWN_AMOUNT_RCY &act_keep &act_ren);
     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm
           and V_D_ACCOUNT_STATUS = "Active";
 
@@ -109,6 +123,14 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_SEGMENT_TYPE V_PROD_CODE
     then V_IFRS_STAGE_CODE = 'STAGE3';
 
     if CNTRL_BY_TREASURY_FLAG = 'Y' then V_IFRS_STAGE_CODE = 'STAGE1';
+
+    %if %upcase(&mode) = CHECK %then %do;
+        length MATCH $1;
+        if      missing(&tgt) and missing(ACT_&tgt) then MATCH = 'Y';
+        else if missing(&tgt) or  missing(ACT_&tgt) then MATCH = 'N';
+        else if strip(&tgt) = strip(ACT_&tgt)       then MATCH = 'Y';
+        else MATCH = 'N';
+    %end;
 run;
 
 proc sql;
