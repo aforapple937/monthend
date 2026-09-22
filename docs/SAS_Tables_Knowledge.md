@@ -20,7 +20,8 @@ where `PROC_DTE` is a daily date.
 | `LBFRS9` | `T_MTH_FRS9_TASC_PARTY_FEED` | `PROC_DTE` + `CIF_NO` | |
 | `LBFRS9` | `T_MTH_FRS9_AC_RATING_DTL` | `PROC_DTE` + `AC_CODE` + `ORGL_CR_RATING_FLG` | **2 rows/account**: `Y` orig, `N` current |
 | `LBFRS9` | `T_MTH_FRS9_RT_DTL` | `PROC_DTE` + `AC_CODE` + rate period | **many rows/account** |
-| `LBFRS9` | `T_FRS_RT_INTF` | `PROC_DTE` + `AC_CODE` + `RT_EFF_DTE` | **many rows/account** |
+| `LBFRS9` | `T_FRS_RT_INTF` | `PROC_DTE` + `AC_CODE` + `RT_EFF_DTE` | **many rows/account** — keep latest `RT_EFF_DTE` |
+| `LBFRS9` | `T_RT_TYP_MSTR` | `RT_TYP_CODE` + `UPDT_DTE` | **no `PROC_DTE`** — keep latest `UPDT_DTE` |
 | `LBDWH` | `T_DAL_BORR_AC_RATING_DTL` | `PROC_DTE` + `AC_CODE` | **daily** |
 | `LBDWH` | `T_MTH_CURCY_EXCHG` | `PROC_DTE` + `CURCY_CODE` | monthly rate |
 | `LBDWH` | `T_DAL_CURCY_EXCHG` | `PROC_DTE` + `CURCY_CODE` | daily rate |
@@ -72,7 +73,8 @@ Include `PROC_DTE` in every join except to `V_T_CIF_MSTR` and
 | `LBFRS9.T_MTH_FRS9_INVMT_DTL` | `LBFRS9.T_MTH_FRS9_AC_RATING_DTL` | `AC_CODE` = `AC_CODE` | **1:2** — filter `ORGL_CR_RATING_FLG` |
 | `LBFRS9.T_MTH_FRS9_GUARANTEE_DTL` | `LBFRS9.T_MTH_FRS9_AC_RATING_DTL` | `AC_CODE` = `AC_CODE` | **1:2** — filter `ORGL_CR_RATING_FLG` |
 | `LBFRS9.T_MTH_FRS9_LN_DTL` | `LBFRS9.T_MTH_FRS9_RT_DTL` | `AC_CODE` = `AC_CODE` | **1:many** |
-| `LBFRS9.T_MTH_FRS9_LN_DTL` | `LBFRS9.T_FRS_RT_INTF` | `AC_CODE` = `AC_CODE` | **1:many** — dedupe first |
+| `LBFRS9.T_MTH_FRS9_LN_DTL` | `LBFRS9.T_FRS_RT_INTF` | `ORIGINAL_ACCOUNT_NUMBER` = `AC_CODE` | **1:many** — dedupe first |
+| `LBFRS9.T_FRS_RT_INTF` | `LBFRS9.T_RT_TYP_MSTR` | `put(PRM_RT_NO, z3.)` = `RT_TYP_CODE` | many:1 |
 | `LBFRS9.T_MTH_FRS9_LN_DTL` | `LBFRS9.T_FRS9_PRD_MSTR` | `PRD_CODE` = `PRODUCT_HIERARCHY_CD` | many:1 |
 | `LBFRS9.T_MTH_FRS9_CC_DTL` | `LBFRS9.T_FRS9_PRD_MSTR` | `PRD_CODE` = `PRODUCT_HIERARCHY_CD` | many:1 |
 | `LBFRS9.T_MTH_FRS9_OD_DTL` | `LBFRS9.T_FRS9_PRD_MSTR` | `PRD_CODE` = `PRODUCT_HIERARCHY_CD` | many:1 |
