@@ -19,9 +19,9 @@ where `PROC_DTE` is a daily date.
 | `LBFRS9` | `T_MTH_FRS9_PARTY_MSTR` | `PROC_DTE` + `CIF_NO` | |
 | `LBFRS9` | `T_MTH_FRS9_TASC_PARTY_FEED` | `PROC_DTE` + `CIF_NO` | |
 | `LBFRS9` | `T_MTH_FRS9_AC_RATING_DTL` | `PROC_DTE` + `AC_CODE` + `ORGL_CR_RATING_FLG` | **2 rows/account**: `Y` orig, `N` current |
-| `LBFRS9` | `T_MTH_FRS9_RT_DTL` | `PROC_DTE` + `AC_CODE` + rate period | **many rows/account** |
-| `LBFRS9` | `T_FRS_RT_INTF` | `PROC_DTE` + `AC_CODE` + `RT_EFF_DTE` | **many rows/account** — keep latest `RT_EFF_DTE` |
-| `LBFRS9` | `T_RT_TYP_MSTR` | `RT_TYP_CODE` + `UPDT_DTE` | **no `PROC_DTE`** — keep latest `UPDT_DTE` |
+| `LBFRS9` | `T_MTH_FRS9_RT_DTL` | `PROC_DTE` + `AC_CODE` + rate period | |
+| `LBFRS9` | `T_FRS_RT_INTF` | `PROC_DTE` + `AC_CODE` + `RT_EFF_DTE` | |
+| `LBFRS9` | `T_RT_TYP_MSTR` | `RT_TYP_CODE` | **no `PROC_DTE`** — current state |
 | `LBDWH` | `T_DAL_BORR_AC_RATING_DTL` | `PROC_DTE` + `AC_CODE` | **daily** |
 | `LBDWH` | `T_MTH_CURCY_EXCHG` | `PROC_DTE` + `CURCY_CODE` | monthly rate |
 | `LBDWH` | `T_DAL_CURCY_EXCHG` | `PROC_DTE` + `CURCY_CODE` | daily rate |
