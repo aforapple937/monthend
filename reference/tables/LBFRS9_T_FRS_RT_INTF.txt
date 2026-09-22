@@ -1,0 +1,32 @@
+## Table: LBFRS9.T_FRS_RT_INTF
+Library   : LBFRS9
+Schema    : FRSPOWR
+Engine    : ODBC (Oracle)
+Variables : 21
+
+## Variable Reference
+# Num = Numeric, Char = Character
+
+#  | Variable                       | Type | Len | Format      | Label
+---|--------------------------------|------|-----|-------------|--------------------------------
+1  | PROC_DTE                       | Num  | 8   | DATETIME20. | PROC_DTE
+2  | AC_CODE                        | Char | 20  | $20.        | AC_CODE
+3  | SYS_CODE                       | Char | 2   | $2.         | SYS_CODE
+4  | AC_TYP_CODE                    | Char | 1   | $1.         | AC_TYP_CODE
+5  | LN_INT_RT                      | Num  | 8   | 13.9        | LN_INT_RT
+6  | PRM_RT_NO                      | Num  | 8   | 4.          | PRM_RT_NO
+7  | PRM_VAR                        | Num  | 8   | 13.9        | PRM_VAR
+8  | PRM_VAR_CODE                   | Char | 2   | $2.         | PRM_VAR_CODE
+9  | PRM_RT_FLR                     | Num  | 8   | 13.9        | PRM_RT_FLR
+10 | PRM_RT_CELG                    | Num  | 8   | 13.9        | PRM_RT_CELG
+11 | PRM_REW_TERM                   | Num  | 8   | 4.          | PRM_REW_TERM
+12 | PRM_REW_TERM_CODE              | Char | 1   | $1.         | PRM_REW_TERM_CODE
+13 | PRM_REW_DTE                    | Num  | 8   | DATETIME20. | PRM_REW_DTE
+14 | RT_EFF_DTE                     | Num  | 8   | DATETIME20. | RT_EFF_DTE
+15 | RT_REW_DTE                     | Num  | 8   | DATETIME20. | RT_REW_DTE
+16 | RT_REW_TERM                    | Num  | 8   | 4.          | RT_REW_TERM
+17 | RT_REW_TERM_CODE               | Char | 10  | $10.        | RT_REW_TERM_CODE
+18 | UPDT_DTE                       | Num  | 8   | DATETIME20. | UPDT_DTE
+19 | UPDT_USR                       | Char | 10  | $10.        | UPDT_USR
+20 | UPDT_PRG                       | Char | 20  | $20.        | UPDT_PRG
+21 | CO_CODE                        | Char | 3   | $3.         | CO_CODE
