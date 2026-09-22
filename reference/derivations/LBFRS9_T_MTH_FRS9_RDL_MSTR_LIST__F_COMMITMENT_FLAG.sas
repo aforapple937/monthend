@@ -1,7 +1,21 @@
-%let rpt_mth = 31JUL2026;
+%let rpt_mth = 31AUG2026;
 %let rpt_dt  = %sysfunc(inputn(&rpt_mth, date9.));
 %let rpt_dtm = "&rpt_mth:00:00:00"dt;
 %let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
+
+%let mode    = DERIVE;
+%let tgt     = F_COMMITMENT_FLAG;
+
+%if %upcase(&mode) = CHECK %then %do;
+    %let act_keep = &tgt;
+    %let act_ren  = rename=(&tgt = ACT_&tgt);
+    %let act_out  = ACT_&tgt MATCH;
+%end;
+%else %do;
+    %let act_keep = ;
+    %let act_ren  = ;
+    %let act_out  = ;
+%end;
 
 data WORK.prd_hier(keep=V_PROD_CODE LEVEL_5);
     length V_PROD_CODE $50 LEVEL_5 $100;
@@ -10,12 +24,12 @@ data WORK.prd_hier(keep=V_PROD_CODE LEVEL_5);
 run;
 
 data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_PROD_CODE PROD_LV4 LEVEL_5
-                            F_COMMITMENT_FLAG);
+                            F_COMMITMENT_FLAG &act_out);
     retain PROC_DTE V_ACCOUNT_NUMBER V_PROD_CODE PROD_LV4 LEVEL_5
-           F_COMMITMENT_FLAG;
+           F_COMMITMENT_FLAG &act_out;
     length F_COMMITMENT_FLAG $1 LEVEL_5 $100;
     set LBFRS9.T_MTH_FRS9_RDL_MSTR_LIST(keep=PROC_DTE V_ACCOUNT_NUMBER V_D_ACCOUNT_STATUS
-                                             V_PROD_CODE PROD_LV4);
+                                             V_PROD_CODE PROD_LV4 &act_keep &act_ren);
     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm
           and V_D_ACCOUNT_STATUS = "Active";
 
@@ -33,6 +47,14 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_PROD_CODE PROD_LV4 LEVEL
        or (strip(PROD_LV4) = 'Term Loans' and strip(LEVEL_5) = 'Mortgage')
         then F_COMMITMENT_FLAG = 'Y';
     else F_COMMITMENT_FLAG = 'N';
+
+    %if %upcase(&mode) = CHECK %then %do;
+        length MATCH $1;
+        if      missing(&tgt) and missing(ACT_&tgt) then MATCH = 'Y';
+        else if missing(&tgt) or  missing(ACT_&tgt) then MATCH = 'N';
+        else if strip(&tgt) = strip(ACT_&tgt)       then MATCH = 'Y';
+        else MATCH = 'N';
+    %end;
 run;
 
 proc datasets library=WORK nolist;

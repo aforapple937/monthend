@@ -1,7 +1,21 @@
-%let rpt_mth = 31JUL2026;
+%let rpt_mth = 31AUG2026;
 %let rpt_dt  = %sysfunc(inputn(&rpt_mth, date9.));
 %let rpt_dtm = "&rpt_mth:00:00:00"dt;
 %let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
+
+%let mode    = DERIVE;
+%let tgt     = PROD_LV4;
+
+%if %upcase(&mode) = CHECK %then %do;
+    %let act_keep = &tgt;
+    %let act_ren  = rename=(&tgt = ACT_&tgt);
+    %let act_out  = ACT_&tgt MATCH;
+%end;
+%else %do;
+    %let act_keep = ;
+    %let act_ren  = ;
+    %let act_out  = ;
+%end;
 
 data WORK.prd_hier(keep=V_PROD_CODE LEVEL_4);
     length V_PROD_CODE $50 LEVEL_4 $100;
@@ -9,11 +23,11 @@ data WORK.prd_hier(keep=V_PROD_CODE LEVEL_4);
                                rename=(PRODUCT_HIERARCHY_CD=V_PROD_CODE));
 run;
 
-data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_PROD_CODE LEVEL_4 PROD_LV4);
-    retain PROC_DTE V_ACCOUNT_NUMBER V_PROD_CODE LEVEL_4 PROD_LV4;
+data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_PROD_CODE LEVEL_4 PROD_LV4 &act_out);
+    retain PROC_DTE V_ACCOUNT_NUMBER V_PROD_CODE LEVEL_4 PROD_LV4 &act_out;
     length PROD_LV4 $150 LEVEL_4 $100;
     set LBFRS9.T_MTH_FRS9_RDL_MSTR_LIST(keep=PROC_DTE V_ACCOUNT_NUMBER V_D_ACCOUNT_STATUS
-                                             V_PROD_CODE);
+                                             V_PROD_CODE &act_keep &act_ren);
     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm
           and V_D_ACCOUNT_STATUS = "Active";
 
@@ -34,6 +48,14 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_PROD_CODE LEVEL_4 PROD_L
        match. */
     if PROD_LV4 = "STD with Other Bank and FI" then
         PROD_LV4 = "Short Term Deposit with Other Bank and FI";
+
+    %if %upcase(&mode) = CHECK %then %do;
+        length MATCH $1;
+        if      missing(&tgt) and missing(ACT_&tgt) then MATCH = 'Y';
+        else if missing(&tgt) or  missing(ACT_&tgt) then MATCH = 'N';
+        else if strip(&tgt) = strip(ACT_&tgt)       then MATCH = 'Y';
+        else MATCH = 'N';
+    %end;
 run;
 
 proc datasets library=WORK nolist;

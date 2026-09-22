@@ -1,7 +1,10 @@
-%let rpt_mth = 31MAY2026;
+%let rpt_mth = 31AUG2026;
 %let rpt_dt  = %sysfunc(inputn(&rpt_mth, date9.));
 %let rpt_dtm = "&rpt_mth:00:00:00"dt;
 %let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
+
+%let mode = DERIVE;
+%let tgt  = PRD_CODE;
 proc sql;
     create table WORK.v_ref as
     select  AC_CODE
@@ -34,6 +37,9 @@ proc sql;
           , v.BIZ_PRD_CODE   as V_BIZ_PRD_CODE
           , v.MI_PRD_CODE    as V_MI_PRD_CODE
           , case when m.AC_CODE is not missing then 1 else 0 end as IN_MSG
+          %if %upcase(&mode) = CHECK %then %do;
+          , l.PRD_CODE as ACT_PRD_CODE
+          %end;
     from        LBFRS9.T_MTH_FRS9_LN_DTL as l
     left join   WORK.v_ref               as v   on l.ORIGINAL_ACCOUNT_NUMBER = v.AC_CODE
     left join   WORK.msg_ac              as m   on l.ORIGINAL_ACCOUNT_NUMBER = m.AC_CODE
@@ -61,6 +67,14 @@ data WORK.ln_derived;
         PRD_CODE = 'SG_PWRCL';
     else
         PRD_CODE = 'SG_' || strip(V_BIZ_PRD_CODE);
+
+    %if %upcase(&mode) = CHECK %then %do;
+        length MATCH $1;
+        if      missing(&tgt) and missing(ACT_&tgt) then MATCH = 'Y';
+        else if missing(&tgt) or  missing(ACT_&tgt) then MATCH = 'N';
+        else if strip(&tgt) = strip(ACT_&tgt)       then MATCH = 'Y';
+        else MATCH = 'N';
+    %end;
 run;
 proc datasets library=WORK nolist;
     delete v_ref msg_ac ln_with_ref;

@@ -1,7 +1,21 @@
-%let rpt_mth  = 30JUN2026;
+%let rpt_mth  = 31AUG2026;
 %let rpt_dt   = %sysfunc(inputn(&rpt_mth, date9.));
 %let rpt_dtm  = "&rpt_mth:00:00:00"dt;
 %let nxt_dtm  = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
+
+%let mode    = DERIVE;
+%let tgt     = ORIG_RATING;
+
+%if %upcase(&mode) = CHECK %then %do;
+    %let act_keep = &tgt;
+    %let act_ren  = rename=(&tgt = ACT_&tgt);
+    %let act_out  = ACT_&tgt MATCH;
+%end;
+%else %do;
+    %let act_keep = ;
+    %let act_ren  = ;
+    %let act_out  = ;
+%end;
 %let prev_dt  = %sysfunc(intnx(month, &rpt_dt, -1, end));
 %let prev_dtm = "%sysfunc(putn(&prev_dt, date9.)):00:00:00"dt;
 %let prv_nxt  = "%sysfunc(putn(%eval(&prev_dt + 1), date9.)):00:00:00"dt;
@@ -23,12 +37,12 @@ data WORK.prev_orig(keep=V_ACCOUNT_NUMBER PREV_ORIG_RATING);
 run;
 
 data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER ORGL_RATING PREV_ORIG_RATING
-                            CURR_RATING ORIG_RATING);
+                            CURR_RATING ORIG_RATING &act_out);
     retain PROC_DTE V_ACCOUNT_NUMBER ORGL_RATING PREV_ORIG_RATING
-           CURR_RATING ORIG_RATING;
+           CURR_RATING ORIG_RATING &act_out;
     length ORIG_RATING $20 AC_CODE $50 ORGL_RATING $20 PREV_ORIG_RATING $20;
     set LBFRS9.T_MTH_FRS9_RDL_MSTR_LIST(keep=PROC_DTE V_ACCOUNT_NUMBER V_D_ACCOUNT_STATUS
-                                             CURR_RATING);
+                                             CURR_RATING &act_keep &act_ren);
     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm
           and V_D_ACCOUNT_STATUS = "Active";
 
@@ -55,6 +69,14 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER ORGL_RATING PREV_ORIG_RATI
     else if rc_p = 0 and PREV_ORIG_RATING ne 'UNRATED' then
         ORIG_RATING = PREV_ORIG_RATING;
     else ORIG_RATING = CURR_RATING;
+
+    %if %upcase(&mode) = CHECK %then %do;
+        length MATCH $1;
+        if      missing(&tgt) and missing(ACT_&tgt) then MATCH = 'Y';
+        else if missing(&tgt) or  missing(ACT_&tgt) then MATCH = 'N';
+        else if strip(&tgt) = strip(ACT_&tgt)       then MATCH = 'Y';
+        else MATCH = 'N';
+    %end;
 run;
 
 proc datasets library=WORK nolist;

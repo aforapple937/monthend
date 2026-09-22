@@ -1,7 +1,21 @@
-%let rpt_mth = 31JUL2026;
+%let rpt_mth = 31AUG2026;
 %let rpt_dt  = %sysfunc(inputn(&rpt_mth, date9.));
 %let rpt_dtm = "&rpt_mth:00:00:00"dt;
 %let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
+
+%let mode    = DERIVE;
+%let tgt     = F_RATING_OUTLOOK_WATCH;
+
+%if %upcase(&mode) = CHECK %then %do;
+    %let act_keep = &tgt;
+    %let act_ren  = rename=(&tgt = ACT_&tgt);
+    %let act_out  = ACT_&tgt MATCH;
+%end;
+%else %do;
+    %let act_keep = ;
+    %let act_ren  = ;
+    %let act_out  = ;
+%end;
 
 data WORK.watch(keep=AC_CODE RATING_OUTLOOK_WATCH);
     length AC_CODE $50 RATING_OUTLOOK_WATCH $1;
@@ -14,11 +28,11 @@ data WORK.watch(keep=AC_CODE RATING_OUTLOOK_WATCH);
 run;
 
 data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER RATING_OUTLOOK_WATCH
-                            F_RATING_OUTLOOK_WATCH);
+                            F_RATING_OUTLOOK_WATCH &act_out);
     retain PROC_DTE V_ACCOUNT_NUMBER RATING_OUTLOOK_WATCH
-           F_RATING_OUTLOOK_WATCH;
+           F_RATING_OUTLOOK_WATCH &act_out;
     length AC_CODE $50 RATING_OUTLOOK_WATCH $1 F_RATING_OUTLOOK_WATCH $1;
-    set LBFRS9.T_MTH_FRS9_RDL_MSTR_LIST(keep=PROC_DTE V_ACCOUNT_NUMBER V_D_ACCOUNT_STATUS);
+    set LBFRS9.T_MTH_FRS9_RDL_MSTR_LIST(keep=PROC_DTE V_ACCOUNT_NUMBER V_D_ACCOUNT_STATUS &act_keep &act_ren);
     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm
           and V_D_ACCOUNT_STATUS = "Active";
 
@@ -35,6 +49,14 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER RATING_OUTLOOK_WATCH
 
     if missing(RATING_OUTLOOK_WATCH) then F_RATING_OUTLOOK_WATCH = 'N';
     else F_RATING_OUTLOOK_WATCH = RATING_OUTLOOK_WATCH;
+
+    %if %upcase(&mode) = CHECK %then %do;
+        length MATCH $1;
+        if      missing(&tgt) and missing(ACT_&tgt) then MATCH = 'Y';
+        else if missing(&tgt) or  missing(ACT_&tgt) then MATCH = 'N';
+        else if strip(&tgt) = strip(ACT_&tgt)       then MATCH = 'Y';
+        else MATCH = 'N';
+    %end;
 run;
 
 proc datasets library=WORK nolist;

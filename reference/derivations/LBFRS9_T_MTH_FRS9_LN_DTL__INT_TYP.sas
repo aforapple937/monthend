@@ -1,7 +1,10 @@
-%let rpt_mth = 31MAY2026;
+%let rpt_mth = 31AUG2026;
 %let rpt_dt  = %sysfunc(inputn(&rpt_mth, date9.));
 %let rpt_dtm = "&rpt_mth:00:00:00"dt;
 %let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
+
+%let mode = DERIVE;
+%let tgt  = INT_TYP;
 proc sql;
     create table WORK.v_ref as
     select  AC_CODE
@@ -19,6 +22,9 @@ proc sql;
           , v.RT_TYP_CODE   as V_RT_TYP_CODE
           , v.MI_PRD_CODE   as V_MI_PRD_CODE
           , v.PRD_CODE      as V_PRD_CODE
+          %if %upcase(&mode) = CHECK %then %do;
+          , l.INT_TYP as ACT_INT_TYP
+          %end;
     from        LBFRS9.T_MTH_FRS9_LN_DTL as l
     left join   WORK.v_ref               as v   on l.ORIGINAL_ACCOUNT_NUMBER = v.AC_CODE
     where l.PROC_DTE >= &rpt_dtm and l.PROC_DTE < &nxt_dtm
@@ -36,6 +42,14 @@ data WORK.ln_derived;
         INT_TYP = 'Fixed Rate';
     else
         INT_TYP = 'Other Adjustable';
+
+    %if %upcase(&mode) = CHECK %then %do;
+        length MATCH $1;
+        if      missing(&tgt) and missing(ACT_&tgt) then MATCH = 'Y';
+        else if missing(&tgt) or  missing(ACT_&tgt) then MATCH = 'N';
+        else if strip(&tgt) = strip(ACT_&tgt)       then MATCH = 'Y';
+        else MATCH = 'N';
+    %end;
 run;
 proc datasets library=WORK nolist;
     delete v_ref ln_with_ref;

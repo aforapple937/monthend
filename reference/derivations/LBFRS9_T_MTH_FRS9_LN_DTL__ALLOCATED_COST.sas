@@ -1,4 +1,4 @@
-%let rpt_mth     = 30APR2026;
+%let rpt_mth     = 31AUG2026;
 %let rpt_dt      = %sysfunc(inputn(&rpt_mth, date9.));
 %let rpt_dtm     = "&rpt_mth:00:00:00"dt;
 %let nxt_dtm     = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;

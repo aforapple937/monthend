@@ -1,7 +1,22 @@
-%let rpt_mth = 31JUL2026;
+%let rpt_mth = 31AUG2026;
 %let rpt_dt  = %sysfunc(inputn(&rpt_mth, date9.));
 %let rpt_dtm = "&rpt_mth:00:00:00"dt;
 %let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
+
+%let mode    = DERIVE;
+%let tgt     = N_CCF_PERCENT;
+%let num_tol = 0.0005;
+
+%if %upcase(&mode) = CHECK %then %do;
+    %let act_keep = &tgt;
+    %let act_ren  = rename=(&tgt = ACT_&tgt);
+    %let act_out  = ACT_&tgt MATCH;
+%end;
+%else %do;
+    %let act_keep = ;
+    %let act_ren  = ;
+    %let act_out  = ;
+%end;
 
 /* CLARIFY: open queries on the FSD, raised against this derivation:
 
@@ -41,13 +56,13 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER F_UNCOND_CANCELLED_EXP_IND
                             F_EXPOSURE_DEFAULT_STATUS_FLAG IMPAIRED_FLAG
                             F_NEW_ACCT_FLG CUST_UTILISATION
                             CE_TYPE PROD_LV4 CURR_RATING N_ORIGINAL_MATURITY
-                            CCF N_CCF_PERCENT);
+                            CCF N_CCF_PERCENT &act_out);
     retain PROC_DTE V_ACCOUNT_NUMBER F_UNCOND_CANCELLED_EXP_IND
            V_SEGMENT_NAME
            F_EXPOSURE_DEFAULT_STATUS_FLAG IMPAIRED_FLAG
            F_NEW_ACCT_FLG CUST_UTILISATION
            CE_TYPE PROD_LV4 CURR_RATING N_ORIGINAL_MATURITY
-           CCF N_CCF_PERCENT;
+           CCF N_CCF_PERCENT &act_out;
     length AC_CODE $50;
     format N_CCF_PERCENT 17.11;
 
@@ -56,7 +71,7 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER F_UNCOND_CANCELLED_EXP_IND
                                              F_EXPOSURE_DEFAULT_STATUS_FLAG IMPAIRED_FLAG
                                              F_NEW_ACCT_FLG
                                              CE_TYPE PROD_LV4 CURR_RATING
-                                             N_ORIGINAL_MATURITY);
+                                             N_ORIGINAL_MATURITY &act_keep &act_ren);
     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm
           and V_D_ACCOUNT_STATUS = "Active";
 
@@ -105,6 +120,14 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER F_UNCOND_CANCELLED_EXP_IND
         when ('238') N_CCF_PERCENT = 0.2;
         otherwise;
     end;
+
+    %if %upcase(&mode) = CHECK %then %do;
+        length MATCH $1;
+        if      missing(&tgt) and missing(ACT_&tgt) then MATCH = 'Y';
+        else if missing(&tgt) or  missing(ACT_&tgt) then MATCH = 'N';
+        else if abs(&tgt - ACT_&tgt) <= &num_tol    then MATCH = 'Y';
+        else MATCH = 'N';
+    %end;
 run;
 
 proc datasets library=WORK nolist;
