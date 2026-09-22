@@ -1,0 +1,25 @@
+## Table: LBFRS9.T_RT_TYP_MSTR
+Library   : LBFRS9
+Schema    : FRSPOWR
+Engine    : ODBC (Oracle)
+Variables : 14
+
+## Variable Reference
+# Num = Numeric, Char = Character
+
+#  | Variable                       | Type | Len | Format      | Label
+---|--------------------------------|------|-----|-------------|--------------------------------
+1  | SYS_CODE                       | Char | 2   | $2.         | SYS_CODE
+2  | RT_TYP_CODE                    | Char | 7   | $7.         | RT_TYP_CODE
+3  | MI_RT_TYP_CODE                 | Char | 3   | $3.         | MI_RT_TYP_CODE
+4  | RT_TYP_DESC                    | Char | 50  | $50.        | RT_TYP_DESC
+5  | MI_RT_TYP_DESC                 | Char | 50  | $50.        | MI_RT_TYP_DESC
+6  | UPDT_DTE                       | Num  | 8   | DATETIME20. | UPDT_DTE
+7  | UPDT_PRG                       | Char | 20  | $20.        | UPDT_PRG
+8  | UPDT_USR                       | Char | 10  | $10.        | UPDT_USR
+9  | MI_RT_GRP_CODE                 | Char | 3   | $3.         | MI_RT_GRP_CODE
+10 | CURCY_CODE                     | Char | 3   | $3.         | CURCY_CODE
+11 | CURR_RT                        | Num  | 8   | 14.9        | CURR_RT
+12 | CURR_EFF_DTE                   | Num  | 8   | DATETIME20. | CURR_EFF_DTE
+13 | PREV_RT                        | Num  | 8   | 14.9        | PREV_RT
+14 | TENOR                          | Char | 10  | $10.        | TENOR
