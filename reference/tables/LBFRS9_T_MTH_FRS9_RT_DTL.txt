@@ -1,0 +1,23 @@
+## Table: LBFRS9.T_MTH_FRS9_RT_DTL
+Library   : LBFRS9
+Schema    : FRSPOWR
+Engine    : ODBC (Oracle)
+Variables : 12
+
+## Variable Reference
+# Num = Numeric, Char = Character
+
+#  | Variable                       | Type | Len | Format      | Label
+---|--------------------------------|------|-----|-------------|--------------------------------
+1  | PROC_DTE                       | Num  | 8   | DATETIME20. | PROC_DTE
+2  | RT_EFF_DTE                     | Num  | 8   | DATETIME20. | RT_EFF_DTE
+3  | RT_END_DTE                     | Num  | 8   | DATETIME20. | RT_END_DTE
+4  | TIER_INT_RT                    | Num  | 8   | 13.6        | TIER_INT_RT
+5  | AC_CODE                        | Char | 20  | $20.        | AC_CODE
+6  | CIF_NO                         | Char | 10  | $10.        | CIF_NO
+7  | UPDT_DTE                       | Num  | 8   | DATETIME20. | UPDT_DTE
+8  | UPDT_USR                       | Char | 10  | $10.        | UPDT_USR
+9  | UPDT_PRG                       | Char | 50  | $50.        | UPDT_PRG
+10 | LEGAL_ENTITY_CODE              | Char | 20  | $20.        | LEGAL_ENTITY_CODE
+11 | BASE_RT                        | Num  | 8   | 13.6        | BASE_RT
+12 | VAR_RT                         | Num  | 8   | 13.6        | VAR_RT
