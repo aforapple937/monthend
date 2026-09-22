@@ -10,7 +10,7 @@
 %if %upcase(&mode) = CHECK %then %do;
     %let act_keep = &tgt;
     %let act_ren  = rename=(&tgt = ACT_&tgt);
-    %let act_out  = ACT_&tgt MATCH;
+    %let act_out  = ACT_&tgt DIFF MATCH;
 %end;
 %else %do;
     %let act_keep = ;
@@ -75,6 +75,7 @@ data WORK.ln_derived(keep=PROC_DTE AC_CODE PRD_CODE SYS_CODE CIF_TYP_CODE
 
     %if %upcase(&mode) = CHECK %then %do;
         length MATCH $1;
+        DIFF = &tgt - ACT_&tgt;
         if      missing(&tgt) and missing(ACT_&tgt) then MATCH = 'Y';
         else if missing(&tgt) or  missing(ACT_&tgt) then MATCH = 'N';
         else if abs(&tgt - ACT_&tgt) <= &num_tol    then MATCH = 'Y';
