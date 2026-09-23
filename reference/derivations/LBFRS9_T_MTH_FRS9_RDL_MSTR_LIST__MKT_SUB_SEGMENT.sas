@@ -43,3 +43,11 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER V_CUST_MKT_SUB_SEG MKT_SUB
         else MATCH = 'N';
     %end;
 run;
+
+%if %upcase(&mode) = CHECK %then %do;
+proc freq data=WORK.mstr_derived;
+    tables MATCH / nocum missing;
+    title "&tgt - CHECK &rpt_mth";
+run;
+title;
+%end;

@@ -54,3 +54,11 @@ run;
 proc datasets library=WORK nolist;
     delete v_ref ln_with_ref;
 quit;
+
+%if %upcase(&mode) = CHECK %then %do;
+proc freq data=WORK.ln_derived;
+    tables MATCH / nocum missing;
+    title "&tgt - CHECK &rpt_mth";
+run;
+title;
+%end;

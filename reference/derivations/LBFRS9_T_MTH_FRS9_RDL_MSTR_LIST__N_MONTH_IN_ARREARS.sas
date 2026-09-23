@@ -5,12 +5,11 @@
 
 %let mode    = DERIVE;
 %let tgt     = N_MONTH_IN_ARREARS;
-%let num_tol = 0.0005;
 
 %if %upcase(&mode) = CHECK %then %do;
     %let act_keep = &tgt;
     %let act_ren  = rename=(&tgt = ACT_&tgt);
-    %let act_out  = ACT_&tgt DIFF MATCH;
+    %let act_out  = ACT_&tgt DIFF;
 %end;
 %else %do;
     %let act_keep = ;
@@ -47,15 +46,28 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER MTH_ARREARS
     N_MONTH_IN_ARREARS = MTH_ARREARS;
 
     %if %upcase(&mode) = CHECK %then %do;
-        length MATCH $1;
         DIFF = &tgt - ACT_&tgt;
-        if      missing(&tgt) and missing(ACT_&tgt) then MATCH = 'Y';
-        else if missing(&tgt) or  missing(ACT_&tgt) then MATCH = 'N';
-        else if abs(&tgt - ACT_&tgt) <= &num_tol    then MATCH = 'Y';
-        else MATCH = 'N';
     %end;
 run;
 
 proc datasets library=WORK nolist;
     delete arr;
 quit;
+
+%if %upcase(&mode) = CHECK %then %do;
+data WORK.chk_var(keep=ABS_DIFF);
+    set WORK.mstr_derived;
+    ABS_DIFF = abs(DIFF);
+run;
+
+proc means data=WORK.chk_var n nmiss max maxdec=12;
+    var ABS_DIFF;
+    title "&tgt - CHECK &rpt_mth - maximum absolute variance";
+    label ABS_DIFF = "Absolute variance";
+run;
+title;
+
+proc datasets library=WORK nolist;
+    delete chk_var;
+quit;
+%end;
