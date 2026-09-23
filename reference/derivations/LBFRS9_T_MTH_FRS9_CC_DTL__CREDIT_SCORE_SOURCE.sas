@@ -121,3 +121,11 @@ run;
 proc datasets library=WORK nolist;
     delete rating cif intrtg party;
 quit;
+
+%if %upcase(&mode) = CHECK %then %do;
+proc freq data=WORK.cc_derived;
+    tables MATCH / nocum missing;
+    title "&tgt - CHECK &rpt_mth";
+run;
+title;
+%end;
