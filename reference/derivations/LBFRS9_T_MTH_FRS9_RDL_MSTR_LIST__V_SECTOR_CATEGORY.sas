@@ -3,7 +3,7 @@
 %let rpt_dtm = "&rpt_mth:00:00:00"dt;
 %let nxt_dtm = "%sysfunc(putn(%eval(&rpt_dt + 1), date9.)):00:00:00"dt;
 
-%let mode    = DERIVE;
+%let mode    = CHECK;
 %let tgt     = V_SECTOR_CATEGORY;
 
 %if %upcase(&mode) = CHECK %then %do;
