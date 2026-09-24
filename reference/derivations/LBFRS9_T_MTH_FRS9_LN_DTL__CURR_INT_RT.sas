@@ -59,6 +59,7 @@ quit;
 %if %upcase(&mode) = CHECK %then %do;
 data WORK.chk_var(keep=ABS_DIFF);
     set WORK.ln_derived;
+    if missing(&tgt) and missing(ACTUAL) then delete;
     ABS_DIFF = abs(DIFF);
 run;
 
