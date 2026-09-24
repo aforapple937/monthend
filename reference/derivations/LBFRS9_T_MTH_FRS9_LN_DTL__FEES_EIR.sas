@@ -25,12 +25,9 @@ data WORK.ln_derived(keep=PROC_DTE AC_CODE FEES_EIR &act_out);
     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm
           and ACCT_STATUS_CODE = "Active";
 
-    /* Not populated - FEES_EIR is left blank for every account. */
     call missing(FEES_EIR);
 
     %if %upcase(&mode) = CHECK %then %do;
-        /* The derived value is always missing, so a variance is meaningless -
-           the only question is whether the actual is missing as well. */
         length MATCH $1;
         if missing(ACTUAL) then MATCH = 'Y';
         else MATCH = 'N';
