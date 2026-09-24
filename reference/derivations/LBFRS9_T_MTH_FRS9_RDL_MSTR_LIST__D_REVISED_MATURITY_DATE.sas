@@ -8,8 +8,8 @@
 
 %if %upcase(&mode) = CHECK %then %do;
     %let act_keep = &tgt;
-    %let act_ren  = rename=(&tgt = ACT_&tgt);
-    %let act_out  = ACT_&tgt DIFF;
+    %let act_ren  = rename=(&tgt = ACTUAL);
+    %let act_out  = ACTUAL MATCH;
 %end;
 %else %do;
     %let act_keep = ;
@@ -64,7 +64,11 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER MATURITY_DTE
         D_REVISED_MATURITY_DATE = coalesce(MATURITY_DTE, &far_dtm);
 
     %if %upcase(&mode) = CHECK %then %do;
-        DIFF = &tgt - ACT_&tgt;
+        length MATCH $1;
+        if      missing(&tgt) and missing(ACTUAL) then MATCH = 'Y';
+        else if missing(&tgt) or  missing(ACTUAL) then MATCH = 'N';
+        else if &tgt = ACTUAL                     then MATCH = 'Y';
+        else MATCH = 'N';
     %end;
 run;
 
@@ -73,19 +77,9 @@ proc datasets library=WORK nolist;
 quit;
 
 %if %upcase(&mode) = CHECK %then %do;
-data WORK.chk_var(keep=ABS_DIFF);
-    set WORK.mstr_derived;
-    ABS_DIFF = abs(DIFF);
-run;
-
-proc means data=WORK.chk_var n nmiss max maxdec=12;
-    var ABS_DIFF;
-    title "&tgt - CHECK &rpt_mth - maximum absolute variance";
-    label ABS_DIFF = "Absolute variance";
+proc freq data=WORK.mstr_derived;
+    tables MATCH / nocum missing;
+    title "&tgt - CHECK &rpt_mth";
 run;
 title;
-
-proc datasets library=WORK nolist;
-    delete chk_var;
-quit;
 %end;
