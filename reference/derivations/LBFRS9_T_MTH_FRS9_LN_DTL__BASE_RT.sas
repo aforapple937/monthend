@@ -8,8 +8,8 @@
 
 %if %upcase(&mode) = CHECK %then %do;
     %let act_keep = &tgt;
-    %let act_ren  = rename=(&tgt = ACT_&tgt);
-    %let act_out  = ACT_&tgt DIFF;
+    %let act_ren  = rename=(&tgt = ACTUAL);
+    %let act_out  = ACTUAL DIFF;
 %end;
 %else %do;
     %let act_keep = ;
@@ -92,7 +92,7 @@ data WORK.ln_derived(keep=PROC_DTE AC_CODE PRM_RT_NO RT_TYP_CODE CURR_RT
     else BASE_RT = DWH_BASE_RT * 100;
 
     %if %upcase(&mode) = CHECK %then %do;
-        DIFF = &tgt - ACT_&tgt;
+        DIFF = &tgt - ACTUAL;
     %end;
 run;
 

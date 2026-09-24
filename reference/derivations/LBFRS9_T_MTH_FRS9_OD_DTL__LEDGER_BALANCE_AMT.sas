@@ -8,8 +8,8 @@
 
 %if %upcase(&mode) = CHECK %then %do;
     %let act_keep = &tgt;
-    %let act_ren  = rename=(&tgt = ACT_&tgt);
-    %let act_out  = ACT_&tgt DIFF;
+    %let act_ren  = rename=(&tgt = ACTUAL);
+    %let act_out  = ACTUAL DIFF;
 %end;
 %else %do;
     %let act_keep = ;
@@ -71,7 +71,7 @@ data WORK.od_derived(keep=PROC_DTE AC_CODE CURCY_CODE AC_STS_CODE RCY_TOT_OS
     drop _os;
 
     %if %upcase(&mode) = CHECK %then %do;
-        DIFF = &tgt - ACT_&tgt;
+        DIFF = &tgt - ACTUAL;
     %end;
 run;
 

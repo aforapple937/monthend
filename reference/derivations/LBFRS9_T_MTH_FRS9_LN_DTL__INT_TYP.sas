@@ -45,9 +45,9 @@ data WORK.ln_derived;
 
     %if %upcase(&mode) = CHECK %then %do;
         length MATCH $1;
-        if      missing(&tgt) and missing(ACT_&tgt) then MATCH = 'Y';
-        else if missing(&tgt) or  missing(ACT_&tgt) then MATCH = 'N';
-        else if strip(&tgt) = strip(ACT_&tgt)       then MATCH = 'Y';
+        if      missing(&tgt) and missing(ACTUAL) then MATCH = 'Y';
+        else if missing(&tgt) or  missing(ACTUAL) then MATCH = 'N';
+        else if strip(&tgt) = strip(ACTUAL)       then MATCH = 'Y';
         else MATCH = 'N';
     %end;
 run;

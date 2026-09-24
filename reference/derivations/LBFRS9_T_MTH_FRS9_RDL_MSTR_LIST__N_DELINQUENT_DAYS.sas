@@ -8,8 +8,8 @@
 
 %if %upcase(&mode) = CHECK %then %do;
     %let act_keep = &tgt;
-    %let act_ren  = rename=(&tgt = ACT_&tgt);
-    %let act_out  = ACT_&tgt DIFF;
+    %let act_ren  = rename=(&tgt = ACTUAL);
+    %let act_out  = ACTUAL DIFF;
 %end;
 %else %do;
     %let act_keep = ;
@@ -50,7 +50,7 @@ data WORK.mstr_derived(keep=PROC_DTE V_ACCOUNT_NUMBER DELQ_DAYS
     N_DELINQUENT_DAYS = DELQ_DAYS;
 
     %if %upcase(&mode) = CHECK %then %do;
-        DIFF = &tgt - ACT_&tgt;
+        DIFF = &tgt - ACTUAL;
     %end;
 run;
 

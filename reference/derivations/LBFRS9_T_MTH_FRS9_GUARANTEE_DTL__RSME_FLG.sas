@@ -8,8 +8,8 @@
 
 %if %upcase(&mode) = CHECK %then %do;
     %let act_keep = &tgt;
-    %let act_ren  = rename=(&tgt = ACT_&tgt);
-    %let act_out  = ACT_&tgt MATCH;
+    %let act_ren  = rename=(&tgt = ACTUAL);
+    %let act_out  = ACTUAL MATCH;
 %end;
 %else %do;
     %let act_keep = ;
@@ -46,9 +46,9 @@ data WORK.guar_derived(keep=PROC_DTE AC_CODE CIF_NO MKT_SUB_SEG_DESC RSME_FLG &a
 
     %if %upcase(&mode) = CHECK %then %do;
         length MATCH $1;
-        if      missing(&tgt) and missing(ACT_&tgt) then MATCH = 'Y';
-        else if missing(&tgt) or  missing(ACT_&tgt) then MATCH = 'N';
-        else if strip(&tgt) = strip(ACT_&tgt)       then MATCH = 'Y';
+        if      missing(&tgt) and missing(ACTUAL) then MATCH = 'Y';
+        else if missing(&tgt) or  missing(ACTUAL) then MATCH = 'N';
+        else if strip(&tgt) = strip(ACTUAL)       then MATCH = 'Y';
         else MATCH = 'N';
     %end;
 run;
