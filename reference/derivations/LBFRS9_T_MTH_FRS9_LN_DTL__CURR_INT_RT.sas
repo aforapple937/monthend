@@ -17,20 +17,18 @@
     %let act_out  = ;
 %end;
 
-data WORK.ac_ref(keep=DWH_AC_CODE DWH_BASE_RT DWH_VAR_RT);
+data WORK.ac_ref(keep=DWH_AC_CODE BASE_RT VAR_RT);
     length DWH_AC_CODE $50;
     set LBDWH.V_T_MTH_AC_DTL(keep=PROC_DTE AC_CODE BASE_RT VAR_RT
-                             rename=(AC_CODE = DWH_AC_CODE
-                                     BASE_RT = DWH_BASE_RT
-                                     VAR_RT  = DWH_VAR_RT));
+                             rename=(AC_CODE = DWH_AC_CODE));
     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm;
 run;
 
-data WORK.ln_derived(keep=PROC_DTE AC_CODE DWH_BASE_RT DWH_VAR_RT CURR_INT_RT
+data WORK.ln_derived(keep=PROC_DTE AC_CODE BASE_RT VAR_RT CURR_INT_RT
                           &act_out);
-    retain PROC_DTE AC_CODE DWH_BASE_RT DWH_VAR_RT CURR_INT_RT &act_out;
+    retain PROC_DTE AC_CODE BASE_RT VAR_RT CURR_INT_RT &act_out;
     length DWH_AC_CODE $50;
-    format DWH_BASE_RT DWH_VAR_RT 20.9 CURR_INT_RT 13.6;
+    format BASE_RT VAR_RT 20.9 CURR_INT_RT 13.6;
     set LBFRS9.T_MTH_FRS9_LN_DTL(keep=PROC_DTE AC_CODE ORIGINAL_ACCOUNT_NUMBER
                                       ACCT_STATUS_CODE &act_keep &act_ren);
     where PROC_DTE >= &rpt_dtm and PROC_DTE < &nxt_dtm
@@ -39,15 +37,15 @@ data WORK.ln_derived(keep=PROC_DTE AC_CODE DWH_BASE_RT DWH_VAR_RT CURR_INT_RT
     if _n_ = 1 then do;
         declare hash a(dataset:"WORK.ac_ref");
         a.definekey("DWH_AC_CODE");
-        a.definedata("DWH_BASE_RT", "DWH_VAR_RT");
+        a.definedata("BASE_RT", "VAR_RT");
         a.definedone();
     end;
 
-    call missing(DWH_BASE_RT, DWH_VAR_RT);
+    call missing(BASE_RT, VAR_RT);
     DWH_AC_CODE = ORIGINAL_ACCOUNT_NUMBER;
     rc = a.find();
 
-    CURR_INT_RT = (coalesce(DWH_BASE_RT, 0) + coalesce(DWH_VAR_RT, 0)) * 100;
+    CURR_INT_RT = (coalesce(BASE_RT, 0) + coalesce(VAR_RT, 0)) * 100;
 
     %if %upcase(&mode) = CHECK %then %do;
         DIFF = &tgt - ACTUAL;
