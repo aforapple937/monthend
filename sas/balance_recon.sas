@@ -42,12 +42,18 @@ quit;
     %return;
 %end;
 
+%local tb_hdr_err;
+%let tb_hdr_err = 0;
+
 data work.tb_sum(keep=ENTITY PRODUCT_TYPE RECON_GRP YTD_NET_ACCOUNTED);
-    length LEDGER_ID 8 PERIOD $10 ACCOUNT_NAME $100 ACCOUNTS $60
-           CURRENCY $3 ACC_PROD $13 ENTITY $3 PRODUCT_TYPE $10
-           RECON_GRP $64 K $16 _dlm $1;
-    retain _dlm ",";
-    infile "&tb_dir/*.txt" dsd truncover dlm=_dlm;
+    length ACCOUNTS $60 ACC_PROD $13 ENTITY $3 PRODUCT_TYPE $10
+           RECON_GRP $64 K $16 _dlm $1
+           _fn _cur_fn $500 _hdr $32 _miss $200 _c1-_c50 $200;
+    retain _dlm "," _cur_fn " " _need_hdr 1 _p1-_p3;
+    array _c{50} $ _c1-_c50;
+    array _p{3} _p1-_p3;
+    array _nm{3} $32 _temporary_ ("ACCOUNTS" "YTD_NET_ACCOUNTED" "ACC_PROD");
+    infile "&tb_dir/*.txt" dsd truncover dlm=_dlm filename=_fn;
 
     if _n_ = 1 then do;
         declare hash m(dataset:"work.tbmap");
@@ -57,8 +63,11 @@ data work.tb_sum(keep=ENTITY PRODUCT_TYPE RECON_GRP YTD_NET_ACCOUNTED);
     end;
 
     input @;
+    if _fn ne _cur_fn then do;
+        _cur_fn   = _fn;
+        _need_hdr = 1;
+    end;
     if _infile_ = " " then delete;
-    if _infile_ =: "LEDGER_ID" then delete;
 
     if      index(_infile_, "09"x) then _dlm = "09"x;
     else if index(_infile_, ",")   then _dlm = ",";
@@ -67,9 +76,37 @@ data work.tb_sum(keep=ENTITY PRODUCT_TYPE RECON_GRP YTD_NET_ACCOUNTED);
         stop;
     end;
 
-    input LEDGER_ID PERIOD $ EFFECTIVE_DATE : anydtdte10. ACCOUNT_NAME $
-          ACCOUNTS $ CURRENCY $ PTD_NET_ENTERED PTD_NET_ACCOUNTED
-          YTD_NET_ENTERED YTD_NET_ACCOUNTED ACC_PROD $;
+    input (_c1-_c50) (:$200.);
+
+    if _need_hdr then do;
+        _need_hdr = 0;
+        if substr(_c1, 1, 3) = "EFBBBF"x then _c1 = substr(_c1, 4);
+        do _j = 1 to dim(_p);
+            _p{_j} = .;
+        end;
+        do _i = 1 to dim(_c);
+            _hdr = compress(upcase(dequote(strip(_c{_i}))), "_ ");
+            do _j = 1 to dim(_nm);
+                if _hdr = compress(_nm{_j}, "_") and _p{_j} = . then _p{_j} = _i;
+            end;
+        end;
+        _miss = " ";
+        do _j = 1 to dim(_nm);
+            if _p{_j} = . then _miss = catx(" ", _miss, _nm{_j});
+        end;
+        if _miss ne " " then do;
+            put "ERROR: TB file " _fn "has no column(s) " _miss;
+            call symputx("tb_hdr_err", 1);
+            stop;
+        end;
+        delete;
+    end;
+
+    if upcase(strip(_c{_p{1}})) = "ACCOUNTS" then delete;
+
+    ACCOUNTS          = _c{_p{1}};
+    YTD_NET_ACCOUNTED = input(_c{_p{2}}, best32.);
+    ACC_PROD          = _c{_p{3}};
 
     ENTITY = scan(ACCOUNTS, 1, "-");
     K = catx("|", ACC_PROD,
@@ -80,6 +117,11 @@ data work.tb_sum(keep=ENTITY PRODUCT_TYPE RECON_GRP YTD_NET_ACCOUNTED);
 
     if RECON_GRP = "" then RECON_GRP = catx(" ", ACC_PROD, "&nogrp");
 run;
+
+%if &tb_hdr_err = 1 %then %do;
+    %put ERROR: TB header check failed in &tb_dir - see the ERROR line above.;
+    %return;
+%end;
 
 proc means data=work.tb_sum noprint nway missing;
     class ENTITY PRODUCT_TYPE;
