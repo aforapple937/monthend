@@ -325,25 +325,22 @@ data mth.baldetail;
     else                                            STATUS = "Amount differs";
 run;
 
-data work.grp_abs(keep=ENTITY PRODUCT_TYPE PROD_BAL TB_BAL ABS_DIFF);
-    set mth.baldetail;
-    ABS_DIFF = abs(DIFF);
-run;
-
-proc means data=work.grp_abs noprint nway missing;
+proc means data=mth.baldetail noprint nway missing;
     class ENTITY PRODUCT_TYPE;
-    var PROD_BAL TB_BAL ABS_DIFF;
-    output out=work.grp_gross(drop=_type_ _freq_)
-           sum(PROD_BAL TB_BAL ABS_DIFF) = DTL_PROD DTL_TB GROSS_DIFF;
+    var PROD_BAL TB_BAL;
+    output out=work.grp_sum(drop=_type_ _freq_)
+           sum(PROD_BAL TB_BAL) = DTL_PROD DTL_TB;
 run;
 
 proc sort data=work.prod_bal;  by ENTITY PRODUCT_TYPE;  run;
 proc sort data=work.tb_bal;    by ENTITY PRODUCT_TYPE;  run;
 
 data mth.balrecon(drop=DTL_PROD DTL_TB);
-    merge work.prod_bal(in=p) work.tb_bal(in=t) work.grp_gross;
+    length ENTITY $3 ENTITY_NAME $3 PRODUCT_TYPE $10;
+    retain ENTITY ENTITY_NAME PRODUCT_TYPE PROD_BAL FIFO_BAL TOTAL_PROD
+           TB_BAL DIFF FOOT_GAP;
+    merge work.prod_bal(in=p) work.tb_bal(in=t) work.grp_sum;
     by ENTITY PRODUCT_TYPE;
-    length ENTITY_NAME $3 MATCH_FLG $1;
 
     select (ENTITY);
         when ("128") ENTITY_NAME = "MBS";
@@ -353,7 +350,6 @@ data mth.balrecon(drop=DTL_PROD DTL_TB);
 
     if not p then PROD_BAL = 0;
     if not t then TB_BAL   = 0;
-    if GROSS_DIFF = . then GROSS_DIFF = 0;
 
     FOOT_GAP = round(PROD_BAL - coalesce(DTL_PROD, 0), 0.01)
              + round(TB_BAL   - coalesce(DTL_TB,   0), 0.01);
@@ -363,18 +359,9 @@ data mth.balrecon(drop=DTL_PROD DTL_TB);
 
     TOTAL_PROD = PROD_BAL + FIFO_BAL;
     DIFF       = TOTAL_PROD - TB_BAL;
-    MATCH_FLG  = ifc(round(DIFF, 0.01) = 0 and round(GROSS_DIFF, 0.01) = 0,
-                     "Y", "N");
 run;
 
 proc sql noprint;
-    select count(*) into :n_diff trimmed
-      from mth.balrecon where MATCH_FLG = "N";
-
-    select count(*) into :n_mask trimmed
-      from mth.balrecon
-     where GROSS_DIFF > abs(DIFF) + &tol;
-
     select count(*) into :n_foot trimmed
       from mth.balrecon where FOOT_GAP ne 0;
 quit;
@@ -395,20 +382,14 @@ quit;
     title;
 %end;
 
-%if &n_mask > 0 %then %do;
-    %put WARNING: &n_mask entity/product type(s) have offsetting group breaks.;
-    %put WARNING- "Difference" is the net - read "Group breaks" and the detail before signing off.;
-%end;
-
 title "Balance Recon &yymm";
 proc print data=mth.balrecon noobs label;
-    var ENTITY_NAME PRODUCT_TYPE PROD_BAL FIFO_BAL TOTAL_PROD
-        TB_BAL DIFF GROSS_DIFF;
-    format PROD_BAL FIFO_BAL TOTAL_PROD TB_BAL DIFF GROSS_DIFF comma20.2;
+    var ENTITY_NAME PRODUCT_TYPE PROD_BAL FIFO_BAL TOTAL_PROD TB_BAL DIFF;
+    format PROD_BAL FIFO_BAL TOTAL_PROD TB_BAL DIFF comma20.2;
     label ENTITY_NAME  = "Entity"        PRODUCT_TYPE = "Product type"
           PROD_BAL     = "Product files" FIFO_BAL     = "FIFO"
           TOTAL_PROD   = "Total product" TB_BAL       = "Trial balance"
-          DIFF         = "Difference"    GROSS_DIFF   = "Group breaks";
+          DIFF         = "Difference";
 run;
 title;
 
@@ -437,33 +418,11 @@ proc report data=mth.baldetail nowd spanrows;
 run;
 title;
 
-proc sort data=mth.baldetail out=work.brk;
-    by ENTITY PRODUCT_TYPE descending DIFF;
-    where abs(round(DIFF, 0.01)) > &tol;
-run;
-
-proc sql noprint;
-    select count(*) into :n_break trimmed from work.brk;
-quit;
-
-%if &n_break > 0 %then %do;
-    title "Group breaks &yymm";
-    proc print data=work.brk noobs label;
-        var ENTITY_NAME PRODUCT_TYPE RECON_GRP TOTAL_PROD TB_BAL DIFF STATUS;
-        format TOTAL_PROD TB_BAL DIFF comma20.2;
-        label ENTITY_NAME = "Entity"        PRODUCT_TYPE = "Product type"
-              RECON_GRP   = "Group"         TOTAL_PROD   = "Total product"
-              TB_BAL      = "Trial balance" DIFF         = "Difference"
-              STATUS      = "Status";
-    run;
-    title;
-%end;
-
 %mend;
 %bal_recon
 
 proc datasets library=work nolist nowarn;
     delete tbmap tb_sum tb_bal tb_grp prod_all prod_bal pg_in pg pg_dup
-           prod_grp prod_gbal nogrp_bal grp_abs grp_gross brk
+           prod_grp prod_gbal nogrp_bal grp_sum
            fifo_raw fifo_in;
 quit;
