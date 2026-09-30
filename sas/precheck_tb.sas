@@ -90,15 +90,28 @@ run;
 
 %let is_jan = %eval(%sysfunc(month(&rpt_dt)) = 1);
 
-data work.tb_all(drop=_dlm);
+%let tb_hdr_err = 0;
+
+data work.tb_all(drop=_:);
     length LEDGER_ID 8 PERIOD $10 ACCOUNT_NAME $100 ACCOUNTS $60
-           CURRENCY $3 ACC_PROD $20 ENTITY $3 ENTITY_NAME $3 GL_NO $7 _dlm $1;
-    retain _dlm ",";
-    infile "&tb_dir/*.txt" dsd truncover dlm=_dlm;
+           CURRENCY $3 ACC_PROD $20 ENTITY $3 ENTITY_NAME $3 GL_NO $7 _dlm $1
+           _fn _cur_fn $500 _hdr $32 _miss $200 _c1-_c50 $200;
+    retain _dlm "," _cur_fn " " _need_hdr 1 _p1-_p11;
+    array _c{50} $ _c1-_c50;
+    array _p{11} _p1-_p11;
+    array _nm{11} $32 _temporary_
+          ("LEDGER_ID" "PERIOD" "EFFECTIVE_DATE" "ACCOUNT_NAME" "ACCOUNTS"
+           "CURRENCY" "PTD_NET_ENTERED" "PTD_NET_ACCOUNTED" "YTD_NET_ENTERED"
+           "YTD_NET_ACCOUNTED" "ACC_PROD");
+    array _req{11} _temporary_ (0 1 0 1 1 1 1 1 1 0 0);
+    infile "&tb_dir/*.txt" dsd truncover dlm=_dlm filename=_fn;
 
     input @;
+    if _fn ne _cur_fn then do;
+        _cur_fn   = _fn;
+        _need_hdr = 1;
+    end;
     if _infile_ = " " then delete;
-    if _infile_ =: "LEDGER_ID" then delete;
     if      index(_infile_, "09"x) then _dlm = "09"x;
     else if index(_infile_, ",")   then _dlm = ",";
     else do;
@@ -106,9 +119,46 @@ data work.tb_all(drop=_dlm);
         stop;
     end;
 
-    input LEDGER_ID PERIOD $ EFFECTIVE_DATE : anydtdte10. ACCOUNT_NAME $
-          ACCOUNTS $ CURRENCY $ PTD_NET_ENTERED PTD_NET_ACCOUNTED
-          YTD_NET_ENTERED YTD_NET_ACCOUNTED ACC_PROD $;
+    input (_c1-_c50) (:$200.);
+
+    if _need_hdr then do;
+        _need_hdr = 0;
+        if substr(_c1, 1, 3) = "EFBBBF"x then _c1 = substr(_c1, 4);
+        do _j = 1 to dim(_p);
+            _p{_j} = .;
+        end;
+        do _i = 1 to dim(_c);
+            _hdr = compress(upcase(dequote(strip(_c{_i}))), "_ ");
+            do _j = 1 to dim(_nm);
+                if _hdr = compress(_nm{_j}, "_") and _p{_j} = . then _p{_j} = _i;
+            end;
+        end;
+        _miss = " ";
+        do _j = 1 to dim(_nm);
+            if _req{_j} and _p{_j} = . then _miss = catx(" ", _miss, _nm{_j});
+        end;
+        if _miss ne " " then do;
+            put "ERROR: TB file " _fn "has no column(s) " _miss;
+            call symputx("tb_hdr_err", 1);
+            stop;
+        end;
+        delete;
+    end;
+
+    if upcase(strip(_c{_p{5}})) = "ACCOUNTS" then delete;
+
+    PERIOD            = _c{_p{2}};
+    ACCOUNT_NAME      = _c{_p{4}};
+    ACCOUNTS          = _c{_p{5}};
+    CURRENCY          = _c{_p{6}};
+    PTD_NET_ENTERED   = input(_c{_p{7}}, best32.);
+    PTD_NET_ACCOUNTED = input(_c{_p{8}}, best32.);
+    YTD_NET_ENTERED   = input(_c{_p{9}}, best32.);
+
+    if _p{1}  then LEDGER_ID         = input(_c{_p{1}}, best32.);
+    if _p{3}  then EFFECTIVE_DATE    = input(_c{_p{3}}, anydtdte10.);
+    if _p{10} then YTD_NET_ACCOUNTED = input(_c{_p{10}}, best32.);
+    if _p{11} then ACC_PROD          = _c{_p{11}};
 
     ENTITY = scan(ACCOUNTS, 1, "-");
     GL_NO  = scan(ACCOUNTS, 3, "-");
@@ -130,6 +180,10 @@ proc sql noprint;
 quit;
 
 %macro precheck_breaks;
+    %if &tb_hdr_err = 1 %then %do;
+        %put ERROR: TB header check failed in &tb_dir - see the ERROR line above.;
+        %return;
+    %end;
     %if &n_ent ne 2 %then %do;
         %put ERROR: Expected 2 entities in &tb_dir, found &n_ent - check WORK.TB_ALL.;
         %return;
