@@ -335,10 +335,11 @@ run;
 proc sort data=work.prod_bal;  by ENTITY PRODUCT_TYPE;  run;
 proc sort data=work.tb_bal;    by ENTITY PRODUCT_TYPE;  run;
 
-data mth.balrecon(drop=DTL_PROD DTL_TB);
+data mth.balrecon(drop=DTL_PROD DTL_TB FOOT_GAP)
+     work.foot(keep=ENTITY_NAME PRODUCT_TYPE PROD_BAL TB_BAL FOOT_GAP);
     length ENTITY $3 ENTITY_NAME $3 PRODUCT_TYPE $10;
     retain ENTITY ENTITY_NAME PRODUCT_TYPE PROD_BAL FIFO_BAL TOTAL_PROD
-           TB_BAL DIFF FOOT_GAP;
+           TB_BAL DIFF;
     merge work.prod_bal(in=p) work.tb_bal(in=t) work.grp_sum;
     by ENTITY PRODUCT_TYPE;
 
@@ -363,7 +364,7 @@ run;
 
 proc sql noprint;
     select count(*) into :n_foot trimmed
-      from mth.balrecon where FOOT_GAP ne 0;
+      from work.foot where FOOT_GAP ne 0;
 quit;
 
 %if &n_foot > 0 %then %do;
@@ -371,7 +372,7 @@ quit;
     %put ERROR- Balance counted in "Balance Recon" is sitting in no group in the detail.;
 
     title "Detail does not foot to summary &yymm";
-    proc print data=mth.balrecon noobs label;
+    proc print data=work.foot noobs label;
         var ENTITY_NAME PRODUCT_TYPE PROD_BAL TB_BAL FOOT_GAP;
         where FOOT_GAP ne 0;
         format PROD_BAL TB_BAL FOOT_GAP comma20.2;
@@ -423,6 +424,6 @@ title;
 
 proc datasets library=work nolist nowarn;
     delete tbmap tb_sum tb_bal tb_grp prod_all prod_bal pg_in pg pg_dup
-           prod_grp prod_gbal nogrp_bal grp_sum
+           prod_grp prod_gbal nogrp_bal grp_sum foot
            fifo_raw fifo_in;
 quit;
