@@ -10,7 +10,6 @@ libname sasfiles "C:/Users/FNLNJE/Documents/My SAS Files";
 %let tb_dir  = C:/Users/FNLNJE/Documents/My SAS Files/PRETB;
 
 %let detail  = Y;
-%let tol     = 1;
 %let nogrp   = (no group);
 
 options dlcreatedir;
@@ -299,9 +298,11 @@ proc sort data=work.prod_gbal;  by ENTITY PRODUCT_TYPE RECON_GRP;  run;
 proc sort data=work.tb_grp;     by ENTITY PRODUCT_TYPE RECON_GRP;  run;
 
 data mth.baldetail;
-    merge work.prod_gbal(in=p) work.tb_grp(in=t);
+    length ENTITY $3 ENTITY_NAME $3 PRODUCT_TYPE $10 RECON_GRP $64;
+    retain ENTITY ENTITY_NAME PRODUCT_TYPE RECON_GRP PROD_BAL FIFO_BAL
+           TOTAL_PROD TB_BAL DIFF;
+    merge work.prod_gbal work.tb_grp;
     by ENTITY PRODUCT_TYPE RECON_GRP;
-    length ENTITY_NAME $3 STATUS $26;
 
     select (ENTITY);
         when ("128") ENTITY_NAME = "MBS";
@@ -317,12 +318,6 @@ data mth.baldetail;
 
     TOTAL_PROD = PROD_BAL + FIFO_BAL;
     DIFF       = TOTAL_PROD - TB_BAL;
-
-    if      index(RECON_GRP, "&nogrp") > 0     then STATUS = "No group";
-    else if abs(round(DIFF, 0.01)) <= &tol     then STATUS = "Match";
-    else if not t                              then STATUS = "Missing from TB";
-    else if not p                              then STATUS = "Not in product file";
-    else                                            STATUS = "Amount differs";
 run;
 
 proc means data=mth.baldetail noprint nway missing;
