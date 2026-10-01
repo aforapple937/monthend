@@ -268,15 +268,23 @@ proc means data=work.exp_lines noprint nway;
     output out=work.exp_net(drop=_type_ _freq_) sum=RDL_AMT;
 run;
 
-data work.tb_all;
-    length LEDGER_ID 8 PERIOD $10 ACCOUNT_NAME $100 ACCOUNTS $60
-           CURRENCY $3 ACC_PROD $20 GL_NO $10 _dlm $1;
-    retain _dlm ",";
-    infile "&tb_dir/*.txt" dsd truncover dlm=_dlm;
+%let tb_hdr_err = 0;
+
+data work.tb_all(drop=_:);
+    length PERIOD $10 ACCOUNTS $60 CURRENCY $3 GL_NO $10 _dlm $1
+           _fn _cur_fn $500 _hdr $32 _miss $200 _c1-_c50 $200;
+    retain _dlm "," _cur_fn " " _need_hdr 1 _p1-_p4;
+    array _c{50} $ _c1-_c50;
+    array _p{4} _p1-_p4;
+    array _nm{4} $32 _temporary_ ("PERIOD" "ACCOUNTS" "CURRENCY" "YTD_NET_ENTERED");
+    infile "&tb_dir/*.txt" dsd truncover dlm=_dlm filename=_fn;
 
     input @;
+    if _fn ne _cur_fn then do;
+        _cur_fn   = _fn;
+        _need_hdr = 1;
+    end;
     if _infile_ = " " then delete;
-    if _infile_ =: "LEDGER_ID" then delete;
 
     if      index(_infile_, "09"x) then _dlm = "09"x;
     else if index(_infile_, ",")   then _dlm = ",";
@@ -285,9 +293,38 @@ data work.tb_all;
         stop;
     end;
 
-    input LEDGER_ID PERIOD $ EFFECTIVE_DATE : anydtdte10. ACCOUNT_NAME $
-          ACCOUNTS $ CURRENCY $ PTD_NET_ENTERED PTD_NET_ACCOUNTED
-          YTD_NET_ENTERED YTD_NET_ACCOUNTED ACC_PROD $;
+    input (_c1-_c50) (:$200.);
+
+    if _need_hdr then do;
+        _need_hdr = 0;
+        if substr(_c1, 1, 3) = "EFBBBF"x then _c1 = substr(_c1, 4);
+        do _j = 1 to dim(_p);
+            _p{_j} = .;
+        end;
+        do _i = 1 to dim(_c);
+            _hdr = compress(upcase(dequote(strip(_c{_i}))), "_ ");
+            do _j = 1 to dim(_nm);
+                if _hdr = compress(_nm{_j}, "_") and _p{_j} = . then _p{_j} = _i;
+            end;
+        end;
+        _miss = " ";
+        do _j = 1 to dim(_nm);
+            if _p{_j} = . then _miss = catx(" ", _miss, _nm{_j});
+        end;
+        if _miss ne " " then do;
+            put "ERROR: TB file " _fn "has no column(s) " _miss;
+            call symputx("tb_hdr_err", 1);
+            stop;
+        end;
+        delete;
+    end;
+
+    if upcase(strip(_c{_p{2}})) = "ACCOUNTS" then delete;
+
+    PERIOD          = _c{_p{1}};
+    ACCOUNTS        = _c{_p{2}};
+    CURRENCY        = _c{_p{3}};
+    YTD_NET_ENTERED = input(_c{_p{4}}, best32.);
 
     GL_NO = scan(ACCOUNTS, 3, "-");
 run;
@@ -300,6 +337,10 @@ proc sql noprint;
 quit;
 
 %macro post_recon;
+    %if &tb_hdr_err = 1 %then %do;
+        %put ERROR: TB header check failed in &tb_dir - see the ERROR line above.;
+        %return;
+    %end;
     %if &n_ent ne 2 %then %do;
         %put ERROR: Expected 2 entities in &tb_dir, found &n_ent..;
         %return;
